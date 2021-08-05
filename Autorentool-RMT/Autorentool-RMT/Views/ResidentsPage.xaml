@@ -59,7 +59,8 @@
         </CollectionView>
 
         <Button 
-            Text="+NEUER BEWOHNER HINZUFÜGEN" 
+            Text="+ NEUEN BEWOHNER HINZUFÜGEN"
+            TextColor="White"
             BackgroundColor="Orange" 
             Clicked="OnAddNewResidentButtonClicked"/>
 
