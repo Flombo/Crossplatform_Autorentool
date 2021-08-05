@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Autorentool_RMT.Views.Forms.NewResidentPage"
+             Title="BEWOHNER HINZUFÜGEN"
+            xmlns:resource="clr-namespace:Autorentool_RMT.Resources"
+            ControlTemplate="{StaticResource HeaderPageTemplate}">
+    <ContentPage.Content>
+
+        <StackLayout>
+            <ScrollView Orientation="Vertical">
+                <StackLayout>
+
+                    <StackLayout>
+                        <Grid BackgroundColor="Beige" HeightRequest="40">
+
+                            <Label Grid.Row="0" Grid.Column="0" Margin="0,10,0,10" FontAttributes="Bold" FontSize="Subtitle" VerticalTextAlignment="Center" Text="Profilbild"></Label>
+                            <Button Grid.Column="1" Text="Delete" BackgroundColor="Gray" Command="{Binding DeleteSelectedImage}"/>
+                            <Button Grid.Column="2" Text="Edit" BackgroundColor="Orange" Command="{Binding ShowFilePicker}"/>
+                        </Grid>
+                        <Image Aspect="AspectFit" BackgroundColor="White"  Source="{Binding SelectedImage}" HeightRequest="75" WidthRequest="75"></Image>
+                    </StackLayout>
+
+                    <Grid>
+                        <Label Text="Vorname(n):" FontSize="Subtitle" Grid.Row="0" Grid.Column="0"/>
+                        <Entry Placeholder="Vorname(n)" FontSize="Subtitle" Grid.Row="1" Grid.Column="0" Text="{Binding Firstname}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True"/>
+                        <Label Text="Nachname:" FontSize="Subtitle" Grid.Row="0" Grid.Column="1"/>
+                        <Entry Placeholder="Nachname" FontSize="Subtitle" Grid.Row="1" Grid.Column="1" Text="{Binding Lastname}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True"/>
+                        <Label Text="Alter:" FontSize="Subtitle" Grid.Row="2" Grid.Column="0"/>
+                        <Entry Placeholder="Alter" FontSize="Subtitle" Grid.Row="3" Grid.Column="0" Text="{Binding Age}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True"/>
+                        <Label Text="Geschlecht:" FontSize="Subtitle" Grid.Row="2" Grid.Column="1"/>
+                        <Picker FontSize="Subtitle" Grid.Row="3" Grid.Column="1" SelectedIndex="{Binding Gender}">
+                            <Picker.Items>
+                                <x:String>Weiblich</x:String>
+                                <x:String>Männlich</x:String>
+                                <x:String>Divers</x:String>
+                            </Picker.Items>
+                        </Picker>
+                        <Editor MinimumHeightRequest="100" Placeholder="Notizen.." Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Notes}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True"/>
+                    </Grid>
+
+                    <StackLayout>
+                        <Grid BackgroundColor="Beige" HeightRequest="40">
+                            <Label FontAttributes="Bold" TextColor="Gray" Text="Lebensthemen" FontSize="Subtitle" Grid.Row="0" Grid.Column="0" VerticalTextAlignment="Center" Margin="0,10,0,10"/>
+                            <Button Text="Edit" Grid.Row="0" Grid.Column="1" BackgroundColor="Orange"></Button>
+                        </Grid>
+                        <CollectionView ItemsSource="{Binding ResidentLifethemes}" ItemsLayout="VerticalGrid, 2" HeightRequest="300">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Text="Name"></Label>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </StackLayout>
+
+                    <StackLayout>
+                        <Grid BackgroundColor="Beige" HeightRequest="40">
+                            <Label FontAttributes="Bold" Grid.Row="0" Grid.Column="0" TextColor="Gray" Margin="0,10,0,10" FontSize="Subtitle" Text="Sitzungen" VerticalTextAlignment="Center"/>
+                            <Button Text="Play" Grid.Row="0" Grid.Column="1" BackgroundColor="Gray"></Button>
+                            <Button Text="Delete" Grid.Row="0" Grid.Column="2" BackgroundColor="Gray"></Button>
+                            <Button Text="Edit" Grid.Row="0" Grid.Column="3" BackgroundColor="Gray"></Button>
+                        </Grid>
+                        <CollectionView ItemsSource="{Binding ResidentSessions}" ItemsLayout="VerticalGrid, 2" HeightRequest="300">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Text="Name"></Label>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </StackLayout>
+                </StackLayout>
+            </ScrollView>
+        <Button Text="Fertig" Command="{Binding AddResident}"></Button>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

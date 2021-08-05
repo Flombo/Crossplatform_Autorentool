@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Autorentool_RMT.App"
+             xmlns:resource="clr-namespace:Autorentool_RMT.Resources"
+             xmlns:breadcrumb="clr-namespace:Breadcrumb;assembly=Breadcrumb">
+    <!--:breadcrumb="clr-namespace:Breadcrumb;assembly=Xamarin.Forms.Breadcrumb">-->
+
+    <!--<StackLayout Orientation="Vertical">
+    <Label Text="{Binding CurrentValue}" />
+    <StackLayout Orientation="Horizontal">
+        <Button Text="+" Command="{Binding AddCommand}" />
+        <Button Text="-" Command="{Binding MinusCommand}" />
+    </StackLayout>
+</StackLayout>-->
+
+    <Application.Resources>
+
+        <!-- ab: Include fonts: here "Font Awesome 5" assets -->
+        <OnPlatform x:TypeArguments="x:String"
+                    x:Key="FontAwesomeBrands">
+            <On Platform="Android"
+                Value="fa-brands-400.ttf#Regular" />
+            <On Platform="iOS"
+                Value="FontAwesome5Brands-Regular" />
+            <On Platform="UWP"
+                Value="/Assets/FontAwesome5Brands.otf#Font Awesome 5 Brands" />
+        </OnPlatform>
+
+        <OnPlatform x:TypeArguments="x:String"
+                    x:Key="FontAwesomeSolid">
+            <On Platform="Android"
+                Value="fa-solid-900.ttf#Regular" />
+            <On Platform="iOS"
+                Value="FontAwesome5Free-Solid" />
+            <On Platform="UWP"
+                Value="/Assets/FontAwesome5Solid.otf#Font Awesome 5 Free" />
+        </OnPlatform>
+
+        <OnPlatform x:TypeArguments="x:String"
+                    x:Key="FontAwesomeRegular">
+            <On Platform="Android"
+                Value="fa-regular-400.ttf#Regular" />
+            <On Platform="iOS"
+                Value="FontAwesome5Free-Regular" />
+            <On Platform="UWP"
+                Value="/Assets/FontAwesome5Regular.otf#Font Awesome 5 Free" />
+        </OnPlatform>
+
+        <!--<ResourceDictionary>
+            <ControlTemplate x:Key="MainPageTemplate">
+                <StackLayout>
+                    <Label Text="Header Content" FontSize="24" />         
+                    <ContentPresenter />
+                </StackLayout>
+            </ControlTemplate>
+        </ResourceDictionary>-->
+
+        <!-- ab: Templates for reuse in different Views defined here -->
+        <ResourceDictionary>
+
+            <!-- Template for a page/View with header -->
+            <ControlTemplate x:Key="HeaderPageTemplate">
+
+                <StackLayout Orientation="Vertical" Spacing="0">
+
+                    <!-- Header begin -->
+                    <!-- Without template, the header needs to be nested in a StackLayout -->
+                    <!-- <StackLayout Orientation="Vertical" VerticalOptions="Start"> -->
+
+                    <!-- ab: CD color (green) for this section: #1d4064 -->
+                    <Frame BackgroundColor="#1d4064" Padding="7" CornerRadius="0" HorizontalOptions="Fill" HasShadow="False">
+
+                        <!-- ab: Frame only allowed to carry "one" content object, thus some sub-content-objects have to be added for proper header alignment -->
+                        <StackLayout Orientation="Horizontal">
+
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="Start">
+
+                                <!--<Button Text=" LOGO " ImageSource="ImageLogoBrainLight" BackgroundColor="#1d4064" TextColor="White" HorizontalOptions="Start" HeightRequest="{OnPlatform iOS=40, Android=40}" WidthRequest="{OnPlatform iOS=50, Android=50}" />-->
+                                <ImageButton Source="{OnPlatform UWP=ImageLogoBrainLight.png, iOS=ImageLogoBrainLight, Android=ImageLogoBrainLight}" BackgroundColor="#1d4064" HorizontalOptions="Start" HeightRequest="{OnPlatform UWP=40, iOS=40, Android=40}" Clicked="OnHomeButton_Clicked" />
+                                <Button Text=" ⬅ ZURÜCK " BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" Clicked="OnBackButton_Clicked" />
+
+                            </StackLayout>
+
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" x:Name="NavbarStackLayout">
+
+                                <!-- <Button x:Name = "NavbarButton" Text="... NAVBARHERE ..." BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" Clicked="NavbarButton_Clicked" /> -->
+                                <!-- <Button x:Name = "NavbarButton" Text="... NAVBARHERE ..." BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" Clicked="NavbarButton_Clicked" /> -->
+
+                                <!-- <breadcrumb:Breadcrumb Padding="15" VerticalOptions="Start" TextColor="White" /> -->
+
+                                <breadcrumb:Breadcrumb VerticalOptions="Start" AnimationSpeed="600" TextColor="White" LastBreadcrumbTextColor="LightGreen" BreadcrumbBackgroundColor="Gray" LastBreadcrumbBackgroundColor="Gray" Padding="5">
+
+                                    <breadcrumb:Breadcrumb.Separator>
+                                        <FontImageSource FontFamily="{StaticResource FontAwesomeSolid}" Glyph="&#xf101;" Size="15" Color="White" />
+                                    </breadcrumb:Breadcrumb.Separator>
+
+                                </breadcrumb:Breadcrumb>
+
+                            </StackLayout>
+
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="End">
+
+                                <!--<Button Text=" ? " BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" />
+                                <Button Text=" MISC " BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" />
+                                <Button Text=" X " BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" />-->
+                                <Button Text=" ℹ BEDIENUNGSINFOS " BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" />
+
+                            </StackLayout>
+
+                        </StackLayout>
+
+                    </Frame>
+
+                    <!-- </StackLayout> -->
+                    <!-- Header end -->
+
+                    <!-- Content begin -->
+                    <ContentPresenter VerticalOptions="FillAndExpand" Padding="7" />
+                    <!-- Content end -->
+
+                </StackLayout>
+
+            </ControlTemplate>
+
+        </ResourceDictionary>
+
+    </Application.Resources>
+
+</Application>

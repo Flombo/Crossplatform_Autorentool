@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="Autorentool_RMT.Resources.HeaderTemplate"
+    xmlns:resource="clr-namespace:Autorentool_RMT.Resources">
+
+    <!-- ab: NOTE: Currently defunct and unused -->
+
+    <!--<ContentPage.Content>
+        
+    </ContentPage.Content>-->
+
+    <!--<ContentPage.Resources>
+      <DataTemplate x:Key="BasicItemTemplate">
+        <StackLayout>
+          <Frame>
+            <Label Text="{Binding Title}"
+                   FontAttributes="Bold"/>
+            </Frame>
+            <Frame>
+            <Label Text="{Binding Details}" />
+          </Frame>
+        </StackLayout>
+      </DataTemplate>
+    </ContentPage.Resources>-->
+
+    <ContentPage.Resources>
+
+        <DataTemplate x:Key="BasicHeaderTemplate">
+
+            <!-- Header begin -->
+            <StackLayout Orientation="Vertical" VerticalOptions="Start">
+
+                <!-- ab: CD color (green) for this section: #1d4064 -->
+                <Frame BackgroundColor="#1d4064" Padding="7" CornerRadius="0" HorizontalOptions="Fill" HasShadow="False">
+
+                    <!-- ab: Frame only allowed to carry "one" content object, thus some sub-content-objects have to be added for proper header alignment -->
+                    <StackLayout Orientation="Horizontal">
+
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="Start">
+
+                            <!--<Button Text=" LOGO " ImageSource="ImageLogoBrainLight" BackgroundColor="#1d4064" TextColor="White" HorizontalOptions="Start" HeightRequest="{OnPlatform iOS=40, Android=40}" WidthRequest="{OnPlatform iOS=50, Android=50}" />-->
+                            <ImageButton Source="ImageLogoBrainLight" BackgroundColor="#1d4064" HorizontalOptions="Start" HeightRequest="{OnPlatform UWP=40, iOS=40, Android=40}" Clicked="OnHomeButtonClicked" />
+                            <!--<Button Text="{x:Static resource:Resources.BackButtonText}" BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" Clicked="OnBackButtonClicked" />-->
+                            <!--<Button Text="{Binding Source={x:Static resource:Resources.BackButtonText}, FallbackValue='Zurück'}" BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" Clicked="OnBackButtonClicked" />-->
+                            
+                            <!-- from here on all localisation resources have been disabled and manually replaced with strings (reason: UWP app does not work correctly with .resx localisations) -->
+                            <Button Text=" ⬅ ZURÜCK " BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" Clicked="OnBackButtonClicked" />
+
+                        </StackLayout>
+
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
+
+                            <Button x:Name = "NavbarButton" Text="... NAVBARHERE ..." BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" />
+
+                        </StackLayout>
+
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="End">
+
+                            <!--<Button Text=" ? " BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" />
+                            <Button Text=" MISC " BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" />
+                            <Button Text=" X " BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" />-->
+                            <Button Text=" ℹ BEDIENUNGSINFOS " BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" />
+
+                        </StackLayout>
+
+                    </StackLayout>
+
+                </Frame>
+
+            </StackLayout>
+            <!-- Header end -->
+
+        </DataTemplate>
+
+    </ContentPage.Resources>
+
+</ContentPage>

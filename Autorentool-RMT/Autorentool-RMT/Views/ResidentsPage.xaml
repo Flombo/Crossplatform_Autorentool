@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="Autorentool_RMT.Views.ResidentsPage"
+    Title="Bewohner"
+    xmlns:resource="clr-namespace:Autorentool_RMT.Resources"
+    ControlTemplate="{StaticResource HeaderPageTemplate}">
+
+    <!-- <NavigationPage.TitleView>
+        <Slider HeightRequest="44" WidthRequest="300" />
+    </NavigationPage.TitleView> -->
+   
+    <!-- <NavigationPage.TitleV
+        <Slider HeightRequest="44" WidthRequest="300" />
+    </NavigationPage.TitleView> -->
+
+    <!-- <ScrollView> -->
+
+    <!-- Page/View content begin -->
+    <StackLayout Orientation="Vertical">
+
+        <!--<StackLayout BindableLayout.ItemTemplate="{StaticResource BasicHeaderTemplate}" />-->
+        <!--<StackLayout BindableLayout.ItemTemplate="{x:StaticResource: BasicHeaderTemplate}" />-->
+
+        <CollectionView ItemsSource="{Binding Residents}" ItemsLayout="VerticalGrid, 2">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    
+                    <StackLayout 
+                        BackgroundColor="White" 
+                        Padding="2"
+                        HeightRequest="120">
+                        <Image
+                            Source="{Binding ResidentImageSource}"
+                            Aspect="AspectFit"
+                            HeightRequest="60"
+                            WidthRequest="60"
+                            BackgroundColor="White"/>
+                        <StackLayout
+                            BackgroundColor="#252525"
+                            Opacity="0.75">
+                            <Label 
+                                Text="{Binding ResidentOneLineSummary}"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                LineBreakMode="WordWrap"/>
+                            <Label
+                                Text="{Binding Age}"
+                                TextColor="White"
+                                LineBreakMode="TailTruncation"
+                                FontAttributes="Italic"
+                                VerticalOptions="End" />
+                        </StackLayout>
+                    </StackLayout>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Button 
+            Text="+NEUER BEWOHNER HINZUFÜGEN" 
+            BackgroundColor="Orange" 
+            Clicked="OnAddNewResidentButtonClicked"/>
+
+
+        <!-- Footer begin -->
+        <StackLayout Orientation="Vertical" VerticalOptions="End">
+
+            <StackLayout Orientation="Horizontal">
+
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Start">
+
+                    <Image Source="{OnPlatform UWP=ImageLogoEXIST.png, iOS=ImageLogoEXIST, Android=ImageLogoEXIST}" HorizontalOptions="Start" HeightRequest="{OnPlatform UWP=60, iOS=60, Android=60}" ></Image>
+
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand">
+
+                    <Button Text=" 📧 KONTAKT / FEEDBACK " BackgroundColor="White" TextColor="Gray" BorderRadius="0" BorderWidth="2" BorderColor="White" />
+                    <Button Text=" 🙋 ÜBER UNS " BackgroundColor="White" TextColor="Gray" BorderRadius="0" BorderWidth="2" BorderColor="White" />
+
+                </StackLayout>
+
+            </StackLayout>
+
+        </StackLayout>
+        <!-- Footer end -->
+
+    </StackLayout>
+    <!-- Page/View content end -->
+
+<!-- </ScrollView> -->
+
+</ContentPage>
