@@ -1,5 +1,5 @@
-﻿using Autorentool_RMT.ViewModels.ResidentViewModels;
-using Autorentool_RMT.Views.Forms;
+﻿using Autorentool_RMT.ViewModels;
+using Autorentool_RMT.Views;
 using System;
 using Xamarin.Forms;
 

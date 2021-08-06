@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Autorentool_RMT.ViewModels.ResidentViewModels
+namespace Autorentool_RMT.ViewModels
 {
     /// <summary>
     /// This class retrieves requests from the ResidentsPage and processes them.

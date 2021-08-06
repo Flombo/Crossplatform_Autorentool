@@ -12,7 +12,7 @@ using System.Windows.Input;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
-namespace Autorentool_RMT.ViewModels.ResidentViewModels
+namespace Autorentool_RMT.ViewModels
 {
     /// <summary>
     /// This class retrieves requests from the ResidentsPage and processes them.
@@ -43,6 +43,8 @@ namespace Autorentool_RMT.ViewModels.ResidentViewModels
             ShowFilePicker = new Command(OnShowFilePicker);
             DeleteSelectedImage = new Command(OnDeleteSelectedImage);
             AddResident = new Command(OnAddResident);
+            allExistingLifethemes = new List<Lifetheme>();
+            residentLifethemes = new List<Lifetheme>();
         }
         #endregion
 
@@ -260,7 +262,7 @@ namespace Autorentool_RMT.ViewModels.ResidentViewModels
 
                     await BindCheckedLifethemesToResident(residentId);
 
-                    ResidentLifethemes = await ResidentLifethemesDBHandler.GetLifethemesOfResident(residentId);
+                    ResidentLifethemes = await ResidentLifethemesDBHandler.GetLifethemesOfResident(residentId); 
                 }
             }
             catch (Exception sqlException)

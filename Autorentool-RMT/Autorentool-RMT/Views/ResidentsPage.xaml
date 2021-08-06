@@ -66,7 +66,7 @@
 
 
         <!-- Footer begin -->
-        <StackLayout Orientation="Vertical" VerticalOptions="End">
+        <!--<StackLayout Orientation="Vertical" VerticalOptions="End">
 
             <StackLayout Orientation="Horizontal">
 
@@ -85,7 +85,7 @@
 
             </StackLayout>
 
-        </StackLayout>
+        </StackLayout>-->
         <!-- Footer end -->
 
     </StackLayout>

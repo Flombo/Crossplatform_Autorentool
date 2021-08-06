@@ -1,8 +1,8 @@
-﻿using Autorentool_RMT.ViewModels.ResidentViewModels;
+﻿using Autorentool_RMT.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace Autorentool_RMT.Views.Forms
+namespace Autorentool_RMT.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NewResidentPage : ContentPage

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Autorentool_RMT.Views.Forms.NewResidentPage"
+             x:Class="Autorentool_RMT.Views.NewResidentPage"
              Title="BEWOHNER HINZUFÜGEN"
             xmlns:resource="clr-namespace:Autorentool_RMT.Resources"
             ControlTemplate="{StaticResource HeaderPageTemplate}">
