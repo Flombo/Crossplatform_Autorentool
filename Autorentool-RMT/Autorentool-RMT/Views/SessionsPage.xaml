@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Autorentool_RMT.Views.SessionsPage"
+             Title="SITZUNGEN"
+             ControlTemplate="{StaticResource HeaderPageTemplate}">
+    <ContentPage.Content>
+        <Grid>
+            <!--Session section-->
+            <StackLayout Grid.Row="0" Grid.Column="0" Grid.RowSpan="10">
+                <!--Session import/export controls-->
+                <StackLayout BackgroundColor="Beige" Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
+                    <Label Text="" FontSize="Subtitle"/>
+                    <StackLayout HorizontalOptions="EndAndExpand" Orientation="Horizontal">
+                        <Button Text="{StaticResource ExportIcon}" TextColor="White" FontSize="Subtitle" FontAttributes="Bold"/>
+                        <Button Text="{StaticResource ImportIcon}" TextColor="White" FontSize="Subtitle" FontAttributes="Bold"/>
+                    </StackLayout>
+                </StackLayout>
+                
+                <ScrollView>
+                    <CollectionView ItemsSource="{Binding Sessions}" ItemsLayout="VerticalGrid, 1">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+
+                                <Button Text="{Binding Name}" FontAttributes="Bold" FontSize="Subtitle"/>
+
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </ScrollView>
+            </StackLayout>
+
+            <!--Selected session mediaItems section-->
+            <StackLayout Grid.Row="0" Grid.Column="1" Grid.RowSpan="10">
+                <ScrollView>
+                    <CollectionView ItemsSource="{Binding SelectedSessionMediaItems}" ItemsLayout="VerticalGrid, 4">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+
+                                <StackLayout 
+                                    BackgroundColor="White" 
+                                    Padding="2"
+                                    HeightRequest="120">
+                                    <Image
+                                        Source="{Binding GetFullPath}"
+                                        Aspect="AspectFit"
+                                        HeightRequest="60"
+                                        WidthRequest="60"
+                                        BackgroundColor="White"/>
+                                    <StackLayout
+                                            BackgroundColor="#252525"
+                                            Opacity="0.75" HeightRequest="60">
+                                        <Label 
+                                            Text="{Binding Name}"
+                                            TextColor="White"
+                                            FontAttributes="Bold"
+                                            LineBreakMode="WordWrap"/>
+                                    </StackLayout>
+                                </StackLayout>
+
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </ScrollView>
+            </StackLayout>
+
+            <!--Add new session button-->
+            <Button 
+                Text="Neue Sitzung hinzufügen"
+                BackgroundColor="Green"
+                TextColor="White"
+                FontSize="Subtitle"
+                Grid.Row="10" 
+                Grid.Column="0"
+                HorizontalOptions="CenterAndExpand"
+                FontAttributes="Bold"/>
+
+            <!--Session control buttons-->
+            <StackLayout Grid.Row="10" Grid.Column="1">
+                <Button 
+                    Text="{StaticResource EditIcon}" 
+                    FontAttributes="Bold" 
+                    BackgroundColor="Green" 
+                    TextColor="White"
+                    FontSize="Subtitle"/>                
+                <Button 
+                    Text="{StaticResource PlayIcon}" 
+                    FontAttributes="Bold" 
+                    BackgroundColor="Green" 
+                    TextColor="White"
+                    FontSize="Subtitle"/>                
+                <Button 
+                    Text="{StaticResource DeleteIcon}" 
+                    FontAttributes="Bold" 
+                    BackgroundColor="Green"
+                    TextColor="White"
+                    FontSize="Subtitle"/>               
+                <Button 
+                    Text="Name ändern" 
+                    FontAttributes="Bold" 
+                    BackgroundColor="Green" 
+                    TextColor="White"
+                    FontSize="Subtitle"/>
+            </StackLayout> 
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

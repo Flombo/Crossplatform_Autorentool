@@ -104,13 +104,15 @@ namespace Autorentool_RMT.Models
         /// <summary>
         /// Constructor with all parameters.
         /// </summary>
+        /// <param name="id"></param>
         /// <param name="name"></param>
         /// <param name="filetype"></param>
         /// <param name="path"></param>
         /// <param name="notes"></param>
         /// <param name="backendMediaItemId"></param>
-        public MediaItem(string name, string filetype, string path, string notes, int backendMediaItemId)
+        public MediaItem(int id, string name, string filetype, string path, string notes, int backendMediaItemId)
         {
+            Id = id;
             Name = name;
             FileType = filetype;
             Path = path;

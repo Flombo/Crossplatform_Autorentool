@@ -49,7 +49,7 @@
             <!-- ab: CD color (gray) for this section: #91989c -->
             <StackLayout Orientation="Vertical" HorizontalOptions="Center" BackgroundColor="#0091f1" Spacing="-10" WidthRequest="{OnPlatform UWP=200, iOS=200, Android=200}">
 
-                <ImageButton Source="{OnPlatform UWP=ImageChecklist.png, iOS=ImageChecklist, Android=ImageChecklist}" BackgroundColor="#0091f1" WidthRequest="{OnPlatform UWP=100, iOS=100, Android=100}" Padding="10"/>
+                <ImageButton Source="{OnPlatform UWP=ImageChecklist.png, iOS=ImageChecklist, Android=ImageChecklist}" BackgroundColor="#0091f1" WidthRequest="{OnPlatform UWP=100, iOS=100, Android=100}" Padding="10" Clicked="OnSessionButtonClicked"/>
                 <Button Text=" SITZUNGEN " BackgroundColor="#0091f1" TextColor="White" Padding="10" />
 
             </StackLayout>

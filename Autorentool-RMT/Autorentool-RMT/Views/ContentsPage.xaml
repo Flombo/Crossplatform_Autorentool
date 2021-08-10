@@ -32,9 +32,9 @@
                     <StackLayout BackgroundColor="Beige" Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
                         <Button Text="{StaticResource DeleteIcon}" BackgroundColor="Green" Padding="5" FontSize="Subtitle" FontAttributes="Bold"/>
                         <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand">
-                            <Button Text="☁️" Padding="5" HeightRequest="35" WidthRequest="45"  BackgroundColor="Green" FontSize="Subtitle" FontAttributes="Bold"/>
-                            <Button Text="↧" HeightRequest="35" TextColor="White" Padding="5" WidthRequest="45" BackgroundColor="Green" FontSize="Subtitle" FontAttributes="Bold"/>
-                            <Button Text="↥" HeightRequest="35" TextColor="White" Padding="5" WidthRequest="45" BackgroundColor="Green" FontSize="Subtitle" FontAttributes="Bold"/>
+                            <Button Text="{StaticResource ImportFromBackendIcon}" Padding="5" HeightRequest="35" WidthRequest="45"  BackgroundColor="Green" FontSize="Subtitle" FontAttributes="Bold"/>
+                            <Button Text="{StaticResource ExportIcon}" HeightRequest="35" TextColor="White" Padding="5" WidthRequest="45" BackgroundColor="Green" FontSize="Subtitle" FontAttributes="Bold"/>
+                            <Button Text="{StaticResource ImportIcon}" HeightRequest="35" TextColor="White" Padding="5" WidthRequest="45" BackgroundColor="Green" FontSize="Subtitle" FontAttributes="Bold"/>
                         </StackLayout>
                     </StackLayout>
                     

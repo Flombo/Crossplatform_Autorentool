@@ -1,10 +1,7 @@
 ﻿using Autorentool_RMT.Models;
-using Autorentool_RMT.Services.DBHandling;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Autorentool_RMT.ViewModels
@@ -80,8 +77,8 @@ namespace Autorentool_RMT.ViewModels
             //MediaItems = await MediaItemDBHandler.GetAllMediaItems();
             MediaItems = new List<MediaItem>()
             {
-                {new MediaItem("test.jpg", "jpg", "ImageOld.png", "Test", 0) },
-                {new MediaItem("test2.jpg", "jpg", "ImageOld.png", "Test2", 0) }
+                {new MediaItem(1, "test.jpg", "jpg", "ImageOld.png", "Test", 0) },
+                {new MediaItem(2, "test2.jpg", "jpg", "ImageOld.png", "Test2", 0) }
             };
 
             CurrentMediaItemLifethemes = new List<Lifetheme>()
