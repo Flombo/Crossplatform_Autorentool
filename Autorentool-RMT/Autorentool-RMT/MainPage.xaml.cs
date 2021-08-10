@@ -63,5 +63,10 @@ namespace Autorentool_RMT
         {
             await Navigation.PushAsync(new ResidentsPage());
         }
+
+        private async void OnContentButtonClicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new ContentsPage());
+        }
     }
 }

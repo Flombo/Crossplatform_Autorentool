@@ -123,6 +123,11 @@
 
             </ControlTemplate>
 
+            <!--Control icons-->
+            <x:String x:Key="DeleteIcon">&#x1F5D1;</x:String>
+            <x:String x:Key="EditIcon">&#x270F;</x:String>
+            <x:String x:Key="PlayIcon">&#x25b6;</x:String>
+
         </ResourceDictionary>
 
     </Application.Resources>

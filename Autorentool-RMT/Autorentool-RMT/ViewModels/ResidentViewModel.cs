@@ -3,6 +3,7 @@ using Autorentool_RMT.Services.DBHandling;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace Autorentool_RMT.ViewModels
 {
@@ -14,7 +15,7 @@ namespace Autorentool_RMT.ViewModels
     public class ResidentViewModel : INotifyPropertyChanged
     {
 
-        List<Resident> residents;
+        private List<Resident> residents;
 
         #region Constructor
         /// <summary>
@@ -33,7 +34,7 @@ namespace Autorentool_RMT.ViewModels
         /// Calls the corresponding method for the OnPropertyChanged-event.
         /// </summary>
         /// <param name="name"></param>
-        void OnPropertyChanged([CallerMemberName] string name = "")
+        private void OnPropertyChanged([CallerMemberName] string name = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -42,16 +43,13 @@ namespace Autorentool_RMT.ViewModels
         #region Residents
         /// <summary>
         /// Getter and Setter for the residents-List.
-        /// UI retrieves over this method the residents and sets new Residents(ToDo).
+        /// UI retrieves over this method the residents and sets new Residents.
         /// Setter calls OnPropertyChanged for updating the UI.
         /// </summary>
         public List<Resident> Residents
         {
-            get
-            {
-                return residents;
-            }
-            set 
+            get => residents;
+            set
             {
                 residents = value;
                 OnPropertyChanged();
@@ -63,7 +61,8 @@ namespace Autorentool_RMT.ViewModels
         /// <summary>
         /// Loads all existing residents into Residents-property.
         /// </summary>
-        public async void OnLoadAllResidents()
+        /// <returns></returns>
+        public async Task OnLoadAllResidents()
         {
             Residents = await ResidentDBHandler.GetAllResidents();
         }

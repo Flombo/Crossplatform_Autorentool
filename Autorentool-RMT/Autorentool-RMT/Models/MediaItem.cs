@@ -1,5 +1,7 @@
 ﻿using SQLite;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using Xamarin.Forms;
 
 namespace Autorentool_RMT.Models
@@ -88,9 +90,55 @@ namespace Autorentool_RMT.Models
         [Ignore]
         public int Position { get; set; }
         [Ignore]
-        public ImageSource StorageFile { get; set; }
-        [Ignore]
         public Image PreviewImage { get; set; }
+        #endregion
+
+        #region Empty Constructor
+        public MediaItem()
+        {
+
+        }
+        #endregion
+
+        #region Constructor with all parameters
+        /// <summary>
+        /// Constructor with all parameters.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="filetype"></param>
+        /// <param name="path"></param>
+        /// <param name="notes"></param>
+        /// <param name="backendMediaItemId"></param>
+        public MediaItem(string name, string filetype, string path, string notes, int backendMediaItemId)
+        {
+            Name = name;
+            FileType = filetype;
+            Path = path;
+            Notes = notes;
+            BackendMediaItemId = backendMediaItemId;
+        }
+        #endregion
+
+        #region GetFullPath
+        /// <summary>
+        /// Returns the Path property if a file exists under this path.
+        /// Else the default image path will be returned.
+        /// </summary>
+        public string GetFullPath
+        {
+            get
+            {
+                if (File.Exists(Path))
+                {
+                    return Path;
+                }
+                else
+                {
+                    return "ImageOld.png";
+                }
+
+            }
+        }
         #endregion
 
     }

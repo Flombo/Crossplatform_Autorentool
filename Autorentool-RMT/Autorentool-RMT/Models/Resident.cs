@@ -1,5 +1,4 @@
 ﻿using SQLite;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Xamarin.Forms;
@@ -91,7 +90,11 @@ namespace Autorentool_RMT.Models
         #endregion
 
         #region GetFullProfilePicPath
-        private string GetFullProfilePicPath
+        /// <summary>
+        /// Returns the ProfilePicPath property if a file exists under this path.
+        /// Else the path for the default image will be returned.
+        /// </summary>
+        public string GetFullProfilePicPath
         {
             get
             {
@@ -106,39 +109,6 @@ namespace Autorentool_RMT.Models
             }
         }
         #endregion
-
-        #region GetImageSource
-        /// <summary>
-        /// Returns ImageSource of Resident by ProfilePicPath property
-        /// </summary>
-        public ImageSource ResidentImageSource
-        {
-            get
-            {
-                try
-                {
-                    return GetFullProfilePicPath;
-                }
-                catch (Exception)
-                {
-                    return ImageSource.FromFile("ImageOld.png");
-                }
-            }
-        }
-        #endregion
-
-        public override bool Equals(object obj)
-        {
-            return obj is Resident resident &&
-                   Id == resident.Id &&
-                   Firstname == resident.Firstname &&
-                   Lastname == resident.Lastname &&
-                   Notes == resident.Notes &&
-                   Age == resident.Age &&
-                   Gender == resident.Gender &&
-                   ProfilePicPath == resident.ProfilePicPath;
-                   //EqualityComparer<BitmapImage>.Default.Equals(ProfileImage, resident.ProfileImage);
-        }
 
         #region GetHashCode
         /// <summary>

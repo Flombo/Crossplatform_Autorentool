@@ -41,7 +41,7 @@
             <!-- ab: CD color (green) for this section: #b1d076 -->
             <StackLayout Orientation="Vertical" HorizontalOptions="Center" BackgroundColor="#00cd3e" Spacing="-10" WidthRequest="{OnPlatform UWP=200, iOS=200, Android=200}">
 
-                <ImageButton Source="{OnPlatform UWP=ImageSharingContent.png, iOS=ImageSharingContent, Android=ImageSharingContent}" BackgroundColor="#00cd3e" WidthRequest="{OnPlatform UWP=100, iOS=100, Android=100}" Padding="10"/>
+                <ImageButton Source="{OnPlatform UWP=ImageSharingContent.png, iOS=ImageSharingContent, Android=ImageSharingContent}" BackgroundColor="#00cd3e" WidthRequest="{OnPlatform UWP=100, iOS=100, Android=100}" Padding="10" Clicked="OnContentButtonClicked"/>
                 <Button Text=" INHALTE " BackgroundColor="#00cd3e" TextColor="White" Padding="10" />
 
             </StackLayout>

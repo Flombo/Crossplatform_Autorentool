@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="Autorentool_RMT.Views.ContentsPage"
+            Title="INHALTE"
+            ControlTemplate="{StaticResource HeaderPageTemplate}">
+  <ContentPage.Content>
+        <StackLayout>
+            <Grid>
+
+                <!--Searchbar with filter options section-->
+                <StackLayout Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+                    <SearchBar Placeholder="Suche..." WidthRequest="250" HeightRequest="50" Margin="0, 0, 10, 0"/>
+                    <StackLayout Orientation="Horizontal">
+                        <CheckBox IsChecked="True"/>
+                        <Label VerticalTextAlignment="Center" Text="Fotos" FontSize="Small" FontAttributes="Bold"/>
+                        <CheckBox IsChecked="True"/>
+                        <Label VerticalTextAlignment="Center" Text="Filme" FontSize="Small" FontAttributes="Bold"/>
+                        <CheckBox IsChecked="True"/>
+                        <Label VerticalTextAlignment="Center" Text="Musik" FontSize="Small" FontAttributes="Bold"/>
+                        <CheckBox IsChecked="True"/>
+                        <Label VerticalTextAlignment="Center" Text="Dokumente" FontSize="Small" FontAttributes="Bold"/>
+                        <CheckBox IsChecked="True"/>
+                        <Label VerticalTextAlignment="Center" Text="Links" FontSize="Small" FontAttributes="Bold"/>                    
+                    </StackLayout>
+                </StackLayout>
+
+                <!--Content section-->
+                <StackLayout Grid.Row="1" Grid.Column="0" BackgroundColor="White" Grid.RowSpan="12">
+                    <!--Content controls-->
+                    <StackLayout BackgroundColor="Beige" Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+                        <Button Text="{StaticResource DeleteIcon}" BackgroundColor="Green" Padding="5" FontSize="Subtitle" FontAttributes="Bold"/>
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand">
+                            <Button Text="☁️" Padding="5" HeightRequest="35" WidthRequest="45"  BackgroundColor="Green" FontSize="Subtitle" FontAttributes="Bold"/>
+                            <Button Text="↧" HeightRequest="35" TextColor="White" Padding="5" WidthRequest="45" BackgroundColor="Green" FontSize="Subtitle" FontAttributes="Bold"/>
+                            <Button Text="↥" HeightRequest="35" TextColor="White" Padding="5" WidthRequest="45" BackgroundColor="Green" FontSize="Subtitle" FontAttributes="Bold"/>
+                        </StackLayout>
+                    </StackLayout>
+                    
+                    <!--ScrollView for MediaItems-->
+                    <ScrollView BackgroundColor="White" Grid.Row="2" Grid.Column="0">
+
+                        <CollectionView ItemsSource="{Binding MediaItems}" ItemsLayout="VerticalGrid, 4">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+
+                                    <StackLayout 
+                                            BackgroundColor="White" 
+                                            Padding="2"
+                                            HeightRequest="120">
+                                        <Image
+                                                Source="{Binding GetFullPath}"
+                                                Aspect="AspectFit"
+                                                HeightRequest="60"
+                                                WidthRequest="60"
+                                                BackgroundColor="White"/>
+                                        <StackLayout
+                                                BackgroundColor="#252525"
+                                                Opacity="0.75" HeightRequest="60">
+                                            <Label 
+                                                Text="{Binding Name}"
+                                                TextColor="White"
+                                                FontAttributes="Bold"
+                                                LineBreakMode="WordWrap"/>
+                                        </StackLayout>
+                                    </StackLayout>
+
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </ScrollView>
+                </StackLayout>
+
+                <!--Preview if MediaItem is an image or no MediaItem was selected-->
+                <StackLayout BackgroundColor="Black" Grid.Row="1" Grid.Column="1" Grid.RowSpan="7">
+                    <StackLayout Grid.Row="1" Grid.Column="1" Grid.RowSpan="6" IsVisible="False">
+                        <Label 
+                            Grid.Row="1" 
+                            Grid.Column="1" 
+                            FontSize="Subtitle" 
+                            FontAttributes="Bold" 
+                            TextColor="White" 
+                            HorizontalOptions="Center">
+                            Vorschau
+                        </Label>
+                        <Label 
+                            Grid.Row="1" 
+                            Grid.Column="1" 
+                            FontSize="Subtitle"
+                            TextColor="White"
+                            HorizontalTextAlignment="Center"
+                            VerticalTextAlignment="Center">
+                            Hier erscheint ein Vorschaubild, sobald Sie einen Inhaltsbaustein auswählen
+                        </Label>
+                    </StackLayout>
+                    <Image IsVisible="False" Source="ImageOld.png" Grid.Row="1" Grid.Column="1" Grid.RowSpan="6" BackgroundColor="White" Aspect="AspectFit"/>
+                </StackLayout>
+                
+                <!--MediaElement for playing Audio and Video-->
+                <xct:MediaElement
+                    IsVisible="True"
+                    Source="https://sec.ch9.ms/ch9/5d93/a1eab4bf-3288-4faf-81c4-294402a85d93/XamarinShow_mid.mp4"
+                    ShowsPlaybackControls="True"
+                    AutoPlay="False"
+                    Grid.Row="1" Grid.Column="1"  Grid.RowSpan="7"
+                    Aspect="AspectFit"
+                    />
+                <!--Notes section-->
+                <Editor Grid.Row="8" Grid.Column="1" Grid.RowSpan="5" Placeholder="Notizen..."/>
+
+                <!--Lifethemes section-->
+                <StackLayout Grid.Row="1" Grid.Column="2" Grid.RowSpan="7">
+                    <!--Lifethemes control panel-->
+                    <StackLayout Grid.Row="1" Grid.Column="2" BackgroundColor="Beige" Orientation="Horizontal">
+                        <Label 
+                            Text="Lebensthemen" 
+                            FontAttributes="Bold" 
+                            FontSize="Subtitle" 
+                            VerticalTextAlignment="Center" 
+                            HorizontalTextAlignment="Center" 
+                            VerticalOptions="FillAndExpand"
+                            />
+                        <Button Text="{StaticResource EditIcon}" Padding="5" BackgroundColor="LightGray" FontAttributes="Bold" FontSize="Subtitle"  HorizontalOptions="EndAndExpand"/>
+                    </StackLayout>
+                    
+                    <!--ScrollView for Lifethemes-->
+                    <ScrollView>
+                        <CollectionView ItemsSource="{Binding CurrentMediaItemLifethemes}" ItemsLayout="VerticalGrid, 4">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+
+                                    <StackLayout>
+                                        <Label 
+                                            Text="{Binding Name}"
+                                            FontAttributes="Bold"
+                                            FontSize="Subtitle"
+                                            LineBreakMode="WordWrap"/>
+                                    </StackLayout>
+
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </ScrollView>
+                </StackLayout>
+                
+                <!--Buttons section-->
+                <Button Text="{StaticResource DeleteIcon}" FontAttributes="Bold" FontSize="Subtitle" Grid.Row="8"  BackgroundColor="LightGray" Grid.Column="2" Grid.RowSpan="2"/>
+                <Button Text="Fertig" FontAttributes="Bold" FontSize="Subtitle" TextColor="White" Grid.Row="11" Grid.Column="2" BackgroundColor="Green" Grid.RowSpan="2"/>
+            </Grid>
+        </StackLayout>
+  </ContentPage.Content>
+</ContentPage>

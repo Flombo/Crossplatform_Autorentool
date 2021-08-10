@@ -45,7 +45,7 @@ namespace Autorentool_RMT.Views
             BindingContext = residentViewModel;
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             //// ab: Show NavStack on Console
             //Console.WriteLine("Nav stack size: " + Navigation.NavigationStack.Count);
@@ -54,7 +54,7 @@ namespace Autorentool_RMT.Views
             //{
             //    Console.WriteLine(page.Title);
             //}
-            residentViewModel.OnLoadAllResidents();
+            await residentViewModel.OnLoadAllResidents();
         }
 
         private async void OnBackButtonClicked(object sender, EventArgs e)

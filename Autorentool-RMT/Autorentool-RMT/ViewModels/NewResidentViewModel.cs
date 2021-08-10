@@ -24,7 +24,7 @@ namespace Autorentool_RMT.ViewModels
         private List<Lifetheme> residentLifethemes;
         private ImageSource selectedImage = ImageSource.FromFile("ImageOld.png");
         private string selectedImagePath = "";
-        List<Lifetheme> allExistingLifethemes;
+        private List<Lifetheme> allExistingLifethemes;
         private string firstname;
         private string lastname;
         private Gender gender;
@@ -55,7 +55,7 @@ namespace Autorentool_RMT.ViewModels
         /// Calls the corresponding method for the OnPropertyChanged-event.
         /// </summary>
         /// <param name="name"></param>
-        void OnPropertyChanged([CallerMemberName] string name = "")
+        private void OnPropertyChanged([CallerMemberName] string name = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -190,7 +190,7 @@ namespace Autorentool_RMT.ViewModels
         /// Shows Filepicker and sets if a file was successfully picked the result into the SelectedImage property.
         /// Writes the picked file to the LocalApplicationData-Folder.
         /// </summary>
-        async void OnShowFilePicker()
+        public async void OnShowFilePicker()
         {
             try
             {
@@ -237,11 +237,14 @@ namespace Autorentool_RMT.ViewModels
         /// <summary>
         /// Resets the SelectedImage to the default image.
         /// </summary>
-        void OnDeleteSelectedImage()
+        public void OnDeleteSelectedImage()
         {
-            File.Delete(selectedImagePath);
-            selectedImagePath = "";
-            SelectedImage = ImageSource.FromFile("old.png");
+            if (selectedImagePath.Length > 0 && File.Exists(selectedImagePath))
+            {
+                File.Delete(selectedImagePath);
+                selectedImagePath = "";
+                SelectedImage = ImageSource.FromFile("old.png");
+            }
         }
         #endregion
 
@@ -250,7 +253,7 @@ namespace Autorentool_RMT.ViewModels
         /// Adds new Residents to database.
         /// If there are checked Lifethemes, then they will be binded to the resident.
         /// </summary>
-        async void OnAddResident()
+        public async void OnAddResident()
         {
             try
             {
@@ -294,7 +297,7 @@ namespace Autorentool_RMT.ViewModels
         /// <summary>
         /// Loads all existing Lifethemes.
         /// </summary>
-        async void OnLoadAllExistingLifethemes()
+        public async void OnLoadAllExistingLifethemes()
         {
             AllExistingLifethemes = await LifethemeDBHandler.GetAllLifethemes();
         }

@@ -23,7 +23,7 @@
         <!--<StackLayout BindableLayout.ItemTemplate="{StaticResource BasicHeaderTemplate}" />-->
         <!--<StackLayout BindableLayout.ItemTemplate="{x:StaticResource: BasicHeaderTemplate}" />-->
 
-        <CollectionView ItemsSource="{Binding Residents}" ItemsLayout="VerticalGrid, 2">
+        <CollectionView ItemsSource="{Binding Residents}" ItemsLayout="VerticalGrid, 4">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     
@@ -32,7 +32,7 @@
                         Padding="2"
                         HeightRequest="120">
                         <Image
-                            Source="{Binding ResidentImageSource}"
+                            Source="{Binding GetFullProfilePicPath}"
                             Aspect="AspectFit"
                             HeightRequest="60"
                             WidthRequest="60"
