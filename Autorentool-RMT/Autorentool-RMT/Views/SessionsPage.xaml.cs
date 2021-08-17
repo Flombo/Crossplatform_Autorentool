@@ -28,5 +28,9 @@ namespace Autorentool_RMT.Views
             await Navigation.PushAsync(new EditSessionPage());
         }
 
+        private async void OnStartSessionButtonClicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new PlaySessionContentPage());
+        }
     }
 }

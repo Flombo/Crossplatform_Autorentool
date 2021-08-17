@@ -12,6 +12,7 @@
                 <StackLayout BackgroundColor="Beige" Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
                     <Label Text="" FontSize="Subtitle"/>
                     <StackLayout HorizontalOptions="EndAndExpand" Orientation="Horizontal">
+                        <Button Text="{StaticResource ImportFromBackendIcon}" TextColor="White" BackgroundColor="LightGray" FontSize="Subtitle" FontAttributes="Bold"/>
                         <Button Text="{StaticResource ExportIcon}" TextColor="White" BackgroundColor="LightGray" FontSize="Subtitle" FontAttributes="Bold"/>
                         <Button Text="{StaticResource ImportIcon}" TextColor="White" BackgroundColor="LightGray" FontSize="Subtitle" FontAttributes="Bold"/>
                     </StackLayout>
@@ -91,7 +92,8 @@
                     Grid.Row="0" 
                     Grid.Column="1"
                     Text="&#x25b6; Sitzung starten" 
-                    FontAttributes="Bold" 
+                    FontAttributes="Bold"
+                    Clicked="OnStartSessionButtonClicked"
                     BackgroundColor="LightGray" 
                     TextColor="White"
                     FontSize="Subtitle"/>                
