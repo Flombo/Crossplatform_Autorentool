@@ -12,8 +12,8 @@
                 <StackLayout BackgroundColor="Beige" Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
                     <Label Text="" FontSize="Subtitle"/>
                     <StackLayout HorizontalOptions="EndAndExpand" Orientation="Horizontal">
-                        <Button Text="{StaticResource ExportIcon}" TextColor="White" FontSize="Subtitle" FontAttributes="Bold"/>
-                        <Button Text="{StaticResource ImportIcon}" TextColor="White" FontSize="Subtitle" FontAttributes="Bold"/>
+                        <Button Text="{StaticResource ExportIcon}" TextColor="White" BackgroundColor="LightGray" FontSize="Subtitle" FontAttributes="Bold"/>
+                        <Button Text="{StaticResource ImportIcon}" TextColor="White" BackgroundColor="LightGray" FontSize="Subtitle" FontAttributes="Bold"/>
                     </StackLayout>
                 </StackLayout>
                 
@@ -81,7 +81,8 @@
                 <Button
                     Grid.Row="0" 
                     Grid.Column="0"
-                    Text="&#x270F; Sitzung bearbeiten" 
+                    Text="&#x270F; Sitzung bearbeiten"
+                    Clicked="OnEditSessionButtonClicked"
                     FontAttributes="Bold" 
                     BackgroundColor="LightGray" 
                     TextColor="White"

@@ -104,7 +104,7 @@
                     ShowsPlaybackControls="True"
                     AutoPlay="False"
                     Grid.Row="1" Grid.Column="1"  Grid.RowSpan="7"
-                    Aspect="AspectFit"
+                    Aspect="AspectFit" 
                     />
                 <!--Notes section-->
                 <Editor Grid.Row="8" Grid.Column="1" Grid.RowSpan="5" Placeholder="Notizen..."/>
@@ -151,7 +151,7 @@
                 <!--Buttons section-->
                 <Button Text="&#x1F5D1; Löschen" FontAttributes="Bold" FontSize="Subtitle" Grid.Row="8"  BackgroundColor="LightGray" Grid.Column="2" Grid.RowSpan="2"/>
                 <Button 
-                    Text="&#10003; Fertig" 
+                    Text="{StaticResource CompletedText}" 
                     FontAttributes="Bold" 
                     FontSize="Subtitle" 
                     TextColor="White" 

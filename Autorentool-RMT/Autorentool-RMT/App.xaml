@@ -130,6 +130,7 @@
             <x:String x:Key="ImportIcon">↥</x:String>
             <x:String x:Key="ExportIcon">↧</x:String>
             <x:String x:Key="ImportFromBackendIcon">☁️</x:String>
+            <x:String x:Key="CompletedText">&#10003; Fertig</x:String>
 
         </ResourceDictionary>
 

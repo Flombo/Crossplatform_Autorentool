@@ -70,7 +70,7 @@
                     </StackLayout>
                 </StackLayout>
             </ScrollView>
-            <Button Text="&#10003; Fertig" Command="{Binding AddResident}" FontAttributes="Bold" FontSize="Subtitle"/>
+            <Button Text="{StaticResource CompletedText}" Command="{Binding AddResident}" FontAttributes="Bold" FontSize="Subtitle"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
