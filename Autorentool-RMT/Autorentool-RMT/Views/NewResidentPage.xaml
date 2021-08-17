@@ -15,7 +15,7 @@
                         <Grid BackgroundColor="Beige" HeightRequest="40">
 
                             <Label Grid.Row="0" Grid.Column="0" Margin="0,10,0,10" FontAttributes="Bold" FontSize="Subtitle" VerticalTextAlignment="Center" Text="Profilbild"></Label>
-                            <Button Grid.Column="1" Text="{StaticResource DeleteIcon}" BackgroundColor="Gray" Command="{Binding DeleteSelectedImage}" FontSize="Subtitle"/>
+                            <Button Grid.Column="1" Text="{StaticResource DeleteIcon}" BackgroundColor="LightGray" Command="{Binding DeleteSelectedImage}" FontSize="Subtitle"/>
                             <Button Grid.Column="2" Text="{StaticResource EditIcon}" BackgroundColor="Orange" Command="{Binding ShowFilePicker}" FontSize="Subtitle"/>
                         </Grid>
                         <Image Aspect="AspectFit" BackgroundColor="White"  Source="{Binding SelectedImage}" HeightRequest="75" WidthRequest="75"/>
@@ -55,10 +55,10 @@
 
                     <StackLayout>
                         <Grid BackgroundColor="Beige" HeightRequest="40">
-                            <Label FontAttributes="Bold" Grid.Row="0" Grid.Column="0" TextColor="Gray" Margin="0,10,0,10" FontSize="Subtitle" Text="Sitzungen" VerticalTextAlignment="Center"/>
-                            <Button Text="{StaticResource PlayIcon}" Grid.Row="0" Grid.Column="1" BackgroundColor="Gray" FontSize="Subtitle"/>
-                            <Button Text="{StaticResource DeleteIcon}" Grid.Row="0" Grid.Column="2" BackgroundColor="Gray" FontSize="Subtitle"/>
-                            <Button Text="{StaticResource EditIcon}" Grid.Row="0" Grid.Column="3" BackgroundColor="Gray" FontSize="Subtitle"/>
+                            <Label FontAttributes="Bold" Grid.Row="0" Grid.Column="0" TextColor="Gray" FontSize="Subtitle" Text="Sitzungen" VerticalTextAlignment="Center"/>
+                            <Button Text="{StaticResource PlayIcon}" Grid.Row="0" Grid.Column="1" BackgroundColor="LightGray" FontSize="Subtitle"/>
+                            <Button Text="{StaticResource DeleteIcon}" Grid.Row="0" Grid.Column="2" BackgroundColor="LightGray" FontSize="Subtitle"/>
+                            <Button Text="{StaticResource EditIcon}" Grid.Row="0" Grid.Column="3" BackgroundColor="LightGray" FontSize="Subtitle"/>
                         </Grid>
                         <CollectionView ItemsSource="{Binding ResidentSessions}" ItemsLayout="VerticalGrid, 2" HeightRequest="300">
                             <CollectionView.ItemTemplate>
@@ -70,7 +70,7 @@
                     </StackLayout>
                 </StackLayout>
             </ScrollView>
-            <Button Text="Fertig" Command="{Binding AddResident}"/>
+            <Button Text="&#10003; Fertig" Command="{Binding AddResident}" FontAttributes="Bold" FontSize="Subtitle"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

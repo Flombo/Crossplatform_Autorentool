@@ -130,7 +130,11 @@
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
 
-                                    <StackLayout>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label 
+                                            Text="🔗" 
+                                            FontAttributes="Bold" 
+                                            FontSize="Subtitle"/>
                                         <Label 
                                             Text="{Binding Name}"
                                             FontAttributes="Bold"
@@ -145,8 +149,16 @@
                 </StackLayout>
                 
                 <!--Buttons section-->
-                <Button Text="{StaticResource DeleteIcon}" FontAttributes="Bold" FontSize="Subtitle" Grid.Row="8"  BackgroundColor="LightGray" Grid.Column="2" Grid.RowSpan="2"/>
-                <Button Text="Fertig" FontAttributes="Bold" FontSize="Subtitle" TextColor="White" Grid.Row="11" Grid.Column="2" BackgroundColor="Green" Grid.RowSpan="2"/>
+                <Button Text="&#x1F5D1; Löschen" FontAttributes="Bold" FontSize="Subtitle" Grid.Row="8"  BackgroundColor="LightGray" Grid.Column="2" Grid.RowSpan="2"/>
+                <Button 
+                    Text="&#10003; Fertig" 
+                    FontAttributes="Bold" 
+                    FontSize="Subtitle" 
+                    TextColor="White" 
+                    Grid.Row="11" 
+                    Grid.Column="2" 
+                    BackgroundColor="Green" 
+                    Grid.RowSpan="2"/>
             </Grid>
         </StackLayout>
   </ContentPage.Content>
