@@ -121,6 +121,25 @@ namespace Autorentool_RMT.Models
         }
         #endregion
 
+        #region IsImage
+        /// <summary>
+        /// Determines if the MediaItem is an image and returns the corresponding boolean.
+        /// </summary>
+        public bool IsImage
+        {
+            get
+            {
+                if(FileType.Equals("mp3") || FileType.Equals("mp4"))
+                {
+                    return false;
+                } else
+                {
+                    return true;
+                }
+            }
+        }
+        #endregion
+
         #region GetFullPath
         /// <summary>
         /// Returns the Path property if a file exists under this path.

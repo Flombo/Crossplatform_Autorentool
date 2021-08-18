@@ -8,69 +8,68 @@
     <ContentPage.Content>
 
         <StackLayout>
-            <ScrollView Orientation="Vertical">
-                <StackLayout>
+            <Grid>
 
-                    <StackLayout>
-                        <Grid BackgroundColor="Beige" HeightRequest="40">
+                <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2">
+                    <Label Text="Vorname(n):" FontSize="Small" Grid.Row="0" Grid.Column="0"/>
+                    <Entry Placeholder="Vorname(n)" FontSize="Small" Grid.Row="1" Grid.Column="0" Text="{Binding Firstname}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True"/>
+                    <Label Text="Nachname:" FontSize="Small" Grid.Row="0" Grid.Column="1"/>
+                    <Entry Placeholder="Nachname" FontSize="Small" Grid.Row="1" Grid.Column="1" Text="{Binding Lastname}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True"/>
+                    <Label Text="Alter:" FontSize="Small" Grid.Row="2" Grid.Column="0"/>
+                    <Entry Placeholder="Alter" FontSize="Small" Grid.Row="3" Grid.Column="0" Text="{Binding Age}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True"/>
+                    <Label Text="Geschlecht:" FontSize="Small" Grid.Row="2" Grid.Column="1"/>
+                    <Picker FontSize="Small" Grid.Row="3" Grid.Column="1" SelectedIndex="{Binding Gender}">
+                        <Picker.Items>
+                            <x:String>Weiblich</x:String>
+                            <x:String>Männlich</x:String>
+                            <x:String>Divers</x:String>
+                        </Picker.Items>
+                    </Picker>
+                </Grid>
 
-                            <Label Grid.Row="0" Grid.Column="0" Margin="0,10,0,10" FontAttributes="Bold" FontSize="Subtitle" VerticalTextAlignment="Center" Text="Profilbild"></Label>
-                            <Button Grid.Column="1" Text="{StaticResource DeleteIcon}" BackgroundColor="LightGray" Command="{Binding DeleteSelectedImage}" FontSize="Subtitle"/>
-                            <Button Grid.Column="2" Text="{StaticResource EditIcon}" BackgroundColor="Orange" Command="{Binding ShowFilePicker}" FontSize="Subtitle"/>
-                        </Grid>
-                        <Image Aspect="AspectFit" BackgroundColor="White"  Source="{Binding SelectedImage}" HeightRequest="75" WidthRequest="75"/>
+                <StackLayout Grid.Row="2" Grid.Column="0"  Grid.RowSpan="2" Grid.ColumnSpan="2">
+                    <StackLayout BackgroundColor="Beige" Orientation="Horizontal">
+                        <Label FontAttributes="Bold" TextColor="Gray" Text="Lebensthemen" FontSize="Subtitle" Grid.Row="0" VerticalTextAlignment="Center" HorizontalOptions="StartAndExpand"/>
+                        <Button Text="{StaticResource EditIcon}" BackgroundColor="Orange" FontSize="Subtitle"/>
                     </StackLayout>
-
-                    <Grid>
-                        <Label Text="Vorname(n):" FontSize="Subtitle" Grid.Row="0" Grid.Column="0"/>
-                        <Entry Placeholder="Vorname(n)" FontSize="Subtitle" Grid.Row="1" Grid.Column="0" Text="{Binding Firstname}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True"/>
-                        <Label Text="Nachname:" FontSize="Subtitle" Grid.Row="0" Grid.Column="1"/>
-                        <Entry Placeholder="Nachname" FontSize="Subtitle" Grid.Row="1" Grid.Column="1" Text="{Binding Lastname}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True"/>
-                        <Label Text="Alter:" FontSize="Subtitle" Grid.Row="2" Grid.Column="0"/>
-                        <Entry Placeholder="Alter" FontSize="Subtitle" Grid.Row="3" Grid.Column="0" Text="{Binding Age}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True"/>
-                        <Label Text="Geschlecht:" FontSize="Subtitle" Grid.Row="2" Grid.Column="1"/>
-                        <Picker FontSize="Subtitle" Grid.Row="3" Grid.Column="1" SelectedIndex="{Binding Gender}">
-                            <Picker.Items>
-                                <x:String>Weiblich</x:String>
-                                <x:String>Männlich</x:String>
-                                <x:String>Divers</x:String>
-                            </Picker.Items>
-                        </Picker>
-                        <Editor MinimumHeightRequest="100" Placeholder="Notizen.." Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Notes}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True"/>
-                    </Grid>
-
-                    <StackLayout>
-                        <Grid BackgroundColor="Beige" HeightRequest="40">
-                            <Label FontAttributes="Bold" TextColor="Gray" Text="Lebensthemen" FontSize="Subtitle" Grid.Row="0" Grid.Column="0" VerticalTextAlignment="Center" Margin="0,10,0,10"/>
-                            <Button Text="{StaticResource EditIcon}" Grid.Row="0" Grid.Column="1" BackgroundColor="Orange" FontSize="Subtitle"/>
-                        </Grid>
-                        <CollectionView ItemsSource="{Binding ResidentLifethemes}" ItemsLayout="VerticalGrid, 2" HeightRequest="300">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Label Text="Name"></Label>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </StackLayout>
-
-                    <StackLayout>
-                        <Grid BackgroundColor="Beige" HeightRequest="40">
-                            <Label FontAttributes="Bold" Grid.Row="0" Grid.Column="0" TextColor="Gray" FontSize="Subtitle" Text="Sitzungen" VerticalTextAlignment="Center"/>
-                            <Button Text="{StaticResource PlayIcon}" Grid.Row="0" Grid.Column="1" BackgroundColor="LightGray" FontSize="Subtitle"/>
-                            <Button Text="{StaticResource DeleteIcon}" Grid.Row="0" Grid.Column="2" BackgroundColor="LightGray" FontSize="Subtitle"/>
-                            <Button Text="{StaticResource EditIcon}" Grid.Row="0" Grid.Column="3" BackgroundColor="LightGray" FontSize="Subtitle"/>
-                        </Grid>
-                        <CollectionView ItemsSource="{Binding ResidentSessions}" ItemsLayout="VerticalGrid, 2" HeightRequest="300">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Label Text="Name"></Label>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </StackLayout>
+                    <CollectionView ItemsSource="{Binding ResidentLifethemes}" ItemsLayout="VerticalGrid, 2" HeightRequest="300">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Label Text="Name"></Label>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
                 </StackLayout>
-            </ScrollView>
-            <Button Text="{StaticResource CompletedText}" Command="{Binding AddResident}" FontAttributes="Bold" FontSize="Subtitle"/>
+
+                <StackLayout Grid.Row="4" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2">
+                    <StackLayout BackgroundColor="Beige" Orientation="Horizontal">
+                        <Label FontAttributes="Bold" TextColor="Gray" FontSize="Subtitle" Text="Sitzungen" VerticalTextAlignment="Center" HorizontalOptions="StartAndExpand"/>
+                        <Button Text="{StaticResource PlayIcon}" BackgroundColor="LightGray" FontSize="Subtitle"/>
+                        <Button Text="{StaticResource DeleteIcon}" BackgroundColor="LightGray" FontSize="Subtitle"/>
+                        <Button Text="{StaticResource EditIcon}" BackgroundColor="LightGray" FontSize="Subtitle"/>
+                    </StackLayout>
+                    <CollectionView ItemsSource="{Binding ResidentSessions}" ItemsLayout="VerticalGrid, 2" HeightRequest="300">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Label Text="Name"></Label>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+
+                <StackLayout Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Grid.ColumnSpan="2">
+                    <StackLayout BackgroundColor="Beige" Orientation="Horizontal">
+                        <Label Grid.Row="0" Grid.Column="0" Margin="0,10,0,10" FontAttributes="Bold" FontSize="Subtitle" VerticalTextAlignment="Center" HorizontalOptions="StartAndExpand" Text="Profilbild"></Label>
+                        <Button Grid.Column="1" Text="{StaticResource DeleteIcon}" BackgroundColor="LightGray" Command="{Binding DeleteSelectedImage}" FontSize="Subtitle"/>
+                        <Button Grid.Column="2" Text="{StaticResource EditIcon}" BackgroundColor="Orange" Command="{Binding ShowFilePicker}" FontSize="Subtitle"/>
+                    </StackLayout>
+                    <Image Grid.ColumnSpan="2" Grid.Row="1" Aspect="AspectFit" BackgroundColor="White"  Source="{Binding SelectedImage}" HeightRequest="200" WidthRequest="100"/>
+                </StackLayout>
+
+                <Editor Placeholder="Notizen.." Grid.Row="3" Grid.RowSpan="2" Grid.Column="2" Grid.ColumnSpan="2"  Text="{Binding Notes}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True"/>
+
+                <Button Text="{StaticResource CompletedText}" Clicked="OnCompleteButtonClicked" FontAttributes="Bold" FontSize="Subtitle" Grid.Row="5" Grid.Column="3"/>
+            </Grid>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

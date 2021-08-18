@@ -6,24 +6,29 @@
     <ContentPage.Content>
         <Grid>
             <!--MediaPlayer section-->
-            <Image IsVisible="{Binding IsImageVisible}" 
-                    Source="{Binding CurrentImageMediaItem}"
-                    Aspect="AspectFit" 
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Grid.RowSpan="10" 
-                    BackgroundColor="White"/>
+            <CarouselView ItemsSource="{Binding SessionMediaItems}"
+                          IndicatorView="indicatorView"
+                          Grid.Row="0"
+                          Grid.Column="0"
+                          Grid.RowSpan="10">
+                <CarouselView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout>
+                            <Image  IsVisible="{Binding IsImage}"
+                                    Source="{Binding GetFullPath}"
+                                    Aspect="AspectFit"  
+                                    BackgroundColor="White"/>
 
-            <xct:MediaElement Grid.Row="0"
-                              Grid.Column="0"
-                              Grid.RowSpan="10"
-                              BackgroundColor="Black"
-                              IsVisible="{Binding IsMediaElementVisible}"
-                              Source="{Binding CurrentVideoOrAudioMediaItemPath}"
-                              ShowsPlaybackControls="True"
-                              AutoPlay="False" 
-                              Aspect="AspectFit"/>
-            
+                        </StackLayout>
+                    </DataTemplate>
+                </CarouselView.ItemTemplate>
+            </CarouselView>
+
+            <IndicatorView x:Name="indicatorView"
+                   IndicatorColor="LightGray"
+                   SelectedIndicatorColor="#0091EA"
+                   HorizontalOptions="Center" />
+
             <StackLayout 
                 Orientation="Horizontal" 
                 BackgroundColor="LightGray" 

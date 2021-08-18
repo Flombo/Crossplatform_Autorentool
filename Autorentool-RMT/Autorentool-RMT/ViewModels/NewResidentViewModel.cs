@@ -30,9 +30,10 @@ namespace Autorentool_RMT.ViewModels
         private Gender gender;
         private int age;
         private string notes;
+        private bool isLifethemesPopupVisible;
         public ICommand ShowFilePicker { get; }
         public ICommand DeleteSelectedImage { get; }
-        public ICommand AddResident { get; }
+        public ICommand ShowLifethemesPopup { get; }
 
         #region Constructor
         /// <summary>
@@ -42,7 +43,8 @@ namespace Autorentool_RMT.ViewModels
         {
             ShowFilePicker = new Command(OnShowFilePicker);
             DeleteSelectedImage = new Command(OnDeleteSelectedImage);
-            AddResident = new Command(OnAddResident);
+            ShowLifethemesPopup = new Command(OnShowLifethemesPopup);
+            IsLifethemesPopupVisible = false;
             allExistingLifethemes = new List<Lifetheme>();
             residentLifethemes = new List<Lifetheme>();
         }
@@ -63,7 +65,7 @@ namespace Autorentool_RMT.ViewModels
 
         #region Firstname
         /// <summary>
-        /// Setter for the firstname property.
+        /// Setter and Getter for the firstname property.
         /// </summary>
         public string Firstname
         {
@@ -123,7 +125,7 @@ namespace Autorentool_RMT.ViewModels
 
         #region Notes
         /// <summary>
-        /// Setter for the notes property.
+        /// Setter and Getter for the notes property.
         /// </summary>
         public string Notes
         {
@@ -131,6 +133,21 @@ namespace Autorentool_RMT.ViewModels
             set
             {
                 notes = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsLifethemesPopupVisible
+        /// <summary>
+        /// Setter and Getter for the isLifethemesPopupVisible property.
+        /// </summary>
+        public bool IsLifethemesPopupVisible
+        {
+            get => isLifethemesPopupVisible;
+            set
+            {
+                isLifethemesPopupVisible = value;
                 OnPropertyChanged();
             }
         }
@@ -183,6 +200,8 @@ namespace Autorentool_RMT.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        public object StorageApplicationPermissions { get; private set; }
         #endregion
 
         #region OnShowFilePicker
@@ -204,9 +223,15 @@ namespace Autorentool_RMT.ViewModels
                     {
                         Stream stream = await result.OpenReadAsync();
 
+                        Directory.CreateDirectory(Path.Combine(
+                                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                                "ResidentProfilePics"
+                                )
+                            );
+
                         selectedImagePath = Path.Combine(
                             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                            result.FileName
+                            "ResidentProfilePics/" + result.FileName
                             );
 
                         byte[] bArray = new byte[stream.Length];
@@ -239,11 +264,17 @@ namespace Autorentool_RMT.ViewModels
         /// </summary>
         public void OnDeleteSelectedImage()
         {
-            if (selectedImagePath.Length > 0 && File.Exists(selectedImagePath))
+            try
             {
-                File.Delete(selectedImagePath);
-                selectedImagePath = "";
-                SelectedImage = ImageSource.FromFile("old.png");
+                if (selectedImagePath.Length > 0 && File.Exists(selectedImagePath))
+                {
+                    File.Delete(selectedImagePath);
+                    selectedImagePath = "";
+                    SelectedImage = ImageSource.FromFile("old.png");
+                }
+            } catch (Exception e)
+            {
+                Debug.WriteLine(e.StackTrace);
             }
         }
         #endregion
@@ -253,7 +284,7 @@ namespace Autorentool_RMT.ViewModels
         /// Adds new Residents to database.
         /// If there are checked Lifethemes, then they will be binded to the resident.
         /// </summary>
-        public async void OnAddResident()
+        public async Task OnAddResident()
         {
             try
             {
@@ -265,7 +296,7 @@ namespace Autorentool_RMT.ViewModels
 
                     await BindCheckedLifethemesToResident(residentId);
 
-                    ResidentLifethemes = await ResidentLifethemesDBHandler.GetLifethemesOfResident(residentId); 
+                    ResidentLifethemes = await ResidentLifethemesDBHandler.GetLifethemesOfResident(residentId);
                 }
             }
             catch (Exception sqlException)
@@ -290,6 +321,13 @@ namespace Autorentool_RMT.ViewModels
                     await ResidentLifethemesDBHandler.BindResidentLifethemes(residentId, selectedLifetheme.Id);
                 }
             }
+        }
+        #endregion
+
+        #region OnShowLifethemesPopup
+        public async void OnShowLifethemesPopup()
+        {
+            IsLifethemesPopupVisible = !IsLifethemesPopupVisible;
         }
         #endregion
 
