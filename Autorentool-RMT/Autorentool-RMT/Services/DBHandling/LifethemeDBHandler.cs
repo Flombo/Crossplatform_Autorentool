@@ -72,7 +72,7 @@ namespace Autorentool_RMT.Services.DBHandling
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
-            await sQLiteAsyncConnection.DeleteAsync<Session>(lifethemeID);
+            await sQLiteAsyncConnection.DeleteAsync<Lifetheme>(lifethemeID);
         }
         #endregion
 
@@ -81,7 +81,6 @@ namespace Autorentool_RMT.Services.DBHandling
         /// Updates Lifetheme by given ID and parameters.
         /// </summary>
         /// <param name="lifethemeID"></param>
-        /// <param name="backendSessionID"></param>
         /// <param name="name"></param>
         /// <returns></returns>
         public static async Task UpdateLifetheme(int lifethemeID, string name)

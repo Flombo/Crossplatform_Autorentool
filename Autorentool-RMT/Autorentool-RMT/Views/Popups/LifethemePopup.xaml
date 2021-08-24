@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:local="clr-namespace:Autorentool_RMT.Views.Popups"
+             x:Class="Autorentool_RMT.Views.Popups.LifethemePopup"
+             Size="600, 600" 
+             IsLightDismissEnabled="True"
+             x:TypeArguments="local:LifethemePopup+Result">
+
+            <Grid BackgroundColor="White">
+                <Label Text="Lebensthemen auswählen oder neu erstellen" 
+                       HorizontalOptions="CenterAndExpand"
+                       FontSize="Medium" 
+                       Grid.Row="0"
+                       Grid.Column="0"
+                       Grid.ColumnSpan="2"/>
+                <Frame HasShadow="True" 
+                       BorderColor="Black" 
+                       Grid.Row="1" 
+                       Grid.Column="0"
+                       Grid.ColumnSpan="2"
+                       Grid.RowSpan="3">
+                    <ScrollView Grid.ColumnSpan="2" Grid.RowSpan="3">
+                        <CollectionView ItemsSource="{Binding AllExistingLifethemes}" 
+                                        ItemsLayout="VerticalGrid, 3" 
+                                        SelectionMode="Single"
+                                        SelectedItem="{Binding SelectedLifetheme}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+
+                                    <StackLayout Orientation="Horizontal" Spacing="0" Padding="2">
+                                        <CheckBox IsChecked="{Binding Checked}"/>
+                                        <Label Text="{Binding Name}" 
+                                               FontSize="Small" 
+                                               HorizontalOptions="CenterAndExpand" 
+                                               VerticalOptions="CenterAndExpand"
+                                               LineBreakMode="MiddleTruncation"/>
+                                    </StackLayout>
+
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </ScrollView>
+                </Frame>
+                <StackLayout Orientation="Horizontal" 
+                             Spacing="0" 
+                             HorizontalOptions="CenterAndExpand"
+                             Grid.Row="4" 
+                             Grid.Column="0"
+                             Grid.ColumnSpan="2">
+                    <Entry Placeholder="Neues Lebensthema hier eingeben" 
+                           Text="{Binding LifethemeEntryText}"
+                           WidthRequest="300" 
+                           HeightRequest="50"
+                           IsSpellCheckEnabled="True"
+                           IsTextPredictionEnabled="True"/>
+                <Button BackgroundColor="LightGray" Text="&#43; NEU ERSTELLEN" Command="{Binding AddLifetheme}"/>
+                </StackLayout>
+                <Button Text="Auswahl übernehmen und Fenster schließen" 
+                        BackgroundColor="#0091EA" 
+                        Clicked="OnAcceptButtonClicked" 
+                        TextColor="White" 
+                        Grid.Row="5" 
+                        Grid.Column="1"/>
+            </Grid>
+
+</xct:Popup>

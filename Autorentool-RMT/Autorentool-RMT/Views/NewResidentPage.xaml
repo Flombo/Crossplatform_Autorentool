@@ -30,12 +30,12 @@
                 <StackLayout Grid.Row="2" Grid.Column="0"  Grid.RowSpan="2" Grid.ColumnSpan="2">
                     <StackLayout BackgroundColor="Beige" Orientation="Horizontal">
                         <Label FontAttributes="Bold" TextColor="Gray" Text="Lebensthemen" FontSize="Subtitle" Grid.Row="0" VerticalTextAlignment="Center" HorizontalOptions="StartAndExpand"/>
-                        <Button Text="{StaticResource EditIcon}" BackgroundColor="Orange" FontSize="Subtitle"/>
+                        <Button Text="{StaticResource EditIcon}" BackgroundColor="Orange" Clicked="OnShowLifethemePopupButtonClicked" FontSize="Subtitle"/>
                     </StackLayout>
                     <CollectionView ItemsSource="{Binding ResidentLifethemes}" ItemsLayout="VerticalGrid, 2" HeightRequest="300">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Label Text="Name"></Label>
+                                <Label Text="{Binding Name}" HorizontalOptions="CenterAndExpand" FontAttributes="Bold" VerticalOptions="CenterAndExpand"/>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>

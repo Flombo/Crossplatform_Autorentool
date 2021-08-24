@@ -22,18 +22,16 @@ namespace Autorentool_RMT.ViewModels
     public class NewResidentViewModel : INotifyPropertyChanged
     {
         private List<Lifetheme> residentLifethemes;
+        private List<Session> residentSessions;
         private ImageSource selectedImage = ImageSource.FromFile("ImageOld.png");
         private string selectedImagePath = "";
-        private List<Lifetheme> allExistingLifethemes;
         private string firstname;
         private string lastname;
         private Gender gender;
         private int age;
         private string notes;
-        private bool isLifethemesPopupVisible;
         public ICommand ShowFilePicker { get; }
         public ICommand DeleteSelectedImage { get; }
-        public ICommand ShowLifethemesPopup { get; }
 
         #region Constructor
         /// <summary>
@@ -43,10 +41,8 @@ namespace Autorentool_RMT.ViewModels
         {
             ShowFilePicker = new Command(OnShowFilePicker);
             DeleteSelectedImage = new Command(OnDeleteSelectedImage);
-            ShowLifethemesPopup = new Command(OnShowLifethemesPopup);
-            IsLifethemesPopupVisible = false;
-            allExistingLifethemes = new List<Lifetheme>();
             residentLifethemes = new List<Lifetheme>();
+            residentSessions = new List<Session>();
         }
         #endregion
 
@@ -138,42 +134,10 @@ namespace Autorentool_RMT.ViewModels
         }
         #endregion
 
-        #region IsLifethemesPopupVisible
-        /// <summary>
-        /// Setter and Getter for the isLifethemesPopupVisible property.
-        /// </summary>
-        public bool IsLifethemesPopupVisible
-        {
-            get => isLifethemesPopupVisible;
-            set
-            {
-                isLifethemesPopupVisible = value;
-                OnPropertyChanged();
-            }
-        }
-        #endregion
-
-        #region AllExistingLifethemes
-        /// <summary>
-        /// Getter and Setter for the allExistingLifethemes-List.
-        /// UI retrieves over this method the residents and sets new Residents(ToDo).
-        /// Setter calls OnPropertyChanged for updating the UI.
-        /// </summary>
-        public List<Lifetheme> AllExistingLifethemes
-        {
-            get => allExistingLifethemes;
-            set
-            {
-                allExistingLifethemes = value;
-                OnPropertyChanged();
-            }
-        }
-        #endregion
-
         #region ResidentLifethemes
         /// <summary>
         /// Getter and Setter for the residentLifethemes-List.
-        /// UI retrieves over this method the residentLifethemes and sets new Lifethemes(ToDo).
+        /// UI retrieves over this method the residentLifethemes.
         /// Setter calls OnPropertyChanged for updating the UI.
         /// </summary>
         public List<Lifetheme> ResidentLifethemes
@@ -182,6 +146,23 @@ namespace Autorentool_RMT.ViewModels
             set
             {
                 residentLifethemes = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region ResidentSessions
+        /// <summary>
+        /// Getter and Setter for the residentSessions-List.
+        /// UI retrieves over this method the residentSessions and sets new Sessions.
+        /// Setter calls OnPropertyChanged for updating the UI.
+        /// </summary>
+        public List<Session> ResidentSessions
+        {
+            get => residentSessions;
+            set
+            {
+                residentSessions = value;
                 OnPropertyChanged();
             }
         }
@@ -314,30 +295,19 @@ namespace Autorentool_RMT.ViewModels
         /// <returns></returns>
         private async Task BindCheckedLifethemesToResident(int residentId)
         {
-            foreach (Lifetheme selectedLifetheme in allExistingLifethemes)
+            try
             {
-                if (selectedLifetheme.Checked)
+                foreach (Lifetheme residentLifetheme in residentLifethemes)
                 {
-                    await ResidentLifethemesDBHandler.BindResidentLifethemes(residentId, selectedLifetheme.Id);
+                    if (residentLifetheme.Checked)
+                    {
+                        await ResidentLifethemesDBHandler.BindResidentLifethemes(residentId, residentLifetheme.Id);
+                    }
                 }
+            } catch(Exception exc)
+            {
+
             }
-        }
-        #endregion
-
-        #region OnShowLifethemesPopup
-        public async void OnShowLifethemesPopup()
-        {
-            IsLifethemesPopupVisible = !IsLifethemesPopupVisible;
-        }
-        #endregion
-
-        #region OnLoadAllExistingLifethemes
-        /// <summary>
-        /// Loads all existing Lifethemes.
-        /// </summary>
-        public async void OnLoadAllExistingLifethemes()
-        {
-            AllExistingLifethemes = await LifethemeDBHandler.GetAllLifethemes();
         }
         #endregion
 
