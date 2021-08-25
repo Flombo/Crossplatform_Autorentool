@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Autorentool_RMT.Views.NewResidentPage"
+             x:Class="Autorentool_RMT.Views.CreateOrEditResidentPage"
              Title="BEWOHNER HINZUFÜGEN"
             xmlns:resource="clr-namespace:Autorentool_RMT.Resources"
             ControlTemplate="{StaticResource HeaderPageTemplate}">
@@ -68,7 +68,24 @@
 
                 <Editor Placeholder="Notizen.." Grid.Row="3" Grid.RowSpan="2" Grid.Column="2" Grid.ColumnSpan="2"  Text="{Binding Notes}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True"/>
 
-                <Button Text="{StaticResource CompletedText}" Clicked="OnCompleteButtonClicked" FontAttributes="Bold" FontSize="Subtitle" Grid.Row="5" Grid.Column="3"/>
+                <StackLayout Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal">
+                    <Button Text="&#x1F5D1; Bewohner löschen" 
+                            IsVisible="{Binding IsDeleteResidentButtonVisible}"
+                            FontAttributes="Bold" 
+                            FontSize="Subtitle"
+                            WidthRequest="300"
+                            BackgroundColor="Orange"
+                            Clicked="OnDeleteResidentButtonClicked"/>
+                    <Button Text="{StaticResource CompletedText}" 
+                            Clicked="OnCompleteButtonClicked" 
+                            FontAttributes="Bold"
+                            IsEnabled="{Binding IsCompleteButtonEnabled}"
+                            BackgroundColor="Orange"
+                            HorizontalOptions="EndAndExpand"
+                            WidthRequest="300"
+                            FontSize="Subtitle" 
+                            />
+                </StackLayout>
             </Grid>
         </StackLayout>
     </ContentPage.Content>

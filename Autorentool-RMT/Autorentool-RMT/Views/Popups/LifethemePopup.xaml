@@ -16,26 +16,26 @@
                        Grid.Column="0"
                        Grid.ColumnSpan="2"/>
                 <Frame HasShadow="True" 
-                       BorderColor="Black" 
-                       Grid.Row="1" 
-                       Grid.Column="0"
-                       Grid.ColumnSpan="2"
-                       Grid.RowSpan="3">
+                        BorderColor="Black" 
+                        Grid.Row="1" 
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Grid.RowSpan="3">
                     <ScrollView Grid.ColumnSpan="2" Grid.RowSpan="3">
                         <CollectionView ItemsSource="{Binding AllExistingLifethemes}" 
                                         ItemsLayout="VerticalGrid, 3" 
                                         SelectionMode="Single"
-                                        SelectedItem="{Binding SelectedLifetheme}">
+                                        SelectionChanged="OnDeleteLifetheme">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
 
                                     <StackLayout Orientation="Horizontal" Spacing="0" Padding="2">
                                         <CheckBox IsChecked="{Binding Checked}"/>
                                         <Label Text="{Binding Name}" 
-                                               FontSize="Small" 
-                                               HorizontalOptions="CenterAndExpand" 
-                                               VerticalOptions="CenterAndExpand"
-                                               LineBreakMode="MiddleTruncation"/>
+                                                    FontSize="Small" 
+                                                    HorizontalOptions="CenterAndExpand" 
+                                                    VerticalOptions="CenterAndExpand"
+                                                    LineBreakMode="MiddleTruncation"/>
                                     </StackLayout>
 
                                 </DataTemplate>
@@ -55,7 +55,7 @@
                            HeightRequest="50"
                            IsSpellCheckEnabled="True"
                            IsTextPredictionEnabled="True"/>
-                <Button BackgroundColor="LightGray" Text="&#43; NEU ERSTELLEN" Command="{Binding AddLifetheme}"/>
+                    <Button BackgroundColor="LightGray" Text="&#43; NEU ERSTELLEN" Clicked="OnCreateLifethemeButtonClicked"/>
                 </StackLayout>
                 <Button Text="Auswahl übernehmen und Fenster schließen" 
                         BackgroundColor="#0091EA" 

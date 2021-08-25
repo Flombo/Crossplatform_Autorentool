@@ -105,7 +105,7 @@ namespace Autorentool_RMT.Services.DBHandling
         public static async Task DeleteResident(int residentID)
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
-            await sQLiteAsyncConnection.DeleteAsync(residentID);
+            await sQLiteAsyncConnection.DeleteAsync<Resident>(residentID);
         }
         #endregion
 
@@ -119,8 +119,9 @@ namespace Autorentool_RMT.Services.DBHandling
         /// <param name="age"></param>
         /// <param name="gender"></param>
         /// <param name="profilePicPath"></param>
+        /// <param name="notes"></param>
         /// <returns></returns>
-        public static async Task UpdateResident(int residentID, string firstname, string lastname, int age, Gender gender, string profilePicPath)
+        public static async Task UpdateResident(int residentID, string firstname, string lastname, int age, Gender gender, string profilePicPath, string notes)
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
@@ -128,7 +129,8 @@ namespace Autorentool_RMT.Services.DBHandling
             {
                 Id = residentID,
                 Gender = gender,
-                ProfilePicPath = profilePicPath
+                ProfilePicPath = profilePicPath,
+                Notes = notes
             };
 
             if (firstname.Length > 0)

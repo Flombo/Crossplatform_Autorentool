@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="Autorentool_RMT.Views.ResidentsPage"
     Title="Bewohner"
-    xmlns:resource="clr-namespace:Autorentool_RMT.Resources"
     ControlTemplate="{StaticResource HeaderPageTemplate}">
 
     <!-- <NavigationPage.TitleView>
@@ -23,7 +22,7 @@
         <!--<StackLayout BindableLayout.ItemTemplate="{StaticResource BasicHeaderTemplate}" />-->
         <!--<StackLayout BindableLayout.ItemTemplate="{x:StaticResource: BasicHeaderTemplate}" />-->
 
-        <CollectionView ItemsSource="{Binding Residents}" ItemsLayout="VerticalGrid, 4">
+        <CollectionView ItemsSource="{Binding Residents}" ItemsLayout="VerticalGrid, 4" SelectionMode="Single" SelectionChanged="OnSelectionChanged">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     

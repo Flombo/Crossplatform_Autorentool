@@ -1,5 +1,5 @@
-﻿using Autorentool_RMT.ViewModels;
-using Autorentool_RMT.Views;
+﻿using Autorentool_RMT.Models;
+using Autorentool_RMT.ViewModels;
 using System;
 using Xamarin.Forms;
 
@@ -67,9 +67,32 @@ namespace Autorentool_RMT.Views
             await Navigation.PopToRootAsync();
         }
 
+        #region OnAddNewResidentButtonClicked
+        /// <summary>
+        /// Navigates to the view for creating a resident.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void OnAddNewResidentButtonClicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new NewResidentPage());
+            await Navigation.PushAsync(new CreateOrEditResidentPage());
         }
+        #endregion
+
+        #region OnSelectionChanged
+        /// <summary>
+        /// Event-handler for selecting a resident.
+        /// Opens the page for editing a resident.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Resident resident = e.CurrentSelection[0] as Resident;
+
+            await Navigation.PushAsync(new CreateOrEditResidentPage(resident));
+        }
+        #endregion
+
     }
 }

@@ -4,21 +4,22 @@ using System;
 using System.Collections.Generic;
 using Xamarin.CommunityToolkit.UI.Views;
 using Xamarin.Forms.Xaml;
+using Xamarin.Forms;
 
 namespace Autorentool_RMT.Views.Popups
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class LifethemePopup : Popup<LifethemePopup.Result>
     {
-        private List<Lifetheme> selectedLifethemes;
         private LifethemePopupViewModel lifethemePopupViewModel;
+        private List<Lifetheme> selectedLifethemes;
 
-        public LifethemePopup()
+        public LifethemePopup(List<Lifetheme> selectedLifethemes)
         {
             lifethemePopupViewModel = new LifethemePopupViewModel();
+            this.selectedLifethemes = selectedLifethemes;
             BindingContext = lifethemePopupViewModel;
-            selectedLifethemes = new List<Lifetheme>();
-            lifethemePopupViewModel.OnLoadAllExistingLifethemes();
+            lifethemePopupViewModel.OnLoadAllExistingLifethemes(selectedLifethemes);
             InitializeComponent();
         }
 
@@ -29,23 +30,43 @@ namespace Autorentool_RMT.Views.Popups
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OnAcceptButtonClicked(object sender, EventArgs e)
-        {
+        {          
             Result result = new Result
             {
-                selectedLifethemes = lifethemePopupViewModel.OnAcceptLifethemeSelection()
-            };
+                selectedLifethemes = lifethemePopupViewModel.GetSelectedLifethemes()
+        };
 
             Dismiss(result);
         }
         #endregion
 
-        protected override Result GetLightDismissResult()
+        #region OnCreateLifethemeButtonClicked
+        private async void OnCreateLifethemeButtonClicked(object sender, EventArgs e)
         {
-            return new Result
+            try
             {
-                selectedLifethemes = selectedLifethemes
-            };
+                await lifethemePopupViewModel.OnAddLifetheme(selectedLifethemes);
+            } catch(Exception)
+            {
+                
+            }
         }
+        #endregion
+
+        #region OnDeleteLifetheme
+        private async void OnDeleteLifetheme(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                Lifetheme selectedLifetheme = e.CurrentSelection[0] as Lifetheme;
+                await lifethemePopupViewModel.OnDeleteLifetheme(selectedLifetheme, selectedLifethemes);
+            }
+            catch (Exception exc)
+            {
+                throw exc;
+            }
+        }
+        #endregion
 
         #region Result-containerclass
         /// <summary>
