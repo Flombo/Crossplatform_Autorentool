@@ -4,10 +4,9 @@ using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using Xamarin.Forms;
 
 namespace Autorentool_RMT.ViewModels
 {
@@ -16,13 +15,15 @@ namespace Autorentool_RMT.ViewModels
         private List<Lifetheme> allExistingLifethemes;
         private string lifethemeEntryText;
         private string searchText;
+        private List<Lifetheme> selectedLifethemes;
 
         #region Constructor
         /// <summary>
         /// Constructor initializes residents List and request all Residents from database.
         /// </summary>
-        public LifethemePopupViewModel()
+        public LifethemePopupViewModel(List<Lifetheme> selectedLifethemes)
         {
+            this.selectedLifethemes = selectedLifethemes;
             allExistingLifethemes = new List<Lifetheme>();
         }
         #endregion
@@ -93,19 +94,19 @@ namespace Autorentool_RMT.ViewModels
         /// Checks if the selectedLifethemes are part of the requested lifethemes from db.
         /// If thats the case, the Checked-property of the current lifetheme will be set to true.
         /// </summary>
-        /// <param name="selectedLifethemes"></param>
-        public async void OnLoadAllExistingLifethemes(List<Lifetheme> selectedLifethemes)
+        public async void OnLoadAllExistingLifethemes()
         {
-            AllExistingLifethemes = await GetLifethemesAndCheckedLifethemes(selectedLifethemes);
+            AllExistingLifethemes = await GetLifethemesAndCheckedLifethemes();
         }
         #endregion
 
         #region GetLifethemesAndCheckedLifethemes
         /// <summary>
         /// Returns all lifethemes and sets the Checked-property to true, if they appear in the selectedLifethemes-List.
+
         /// </summary>
         /// <returns></returns>
-        private async Task<List<Lifetheme>> GetLifethemesAndCheckedLifethemes(List<Lifetheme> selectedLifethemes)
+        private async Task<List<Lifetheme>> GetLifethemesAndCheckedLifethemes()
         {
             List<Lifetheme> allLifethemes = await LifethemeDBHandler.GetAllLifethemes();
 
@@ -113,7 +114,7 @@ namespace Autorentool_RMT.ViewModels
             {
                 foreach (Lifetheme selectedLifetheme in selectedLifethemes)
                 {
-                    if (lifetheme.Name.Equals(selectedLifetheme.Name))
+                    if(selectedLifetheme.Name.Equals(lifetheme.Name))
                     {
                         lifetheme.Checked = true;
                     }
@@ -130,7 +131,7 @@ namespace Autorentool_RMT.ViewModels
         /// If this process fails an exception will be thrown.
         /// </summary>
         /// <returns></returns>
-        public async Task OnAddLifetheme(List<Lifetheme> selectedLifethemes)
+        public async Task OnAddLifetheme()
         {
             if (lifethemeEntryText.Length > 0)
             {
@@ -141,7 +142,7 @@ namespace Autorentool_RMT.ViewModels
                     
                     selectedLifethemes.Add(addedLifetheme);
 
-                    OnLoadAllExistingLifethemes(selectedLifethemes);
+                    OnLoadAllExistingLifethemes();
                     LifethemeEntryText = "";
                 }
                 catch (Exception exc)
@@ -149,6 +150,37 @@ namespace Autorentool_RMT.ViewModels
                     throw new Exception("Add Lifetheme exception:" + exc.Message);
                 }
             }
+        }
+        #endregion
+
+        #region OnSearch
+        /// <summary>
+        /// Retrieves a list of lifethemes where the searchstring is part of a lifetheme name.
+        /// If an empty searchstring is entered, the list will be reseted.
+        /// </summary>
+        public void OnSearch()
+        {
+
+            if(searchText.Length > 0)
+            {
+                List<Lifetheme> foundLifethemes = new List<Lifetheme>();
+
+                foreach(Lifetheme lifetheme in allExistingLifethemes)
+                {
+                    if(lifetheme.Name.Contains(searchText))
+                    {
+                        foundLifethemes.Add(lifetheme);
+                    }
+                }
+                
+                selectedLifethemes = GetSelectedLifethemes(selectedLifethemes);
+
+                AllExistingLifethemes = foundLifethemes;
+            } else
+            {
+                OnLoadAllExistingLifethemes();
+            }
+
         }
         #endregion
 
@@ -160,7 +192,7 @@ namespace Autorentool_RMT.ViewModels
         /// </summary>
         /// <param name="tappedLifetheme"></param>
         /// <returns></returns>
-        public async Task OnDeleteLifetheme(Lifetheme tappedLifetheme, List<Lifetheme> selectedLifethemes)
+        public async Task OnDeleteLifetheme(Lifetheme tappedLifetheme)
         {
             try
             {
@@ -170,7 +202,7 @@ namespace Autorentool_RMT.ViewModels
                 await MediaItemLifethemesDBHandler.UnbindMediaItemLifethemesByLifethemeId(tappedLifetheme.Id);
                 await LifethemeDBHandler.DeleteLifetheme(tappedLifetheme.Id);
 
-                AllExistingLifethemes = await GetLifethemesAndCheckedLifethemes(selectedLifethemes);
+                OnLoadAllExistingLifethemes();
 
             } catch(Exception exc)
             {
@@ -181,24 +213,40 @@ namespace Autorentool_RMT.ViewModels
 
         #region GetSelectedLifethemes
         /// <summary>
-        /// 
+        /// Returns the selected lifethemes from allExistingLifethemes-list and selectedLifethemes.
+        /// If the search was used before accepting the selection, the selectedLifethemes parameter has to be a list of former selected lifethemes.
+        /// If not an empty list should be used, because the selected lifethemes are then part of the allExistingLifethemes. 
         /// </summary>
+        /// <param name="selectedLifethemes"></param>
         /// <returns></returns>
-        public List<Lifetheme> GetSelectedLifethemes()
+        public List<Lifetheme> GetSelectedLifethemes(List<Lifetheme> selectedLifethemes)
         {
-            List<Lifetheme> checkedLifethemes = new List<Lifetheme>();
+            HashSet<Lifetheme> result = new HashSet<Lifetheme>();
+            List<Lifetheme> checkedLifethemes = GetCheckedLifethemesFromAllExistingLifethemes();
 
-            foreach(Lifetheme lifetheme in allExistingLifethemes)
+            foreach (Lifetheme checkedLifetheme in checkedLifethemes)
             {
-                if(lifetheme.Checked)
-                {
-                    checkedLifethemes.Add(lifetheme);
-                }
+                result.Add(checkedLifetheme);
             }
 
-            return checkedLifethemes;
+            foreach (Lifetheme selectedLifetheme in selectedLifethemes)
+            {
+                result.Add(selectedLifetheme);
+            }
+
+            return result.ToList();
         }
         #endregion
 
+        #region GetCheckedLifethemesFromAllExistingLifethemes
+        /// <summary>
+        /// Retrieves all lifethemes from allExistingLifethemes-list that are checked.
+        /// </summary>
+        /// <returns></returns>
+        private List<Lifetheme> GetCheckedLifethemesFromAllExistingLifethemes()
+        {
+            return allExistingLifethemes.FindAll(lifetheme => lifetheme.Checked);
+        }
+        #endregion
     }
 }

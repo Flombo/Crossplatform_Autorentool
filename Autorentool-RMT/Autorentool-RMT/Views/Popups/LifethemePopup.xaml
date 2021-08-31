@@ -32,10 +32,10 @@
                                     <StackLayout Orientation="Horizontal" Spacing="0" Padding="2">
                                         <CheckBox IsChecked="{Binding Checked}"/>
                                         <Label Text="{Binding Name}" 
-                                                    FontSize="Small" 
-                                                    HorizontalOptions="CenterAndExpand" 
-                                                    VerticalOptions="CenterAndExpand"
-                                                    LineBreakMode="MiddleTruncation"/>
+                                               FontSize="Small" 
+                                               HorizontalOptions="CenterAndExpand" 
+                                               VerticalOptions="CenterAndExpand"
+                                               LineBreakMode="MiddleTruncation"/>
                                     </StackLayout>
 
                                 </DataTemplate>
@@ -43,10 +43,11 @@
                         </CollectionView>
                     </ScrollView>
                 </Frame>
-                <StackLayout Orientation="Horizontal" 
+        <SearchBar Placeholder="Lebensthemen durchsuchen" Text="{Binding SearchText}" SearchButtonPressed="OnSearchButtonPressed" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"/>
+        <StackLayout Orientation="Horizontal" 
                              Spacing="0" 
                              HorizontalOptions="CenterAndExpand"
-                             Grid.Row="4" 
+                             Grid.Row="5" 
                              Grid.Column="0"
                              Grid.ColumnSpan="2">
                     <Entry Placeholder="Neues Lebensthema hier eingeben" 
@@ -61,7 +62,7 @@
                         BackgroundColor="#0091EA" 
                         Clicked="OnAcceptButtonClicked" 
                         TextColor="White" 
-                        Grid.Row="5" 
+                        Grid.Row="6" 
                         Grid.Column="1"/>
             </Grid>
 

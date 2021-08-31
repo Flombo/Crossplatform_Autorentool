@@ -13,13 +13,15 @@ namespace Autorentool_RMT.Views.Popups
     {
         private LifethemePopupViewModel lifethemePopupViewModel;
         private List<Lifetheme> selectedLifethemes;
+        private bool isSearchLastAction;
 
         public LifethemePopup(List<Lifetheme> selectedLifethemes)
         {
-            lifethemePopupViewModel = new LifethemePopupViewModel();
             this.selectedLifethemes = selectedLifethemes;
+            isSearchLastAction = false;
+            lifethemePopupViewModel = new LifethemePopupViewModel(selectedLifethemes);
             BindingContext = lifethemePopupViewModel;
-            lifethemePopupViewModel.OnLoadAllExistingLifethemes(selectedLifethemes);
+            lifethemePopupViewModel.OnLoadAllExistingLifethemes();
             InitializeComponent();
         }
 
@@ -30,11 +32,15 @@ namespace Autorentool_RMT.Views.Popups
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OnAcceptButtonClicked(object sender, EventArgs e)
-        {          
+        {
+            selectedLifethemes = isSearchLastAction
+                ? lifethemePopupViewModel.GetSelectedLifethemes(selectedLifethemes)
+                : lifethemePopupViewModel.GetSelectedLifethemes(new List<Lifetheme>());
+
             Result result = new Result
             {
-                selectedLifethemes = lifethemePopupViewModel.GetSelectedLifethemes()
-        };
+                selectedLifethemes = selectedLifethemes
+            };
 
             Dismiss(result);
         }
@@ -43,9 +49,11 @@ namespace Autorentool_RMT.Views.Popups
         #region OnCreateLifethemeButtonClicked
         private async void OnCreateLifethemeButtonClicked(object sender, EventArgs e)
         {
+            isSearchLastAction = false;
+
             try
             {
-                await lifethemePopupViewModel.OnAddLifetheme(selectedLifethemes);
+                await lifethemePopupViewModel.OnAddLifetheme();
             } catch(Exception)
             {
                 
@@ -56,10 +64,12 @@ namespace Autorentool_RMT.Views.Popups
         #region OnDeleteLifetheme
         private async void OnDeleteLifetheme(object sender, SelectionChangedEventArgs e)
         {
+            isSearchLastAction = false;
+
             try
             {
                 Lifetheme selectedLifetheme = e.CurrentSelection[0] as Lifetheme;
-                await lifethemePopupViewModel.OnDeleteLifetheme(selectedLifetheme, selectedLifethemes);
+                await lifethemePopupViewModel.OnDeleteLifetheme(selectedLifetheme);
             }
             catch (Exception exc)
             {
@@ -79,5 +89,10 @@ namespace Autorentool_RMT.Views.Popups
         }
         #endregion
 
+        private void OnSearchButtonPressed(object sender, EventArgs e)
+        {
+            lifethemePopupViewModel.OnSearch();
+            isSearchLastAction = true;
+        }
     }
 }

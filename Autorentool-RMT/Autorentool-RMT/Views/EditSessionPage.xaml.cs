@@ -11,6 +11,7 @@ namespace Autorentool_RMT.Views
         public EditSessionPage()
         {
             InitializeComponent();
+            NavigationPage.SetHasNavigationBar(this, false);
             editSessionViewModel = new EditSessionViewModel();
             BindingContext = editSessionViewModel;
         }

@@ -12,6 +12,7 @@ namespace Autorentool_RMT.Views
         public ContentsPage()
         {
             InitializeComponent();
+            NavigationPage.SetHasNavigationBar(this, false);
             contentViewModel = new ContentViewModel();
             BindingContext = contentViewModel;
         }

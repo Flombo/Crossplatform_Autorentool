@@ -12,6 +12,7 @@ namespace Autorentool_RMT.Views
         public PlaySessionContentPage()
         {
             InitializeComponent();
+            NavigationPage.SetHasNavigationBar(this, false);
             playSessionContentViewModel = new PlaySessionContentViewModel();
             BindingContext = playSessionContentViewModel;
         }

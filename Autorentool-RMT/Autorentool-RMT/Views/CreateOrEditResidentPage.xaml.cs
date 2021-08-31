@@ -20,6 +20,7 @@ namespace Autorentool_RMT.Views
         public CreateOrEditResidentPage()
         {
             InitializeComponent();
+            NavigationPage.SetHasNavigationBar(this, false);
             createOrEditResidentViewModel = new CreateOrEditResidentViewModel();
             BindingContext = createOrEditResidentViewModel;
         }
@@ -112,9 +113,10 @@ namespace Autorentool_RMT.Views
                     await createOrEditResidentViewModel.OnDeleteResident();
                     await Navigation.PopAsync();
 
-                } catch (Exception)
+                } catch (Exception exc)
                 {
-                    await DisplayAlert("Fehler beim Löschen des Bewohners", "Ein Fehler trat auf beim Löschen des Bewohners " + selectedResident.ResidentOneLineSummary, "OK");
+                    //await DisplayAlert("Fehler beim Löschen des Bewohners", "Ein Fehler trat auf beim Löschen des Bewohners " + selectedResident.ResidentOneLineSummary, "OK");
+                    await DisplayAlert("Fehler", exc.Message, "Ok");
                 }
             }
         }

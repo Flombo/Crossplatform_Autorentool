@@ -66,7 +66,7 @@
                     <Image Grid.ColumnSpan="2" Grid.Row="1" Aspect="AspectFit" BackgroundColor="White"  Source="{Binding SelectedImage}" HeightRequest="200" WidthRequest="100"/>
                 </StackLayout>
 
-                <Editor Placeholder="Notizen.." Grid.Row="3" Grid.RowSpan="2" Grid.Column="2" Grid.ColumnSpan="2"  Text="{Binding Notes}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True"/>
+                <Editor Placeholder="Notizen.." Grid.Row="3" Grid.RowSpan="2" Grid.Column="2" Grid.ColumnSpan="2"  Text="{Binding Notes}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True" FontSize="Subtitle"/>
 
                 <StackLayout Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal">
                     <Button Text="&#x1F5D1; Bewohner löschen" 
