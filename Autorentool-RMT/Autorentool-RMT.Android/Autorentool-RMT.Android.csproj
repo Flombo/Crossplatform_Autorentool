@@ -280,5 +280,8 @@
     <AndroidAsset Include="Assets\fa-regular-400.ttf" />
     <AndroidAsset Include="Assets\fa-solid-900.ttf" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\preview.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

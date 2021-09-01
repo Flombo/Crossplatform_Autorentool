@@ -151,7 +151,15 @@ namespace Autorentool_RMT.Models
             {
                 if (File.Exists(Path))
                 {
-                    return Path;
+                    switch (FileType)
+                    {
+                        case "mp3":
+                            return "ImageOld.png";
+                        case "mp4":
+                            return "ImageOld.png";
+                        default:
+                            return Path;
+                    }
                 }
                 else
                 {

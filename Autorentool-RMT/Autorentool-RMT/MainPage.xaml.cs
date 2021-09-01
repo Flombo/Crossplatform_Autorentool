@@ -78,5 +78,6 @@ namespace Autorentool_RMT
         {
             await Navigation.PushAsync(new ContactPage());
         }
+
     }
 }

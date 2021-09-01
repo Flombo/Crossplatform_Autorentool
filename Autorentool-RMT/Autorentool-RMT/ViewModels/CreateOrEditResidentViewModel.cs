@@ -1,4 +1,5 @@
 ﻿using Autorentool_RMT.Models;
+using Autorentool_RMT.Services;
 using Autorentool_RMT.Services.DBHandling;
 using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
 using System;
@@ -345,40 +346,15 @@ namespace Autorentool_RMT.ViewModels
                 {
                     Stream stream = await fileResult.OpenReadAsync();
 
-                    Directory.CreateDirectory(Path.Combine(
-                            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                            "ResidentProfilePics"
-                            )
-                        );
+                    string directoryPath = FileHandler.CreateDirectory("ResidentProfilePics");
 
                     string filename = fileResult.FileName;
 
-                    selectedImagePath = Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                        "ResidentProfilePics/" + filename
-                        );
+                    selectedImagePath = directoryPath + filename;
 
-                    int filenameIncrement = 1;
+                    selectedImagePath = FileHandler.GetUniqueFilenamePath(selectedImagePath);
 
-                    while (File.Exists(selectedImagePath))
-                    {
-                        int pointIndex = selectedImagePath.LastIndexOf(".");
-
-                        string filePathWithoutFiletype = selectedImagePath.Substring(0, pointIndex) + filenameIncrement;
-                        string filetype = selectedImagePath.Substring(pointIndex, 4);
-
-                        selectedImagePath = filePathWithoutFiletype + filetype;
-                        filenameIncrement++;
-                    }
-
-                    byte[] bArray = new byte[stream.Length];
-
-                    using (FileStream fs = new FileStream(selectedImagePath, FileMode.OpenOrCreate))
-                    {
-                        stream.Read(bArray, 0, (int)stream.Length);
-                        int length = bArray.Length;
-                        fs.Write(bArray, 0, length);
-                    }
+                    FileHandler.SaveFile(stream, selectedImagePath);
 
                     SelectedImage = ImageSource.FromFile(selectedImagePath);
                 }
