@@ -3,14 +3,12 @@ using Autorentool_RMT.Services.DBHandling;
 using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Autorentool_RMT.ViewModels
 {
-    public class LifethemePopupViewModel : INotifyPropertyChanged
+    public class LifethemePopupViewModel : ViewModel
     {
         private List<Lifetheme> allExistingLifethemes;
         private string lifethemeEntryText;
@@ -25,19 +23,6 @@ namespace Autorentool_RMT.ViewModels
         {
             this.selectedLifethemes = selectedLifethemes;
             allExistingLifethemes = new List<Lifetheme>();
-        }
-        #endregion
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        #region OnPropertyChanged
-        /// <summary>
-        /// Calls the corresponding method for the OnPropertyChanged-event.
-        /// </summary>
-        /// <param name="name"></param>
-        private void OnPropertyChanged([CallerMemberName] string name = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
         #endregion
 

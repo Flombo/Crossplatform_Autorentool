@@ -3,9 +3,7 @@ using Autorentool_RMT.Services.DBHandling;
 using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Essentials;
@@ -18,10 +16,11 @@ namespace Autorentool_RMT.ViewModels
     /// For database transactions the ResidentDBHandler is used.
     /// The results of these requests will be sent to back to the UI.
     /// </summary>
-    public class CreateOrEditResidentViewModel : INotifyPropertyChanged
+    public class CreateOrEditResidentViewModel : ViewModel
     {
         private Resident residentForEditing;
         private bool isCompleteButtonEnabled;
+        private bool isDeleteProfilePicButtonEnabled;
         private List<Lifetheme> residentLifethemes;
         private List<Session> residentSessions;
         private ImageSource selectedImage = ImageSource.FromFile("ImageOld.png");
@@ -32,6 +31,8 @@ namespace Autorentool_RMT.ViewModels
         private Gender gender = Gender.Weiblich;
         private int age = 0;
         private string notes;
+        private string completeButtonColour = "LightGray";
+        private string deleteProfilePicButtonColour = "LightGray";
         public ICommand ShowFilePicker { get; }
         public ICommand DeleteSelectedImage { get; }
 
@@ -66,20 +67,65 @@ namespace Autorentool_RMT.ViewModels
                 Gender = residentForEditing.Gender;
                 SelectedImage = residentForEditing.GetFullProfilePicPath;
                 selectedImagePath = residentForEditing.GetFullProfilePicPath;
+                SetIsDeleteProfilePicEnabled();
             }
         }
         #endregion
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        #region OnPropertyChanged
+        #region SetIsDeleteProfilePicEnabled
         /// <summary>
-        /// Calls the corresponding method for the OnPropertyChanged-event.
+        /// Sets the isDeleteProfilePicButtonEnabled-property depending on the selectedImagePath.
+        /// If the selectedImagePath points on the default pic, then the button should be disabled.
         /// </summary>
-        /// <param name="name"></param>
-        private void OnPropertyChanged([CallerMemberName] string name = "")
+        public void SetIsDeleteProfilePicEnabled()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            IsDeleteProfilePicButtonEnabled = selectedImagePath.Length > 0 ? true : false;
+        }
+        #endregion
+
+        #region IsDeleteProfilePicButtonEnabled
+        /// <summary>
+        /// Sets and returns the isDeleteProfilePicButtonEnabled-property.
+        /// </summary>
+        public bool IsDeleteProfilePicButtonEnabled
+        {
+            get => isDeleteProfilePicButtonEnabled;
+            set
+            {
+                isDeleteProfilePicButtonEnabled = value;
+                DeleteProfilePicButtonColour = GetBackgroundColour(isDeleteProfilePicButtonEnabled, "Orange");
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region DeleteProfilePicButtonColour
+        /// <summary>
+        /// Sets and returns the DeleteProfilePicButtonColour depending on the isCompleteButtonEnabled-property.
+        /// </summary>
+        public string DeleteProfilePicButtonColour
+        {
+            get => deleteProfilePicButtonColour;
+            set
+            {
+                deleteProfilePicButtonColour = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region CompleteButtonColour
+        /// <summary>
+        /// Sets and returns the CompleteButtonColour depending on the isCompleteButtonEnabled-property.
+        /// </summary>
+        public string CompleteButtonColour
+        {
+            get => completeButtonColour;
+            set 
+            {
+                completeButtonColour = value;
+                OnPropertyChanged();
+            }
         }
         #endregion
 
@@ -103,6 +149,7 @@ namespace Autorentool_RMT.ViewModels
             set
             {
                 isCompleteButtonEnabled = value;
+                CompleteButtonColour = GetBackgroundColour(IsCompleteButtonEnabled, "Orange");
                 OnPropertyChanged();
             }
         }
@@ -242,6 +289,7 @@ namespace Autorentool_RMT.ViewModels
             set
             {
                 selectedImage = value;
+                SetIsDeleteProfilePicEnabled();
                 OnPropertyChanged();
             }
         }
@@ -396,7 +444,10 @@ namespace Autorentool_RMT.ViewModels
             {
                 notes = notes ?? "";
 
-                await SaveProfilePic();
+                if(fileResult != null)
+                {
+                    await SaveProfilePic();
+                }
 
                 int residentId = await ResidentDBHandler.AddResident(firstname, lastname, gender, age, selectedImagePath, notes);
 

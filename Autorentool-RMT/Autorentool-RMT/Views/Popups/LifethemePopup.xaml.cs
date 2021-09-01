@@ -89,10 +89,12 @@ namespace Autorentool_RMT.Views.Popups
         }
         #endregion
 
+        #region OnSearchButtonPressed
         private void OnSearchButtonPressed(object sender, EventArgs e)
         {
             lifethemePopupViewModel.OnSearch();
             isSearchLastAction = true;
         }
+        #endregion
     }
 }

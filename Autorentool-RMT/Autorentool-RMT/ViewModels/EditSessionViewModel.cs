@@ -1,12 +1,10 @@
 ﻿using Autorentool_RMT.Models;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Autorentool_RMT.ViewModels
 {
-    public class EditSessionViewModel : INotifyPropertyChanged
+    public class EditSessionViewModel : ViewModel
     {
 
         private List<MediaItem> sessionMediaItems;
@@ -15,19 +13,6 @@ namespace Autorentool_RMT.ViewModels
         public EditSessionViewModel()
         {
             sessionMediaItems = new List<MediaItem>();
-        }
-        #endregion
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        #region OnPropertyChanged
-        /// <summary>
-        /// Calls the corresponding method for the OnPropertyChanged-event.
-        /// </summary>
-        /// <param name="name"></param>
-        private void OnPropertyChanged([CallerMemberName] string name = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
         #endregion
 

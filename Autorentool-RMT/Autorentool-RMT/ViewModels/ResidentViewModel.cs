@@ -1,8 +1,6 @@
 ﻿using Autorentool_RMT.Models;
 using Autorentool_RMT.Services.DBHandling;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Autorentool_RMT.ViewModels
@@ -12,7 +10,7 @@ namespace Autorentool_RMT.ViewModels
     /// For database transactions the ResidentDBHandler is used.
     /// The results of these requests will be sent to back to the UI.
     /// </summary>
-    public class ResidentViewModel : INotifyPropertyChanged
+    public class ResidentViewModel : ViewModel
     {
 
         private List<Resident> residents;
@@ -24,19 +22,6 @@ namespace Autorentool_RMT.ViewModels
         public ResidentViewModel()
         {
             residents = new List<Resident>();
-        }
-        #endregion
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        #region OnPropertyChanged
-        /// <summary>
-        /// Calls the corresponding method for the OnPropertyChanged-event.
-        /// </summary>
-        /// <param name="name"></param>
-        private void OnPropertyChanged([CallerMemberName] string name = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
         #endregion
 

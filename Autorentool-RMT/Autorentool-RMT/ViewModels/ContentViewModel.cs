@@ -1,12 +1,10 @@
 ﻿using Autorentool_RMT.Models;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Autorentool_RMT.ViewModels
 {
-    public class ContentViewModel : INotifyPropertyChanged
+    public class ContentViewModel : ViewModel
     {
 
         private List<MediaItem> mediaItems;
@@ -17,19 +15,6 @@ namespace Autorentool_RMT.ViewModels
         {
             mediaItems = new List<MediaItem>();
             currentMediaItemLifethemes = new List<Lifetheme>();
-        }
-        #endregion
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        #region OnPropertyChanged
-        /// <summary>
-        /// Calls the corresponding method for the OnPropertyChanged-event.
-        /// </summary>
-        /// <param name="name"></param>
-        private void OnPropertyChanged([CallerMemberName] string name = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
         #endregion
 

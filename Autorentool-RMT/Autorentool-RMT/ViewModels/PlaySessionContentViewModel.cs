@@ -1,14 +1,12 @@
 ﻿using Autorentool_RMT.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Autorentool_RMT.ViewModels
 {
-    public class PlaySessionContentViewModel : INotifyPropertyChanged
+    public class PlaySessionContentViewModel : ViewModel
     {
 
         private List<MediaItem> sessionMediaItems;
@@ -32,19 +30,6 @@ namespace Autorentool_RMT.ViewModels
                 {new MediaItem(1, "test.jpg", "jpg", "ImageOld.png", "Test", 0) },
                 {new MediaItem(2, "test2.jpg", "jpg", "ImageOld.png", "Test2", 0) }
             };
-        }
-        #endregion
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        #region OnPropertyChanged
-        /// <summary>
-        /// Calls the corresponding method for the OnPropertyChanged-event.
-        /// </summary>
-        /// <param name="name"></param>
-        private void OnPropertyChanged([CallerMemberName] string name = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
         #endregion
 
