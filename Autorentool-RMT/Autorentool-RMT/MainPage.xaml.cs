@@ -73,5 +73,10 @@ namespace Autorentool_RMT
         {
             await Navigation.PushAsync(new SessionsPage());
         }
+
+        private async void OnContactButtonClicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new ContactPage());
+        }
     }
 }
