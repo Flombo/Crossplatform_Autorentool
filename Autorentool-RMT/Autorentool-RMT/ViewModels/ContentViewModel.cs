@@ -27,6 +27,8 @@ namespace Autorentool_RMT.ViewModels
         private bool isFullscreenButtonVisible;
         private bool isDeleteSelectedMediaItemButtonEnabled;
         private string deleteSelectedMediaItemButtonBackgroundColour;
+        private bool isDeleteAllMediaItemsButtonEnabled;
+        private string deleteAllMediaItemsButtonBackgroundcolour;
         public ICommand ImportMediaItems { get; }
 
         #region Constructor
@@ -41,9 +43,43 @@ namespace Autorentool_RMT.ViewModels
             isMediaItemMediaElementVisible = false;
             isFullscreenButtonVisible = false;
             isDeleteSelectedMediaItemButtonEnabled = false;
+            isDeleteAllMediaItemsButtonEnabled = false;
             deleteSelectedMediaItemButtonBackgroundColour = "LightGray";
+            deleteAllMediaItemsButtonBackgroundcolour = "LightGray";
             selectedMediaItem = null;
             currentMediaItemLifethemes = new List<Lifetheme>();
+        }
+        #endregion
+
+        #region SetDeleteAllMediaItemsButtonBackgroundColour
+        private void SetDeleteAllMediaItemsButtonBackgroundColour()
+        {
+            DeleteAllMediaItemsButtonBackgroundcolour = GetBackgroundColour(IsDeleteAllMediaItemsButtonEnabled, "Green");
+        }
+        #endregion
+
+        #region DeleteAllMediaItemsButtonBackgroundcolour
+        public string DeleteAllMediaItemsButtonBackgroundcolour
+        {
+            get => deleteAllMediaItemsButtonBackgroundcolour;
+            set
+            {
+                deleteAllMediaItemsButtonBackgroundcolour = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsDeleteAllMediaItemsButtonEnabled
+        public bool IsDeleteAllMediaItemsButtonEnabled
+        {
+            get => isDeleteAllMediaItemsButtonEnabled;
+            set
+            {
+                isDeleteAllMediaItemsButtonEnabled = value;
+                SetDeleteAllMediaItemsButtonBackgroundColour();
+                OnPropertyChanged();
+            }
         }
         #endregion
 
@@ -65,7 +101,7 @@ namespace Autorentool_RMT.ViewModels
         /// </summary>
         private void SetDeleteSelectedMediaItemBackgroundColour()
         {
-            DeleteSelectedMediaItemButtonBackgroundColour = IsDeleteSelectedMediaItemButtonEnabled ? "Green" : "LightGray";
+            DeleteSelectedMediaItemButtonBackgroundColour = GetBackgroundColour(IsDeleteSelectedMediaItemButtonEnabled, "Green");
         }
         #endregion
 
@@ -240,6 +276,7 @@ namespace Autorentool_RMT.ViewModels
             set
             {
                 mediaItems = value;
+                IsDeleteAllMediaItemsButtonEnabled = mediaItems.Count > 0;
                 OnPropertyChanged();
             }
         }
@@ -337,16 +374,67 @@ namespace Autorentool_RMT.ViewModels
             {
                 try
                 {
-                    if (File.Exists(selectedMediaItem.GetFullPath))
-                    {
-                        File.Delete(selectedMediaItem.GetFullPath);
-                    }
+                    await DeleteMediaItem(selectedMediaItem);
 
-                    await MediaItemDBHandler.DeleteMediaItem(selectedMediaItem.Id);
                     SelectedMediaItem = null;
                     MediaItems = await MediaItemDBHandler.GetAllMediaItems();
                 }
                 catch (Exception exc)
+                {
+                    throw exc;
+                }
+            }
+        }
+        #endregion
+
+        #region DeleteMediaItem
+        /// <summary>
+        /// Deletes given mediaItem and corresponding file.
+        /// If an error occured an exception will be thrown.
+        /// </summary>
+        /// <param name="mediaItem"></param>
+        /// <returns></returns>
+        private async Task DeleteMediaItem(MediaItem mediaItem)
+        {
+            try
+            {
+                if (File.Exists(mediaItem.GetFullPath))
+                {
+                    File.Delete(mediaItem.GetFullPath);
+                }
+                await SessionMediaItemsDBHandler.UnbindSessionMediaItemsByMediaItemId(mediaItem.Id);
+                await MediaItemLifethemesDBHandler.UnbindMediaItemLifethemesByMediaItemId(mediaItem.Id);
+                await MediaItemDBHandler.DeleteMediaItem(mediaItem.Id);
+            
+            } catch(Exception exc)
+            {
+                throw exc;
+            }
+        }
+        #endregion
+
+        #region OnDeleteAllMediaItems
+        /// <summary>
+        /// Deletes all MediaItems if the MediaItems-list isn't empty.
+        /// Throws an Exception if an error occurs.
+        /// </summary>
+        /// <returns></returns>
+        public async Task OnDeleteAllMediaItems()
+        {
+            if(mediaItems.Count > 0)
+            {
+                try
+                {
+                    SelectedMediaItem = null;
+
+                    foreach(MediaItem mediaItem in mediaItems)
+                    {
+                        await DeleteMediaItem(mediaItem);
+                    }
+
+                    MediaItems = new List<MediaItem>();
+
+                } catch(Exception exc)
                 {
                     throw exc;
                 }

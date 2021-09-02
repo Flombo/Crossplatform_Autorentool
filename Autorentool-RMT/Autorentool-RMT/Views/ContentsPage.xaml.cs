@@ -63,7 +63,7 @@ namespace Autorentool_RMT.Views
         }
         #endregion
 
-        #region OnDeleteSelectedMediaItmeButtonClicked
+        #region OnDeleteSelectedMediaItemButtonClicked
         /// <summary>
         /// Deletes selected mediaitem.
         /// If an error occurs, an error message will be prompted.
@@ -84,5 +84,41 @@ namespace Autorentool_RMT.Views
         }
         #endregion
 
+        private async void OnDeleteAllMediaItemsButtonClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                bool shouldDeleteAllMediaItems = await DisplayAlert(
+                    "Alle Bausteine löschen?",
+                    "Sind Sie sicher, dass Sie alle Inhaltsbausteine endgültig löschen wollen? (Dabei werden auch alle mit diesen Bausteinen verknüpften Sitzungen geleert.)",
+                    "Alles klar!",
+                    "Abbrechen"
+                    );
+
+                while (shouldDeleteAllMediaItems)
+                {
+                    PasswordPopup.Result result = await Navigation.ShowPopupAsync<PasswordPopup.Result>(new PasswordPopup());
+
+                    if(result != null)
+                    {
+                        if (result.IsPasswordValid)
+                        {
+                            await contentViewModel.OnDeleteAllMediaItems();
+                            shouldDeleteAllMediaItems = false;
+                        } else
+                        {
+                            shouldDeleteAllMediaItems = await DisplayAlert("Falsches Passwort!", "Das eingegebenen Passwort " + result.InsertedPassword + " ist leider falsch.", "Alles klar!", "Abbrechen");
+                        }
+                    } else
+                    {
+                        shouldDeleteAllMediaItems = false;
+                    }
+                    
+                }
+            } catch(Exception)
+            {
+                await DisplayAlert("Fehler beim Löschen der Medien", "Ein Fehler trat auf beim Löschen der Medien", "Schließen");
+            }
+        }
     }
 }
