@@ -34,6 +34,7 @@ namespace Autorentool_RMT.ViewModels
         private string notes;
         private string completeButtonColour = "LightGray";
         private string deleteProfilePicButtonColour = "LightGray";
+        private string title;
         public ICommand ShowFilePicker { get; }
         public ICommand DeleteSelectedImage { get; }
 
@@ -47,6 +48,7 @@ namespace Autorentool_RMT.ViewModels
             DeleteSelectedImage = new Command(ResetSelectedImageProperties);
             residentLifethemes = new List<Lifetheme>();
             residentSessions = new List<Session>();
+            Title = "BEWOHNER HINZUFÜGEN";
         }
         #endregion
 
@@ -68,7 +70,20 @@ namespace Autorentool_RMT.ViewModels
                 Gender = residentForEditing.Gender;
                 SelectedImage = residentForEditing.GetFullProfilePicPath;
                 selectedImagePath = residentForEditing.GetFullProfilePicPath;
+                Title = "BEWOHNER BEARBEITEN";
                 SetIsDeleteProfilePicEnabled();
+            }
+        }
+        #endregion
+
+        #region Title
+        public string Title
+        {
+            get => title;
+            set
+            {
+                title = value;
+                OnPropertyChanged();
             }
         }
         #endregion
@@ -122,7 +137,7 @@ namespace Autorentool_RMT.ViewModels
         public string CompleteButtonColour
         {
             get => completeButtonColour;
-            set 
+            set
             {
                 completeButtonColour = value;
                 OnPropertyChanged();
@@ -323,7 +338,7 @@ namespace Autorentool_RMT.ViewModels
             }
             catch (Exception)
             {
-                if(selectedImagePath.Length > 0)
+                if (selectedImagePath.Length > 0)
                 {
                     ResetSelectedImageProperties();
                 }
@@ -358,7 +373,8 @@ namespace Autorentool_RMT.ViewModels
 
                     SelectedImage = ImageSource.FromFile(selectedImagePath);
                 }
-            } catch(Exception exc)
+            }
+            catch (Exception exc)
             {
                 throw exc;
             }
@@ -390,7 +406,8 @@ namespace Autorentool_RMT.ViewModels
                     }
                 }
 
-            } catch (Exception exc)
+            }
+            catch (Exception exc)
             {
                 throw exc;
             }
@@ -420,7 +437,7 @@ namespace Autorentool_RMT.ViewModels
             {
                 notes = notes ?? "";
 
-                if(fileResult != null)
+                if (fileResult != null)
                 {
                     await SaveProfilePic();
                 }
@@ -450,19 +467,20 @@ namespace Autorentool_RMT.ViewModels
             {
                 notes = notes ?? "";
 
-                if(selectedImagePath.Length > 0 && !residentForEditing.GetFullProfilePicPath.Equals(selectedImagePath))
+                if (selectedImagePath.Length > 0 && !residentForEditing.GetFullProfilePicPath.Equals(selectedImagePath))
                 {
                     DeleteOldProfilPic();
                     await SaveProfilePic();
                 }
 
                 await ResidentDBHandler.UpdateResident(residentForEditing.Id, firstname, lastname, age, gender, selectedImagePath, notes);
-                
+
                 await ResidentLifethemesDBHandler.UnbindAllResidentLifethemesByResidentId(residentForEditing.Id);
 
                 await BindCheckedLifethemesToResident(residentForEditing.Id);
 
-            } catch(Exception exc)
+            }
+            catch (Exception exc)
             {
                 throw exc;
             }
@@ -477,7 +495,7 @@ namespace Autorentool_RMT.ViewModels
         /// <returns></returns>
         public async Task OnDeleteResident()
         {
-            if(residentForEditing != null)
+            if (residentForEditing != null)
             {
                 try
                 {
@@ -486,7 +504,8 @@ namespace Autorentool_RMT.ViewModels
                     DeleteOldProfilPic();
                     await ResidentDBHandler.DeleteResident(residentForEditing.Id);
                     residentForEditing = null;
-                } catch(Exception exc)
+                }
+                catch (Exception exc)
                 {
                     throw exc;
                 }
@@ -512,7 +531,8 @@ namespace Autorentool_RMT.ViewModels
                         await ResidentLifethemesDBHandler.BindResidentLifethemes(residentId, residentLifetheme.Id);
                     }
                 }
-            } catch(Exception exc)
+            }
+            catch (Exception exc)
             {
                 throw exc;
             }

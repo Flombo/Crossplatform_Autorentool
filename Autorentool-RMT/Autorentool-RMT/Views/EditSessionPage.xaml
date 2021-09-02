@@ -9,7 +9,7 @@
         <Grid>
             <!--MediaItems section-->
             <StackLayout Grid.Row="0" Grid.Column="0" Grid.RowSpan="8">
-                    
+
                 <StackLayout BackgroundColor="Beige" Grid.Row="0" Grid.Column="0">
                     <Label Text="Hier können Sie die Reihenfolge der Inhaltsbausteine durch Gedrückthalten und Verschieben verändern" 
                            FontSize="Small"                             
@@ -35,38 +35,25 @@
             </StackLayout>
 
             <StackLayout BackgroundColor="Black" Grid.Row="0" Grid.Column="1" Grid.RowSpan="8">
-                <StackLayout Grid.Row="1" Grid.Column="1" Grid.RowSpan="6" IsVisible="True">
-                    <Label 
-                            Grid.Row="1" 
-                            Grid.Column="1" 
-                            FontSize="Subtitle" 
-                            FontAttributes="Bold" 
-                            TextColor="White" 
-                            HorizontalOptions="Center">
-                        Vorschau
-                    </Label>
-                    <Label 
-                            Grid.Row="1" 
-                            Grid.Column="1" 
-                            FontSize="Subtitle"
-                            TextColor="White"
-                            HorizontalTextAlignment="Center"
-                            VerticalTextAlignment="Center">
-                        Hier erscheint ein Vorschaubild, sobald Sie einen Inhaltsbaustein auswählen
-                    </Label>
-                </StackLayout>
-                <Image IsVisible="False" Source="ImageOld.png" Grid.Row="0" Grid.Column="1" Grid.RowSpan="8" BackgroundColor="White" Aspect="AspectFit"/>
+                <Image Source="preview.png" 
+                       BackgroundColor="White"
+                       Aspect="AspectFit" 
+                       HeightRequest="375" 
+                       WidthRequest="450" 
+                       HorizontalOptions="CenterAndExpand" 
+                       VerticalOptions="CenterAndExpand" 
+                       IsVisible="True"/>
             </StackLayout>
 
             <!--MediaElement for playing Audio and Video-->
-            <xct:MediaElement
+            <!--<xct:MediaElement
                 IsVisible="False"
                 Source="https://sec.ch9.ms/ch9/5d93/a1eab4bf-3288-4faf-81c4-294402a85d93/XamarinShow_mid.mp4"
                 ShowsPlaybackControls="True"
                 AutoPlay="False"
                 Grid.Row="0" Grid.Column="1"  Grid.RowSpan="8"
                 Aspect="AspectFit"
-                />
+                />-->
 
             <Button Text="&#43; BAUSTEIN HINZUFÜGEN" 
                     BackgroundColor="Green" 
@@ -77,36 +64,39 @@
                     FontSize="Subtitle"
                     TextColor="White"/>
 
-            <StackLayout Grid.Row="8" Grid.Column="1" Grid.RowSpan="2">
-                <Grid>
-                    <Button
-                        Grid.Row="2"
-                        Grid.Column="0"
-                        Text="&#x25b6; SITZUNG STARTEN" 
-                        BackgroundColor="#0091EA" 
-                        FontAttributes="Bold" 
-                        FontSize="Subtitle" 
-                        TextColor="White"/>
-                    <Button 
-                        Grid.Row="0"
-                        Grid.Column="2"
-                        Text="&#x1F5D1; BAUSTEIN LÖSCHEN" 
-                        BackgroundColor="LightGray" 
-                        FontAttributes="Bold" 
-                        FontSize="Subtitle" 
-                        TextColor="White"
-                        VerticalOptions="CenterAndExpand"/>
-                    <Button
-                        Grid.Row="2"
-                        Grid.Column="2"
-                        Text="{StaticResource CompletedText}" 
-                        BackgroundColor="#0091EA" 
-                        FontAttributes="Bold" 
-                        FontSize="Subtitle" 
-                        TextColor="White"/>
-                </Grid>
-            </StackLayout>
-            
+            <Grid Grid.Row="8" Grid.Column="1" Grid.RowSpan="2">
+                <Button
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Grid.RowSpan="2"
+                    Grid.ColumnSpan="2"
+                    Text="&#x25b6; SITZUNG STARTEN" 
+                    BackgroundColor="#0091EA" 
+                    FontAttributes="Bold"
+                    FontSize="Subtitle"
+                    TextColor="White"/>
+                <Button 
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Grid.RowSpan="2"
+                    Grid.ColumnSpan="2"
+                    Text="&#x1F5D1; BAUSTEIN LÖSCHEN" 
+                    BackgroundColor="LightGray" 
+                    FontAttributes="Bold" 
+                    FontSize="Subtitle"
+                    TextColor="White"/>
+                <Button
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    Grid.RowSpan="2"
+                    Grid.ColumnSpan="2"
+                    Text="{StaticResource CompletedText}" 
+                    BackgroundColor="#0091EA" 
+                    FontAttributes="Bold"
+                    FontSize="Subtitle" 
+                    TextColor="White"/>
+            </Grid>
+
         </Grid>
     </ContentPage.Content>
 </ContentPage>

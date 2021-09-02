@@ -162,7 +162,8 @@ namespace Autorentool_RMT.ViewModels
                     IsDeleteSelectedMediaItemButtonEnabled = true;
                     SetMediaPreviewProperties();
                     LoadLifethemesOfSelectedMediaItem();
-                } else
+                }
+                else
                 {
                     Notes = "";
                     ResetMediaPreviewProperties();
@@ -185,7 +186,7 @@ namespace Autorentool_RMT.ViewModels
         /// </summary>
         public void SetMediaPreviewProperties()
         {
-            if(selectedMediaItem.FileType.Equals("mp3") || selectedMediaItem.FileType.Equals("mp4"))
+            if (selectedMediaItem.FileType.Equals("mp3") || selectedMediaItem.FileType.Equals("mp4"))
             {
                 IsMediaItemImageVisible = false;
                 IsMediaItemMediaElementVisible = true;
@@ -216,7 +217,7 @@ namespace Autorentool_RMT.ViewModels
             {
                 notes = value;
 
-                if(selectedMediaItem != null)
+                if (selectedMediaItem != null)
                 {
                     selectedMediaItem.Notes = notes;
                     OnNotesChanged();
@@ -305,7 +306,8 @@ namespace Autorentool_RMT.ViewModels
                     selectedMediaItem.BackendMediaItemId
                     );
 
-            } catch(Exception)
+            }
+            catch (Exception)
             {
 
             }
@@ -331,14 +333,20 @@ namespace Autorentool_RMT.ViewModels
         /// <returns></returns>
         public async Task OnDeleteMediaItem()
         {
-            if(selectedMediaItem != null)
+            if (selectedMediaItem != null)
             {
                 try
                 {
+                    if (File.Exists(selectedMediaItem.GetFullPath))
+                    {
+                        File.Delete(selectedMediaItem.GetFullPath);
+                    }
+
                     await MediaItemDBHandler.DeleteMediaItem(selectedMediaItem.Id);
                     SelectedMediaItem = null;
                     MediaItems = await MediaItemDBHandler.GetAllMediaItems();
-                } catch(Exception exc)
+                }
+                catch (Exception exc)
                 {
                     throw exc;
                 }
@@ -374,7 +382,8 @@ namespace Autorentool_RMT.ViewModels
             try
             {
                 MediaItems = await MediaItemDBHandler.GetAllMediaItems();
-            } catch(Exception exc)
+            }
+            catch (Exception exc)
             {
                 throw exc;
             }
@@ -388,12 +397,13 @@ namespace Autorentool_RMT.ViewModels
         /// </summary>
         public async void LoadLifethemesOfSelectedMediaItem()
         {
-            if(selectedMediaItem != null)
+            if (selectedMediaItem != null)
             {
                 try
                 {
                     CurrentMediaItemLifethemes = await MediaItemLifethemesDBHandler.GetLifethemesOfMediaItem(selectedMediaItem.Id);
-                } catch(Exception exc)
+                }
+                catch (Exception exc)
                 {
                     throw exc;
                 }

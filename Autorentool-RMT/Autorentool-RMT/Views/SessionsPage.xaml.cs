@@ -5,15 +5,16 @@ using Xamarin.Forms.Xaml;
 
 namespace Autorentool_RMT.Views
 {
-	[XamlCompilation(XamlCompilationOptions.Compile)]
+    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SessionsPage : ContentPage
     {
 
         private SessionViewModel sessionViewModel;
-    
+
         public SessionsPage()
         {
             InitializeComponent();
+            NavigationPage.SetHasNavigationBar(this, false);
             sessionViewModel = new SessionViewModel();
             BindingContext = sessionViewModel;
         }

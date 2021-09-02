@@ -34,6 +34,7 @@ namespace Autorentool_RMT.Views
         public CreateOrEditResidentPage(Resident resident)
         {
             InitializeComponent();
+            NavigationPage.SetHasNavigationBar(this, false);
             selectedResident = resident;
             createOrEditResidentViewModel = new CreateOrEditResidentViewModel(selectedResident);
             createOrEditResidentViewModel.LoadResidentLifethemes(selectedResident.Id);
@@ -60,7 +61,8 @@ namespace Autorentool_RMT.Views
                     await createOrEditResidentViewModel.OnAddResident();
                     await Navigation.PopAsync();
 
-                } catch(Exception)
+                }
+                catch (Exception)
                 {
                     await DisplayAlert(
                             "Fehler beim Erstellen des Bewohners",
@@ -69,7 +71,8 @@ namespace Autorentool_RMT.Views
                         );
                 }
 
-            } else
+            }
+            else
             {
 
                 try
@@ -77,7 +80,8 @@ namespace Autorentool_RMT.Views
                     await createOrEditResidentViewModel.OnEditResident();
                     await Navigation.PopAsync();
 
-                } catch(Exception)
+                }
+                catch (Exception)
                 {
                     await DisplayAlert(
                             "Fehler beim Bearbeiten des Bewohners",
@@ -85,7 +89,7 @@ namespace Autorentool_RMT.Views
                             "OK"
                         );
                 }
-                
+
             }
         }
         #endregion
@@ -106,14 +110,15 @@ namespace Autorentool_RMT.Views
                     "Nein"
                 );
 
-            if(shouldDeleteResident)
+            if (shouldDeleteResident)
             {
                 try
                 {
                     await createOrEditResidentViewModel.OnDeleteResident();
                     await Navigation.PopAsync();
 
-                } catch (Exception exc)
+                }
+                catch (Exception exc)
                 {
                     //await DisplayAlert("Fehler beim Löschen des Bewohners", "Ein Fehler trat auf beim Löschen des Bewohners " + selectedResident.ResidentOneLineSummary, "OK");
                     await DisplayAlert("Fehler", exc.Message, "Ok");
@@ -146,7 +151,8 @@ namespace Autorentool_RMT.Views
                     createOrEditResidentViewModel.ResidentLifethemes = result.selectedLifethemes;
                 }
 
-            } catch(Exception exc)
+            }
+            catch (Exception exc)
             {
                 bool isDeleteException = exc.Message.StartsWith("Delete");
 

@@ -2,7 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Autorentool_RMT.MainPage"
              Title="Startseite"
-             xmlns:resource="clr-namespace:Autorentool_RMT.Resources"
              ControlTemplate="{StaticResource HeaderPageTemplate}"
              >
 
@@ -15,46 +14,78 @@
     <!-- <ScrollView> -->
 
     <!-- Page/View content begin -->
-    <StackLayout Orientation="Vertical">
+    <StackLayout>
 
         <!--<StackLayout BindableLayout.ItemTemplate="{StaticResource BasicHeaderTemplate}" />-->
         <!--<StackLayout BindableLayout.ItemTemplate="{x:StaticResource: BasicHeaderTemplate}" />-->
 
         <!-- Body begin -->
-        <StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand">
 
-            <Image Source="{OnPlatform UWP=ImageLogoFullLight.png, iOS=ImageLogoFullLight, Android=ImageLogoFullLight}" HorizontalOptions="Center" HeightRequest="{OnPlatform UWP=90, iOS=90, Android=90}"></Image>
+        <StackLayout VerticalOptions="Start" HorizontalOptions="CenterAndExpand">
+            <Image Source="{OnPlatform UWP=ImageLogoFullLight.png, iOS=ImageLogoFullLight, Android=ImageLogoFullLight}" 
+                       HorizontalOptions="Center" 
+                       HeightRequest="{OnPlatform UWP=90, iOS=90, Android=90}"/>
 
-            <Label Text="Willkommen in der RememTec-App!" FontSize="Title" Padding="30,10,30,10" HorizontalTextAlignment="Center" />
+            <Label Text="Willkommen in der RememTec-App!" 
+                       FontSize="Title" 
+                       HorizontalTextAlignment="Center" />
             <!-- <Label Text="Was möchten Sie heute tun?" FontSize="16" Padding="30,0,30,15" HorizontalTextAlignment="Center"/> -->
-            <Label Text="Wo soll es heute hingehen?" FontSize="16" Padding="30,0,30,15" HorizontalTextAlignment="Center" />
+            <Label Text="Wo soll es heute hingehen?" 
+                       FontSize="16"
+                       HorizontalTextAlignment="Center" />
+        </StackLayout>
 
-            <!-- ab: Custom button layout: ImageButton w/ text -->
-            <!-- ab: CD color (dark blue) for this section: #1d4064 -->
-            <StackLayout Orientation="Vertical" HorizontalOptions="Center" BackgroundColor="#ff7800" Spacing="-10" WidthRequest="{OnPlatform UWP=200, iOS=200, Android=200}">
+        <!-- ab: Custom button layout: ImageButton w/ text -->
+        <!-- ab: CD color (dark blue) for this section: #1d4064 -->
+        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Orientation="Horizontal">
+            <StackLayout BackgroundColor="#ff7800" Spacing="0" Padding="10">
 
-                <ImageButton Source="{OnPlatform UWP=ImageOld.png, iOS=ImageOld, Android=ImageOld}" BackgroundColor="#ff7800" WidthRequest="{OnPlatform UWP=100, iOS=100, Android=100}" Padding="10" Clicked="OnResidentsButtonClicked" />
-                <Button Text=" BEWOHNER " BackgroundColor="#ff7800" TextColor="White" Padding="10" Clicked="OnResidentsButtonClicked" />
+                <ImageButton Source="{OnPlatform UWP=ImageOld.png, iOS=ImageOld, Android=ImageOld}"
+                                     HeightRequest="{OnPlatform UWP=200, Android=150, iOS=150}"
+                                     WidthRequest="{OnPlatform UWP=200, Android=150, iOS=150}"
+                                     BackgroundColor="#ff7800"  
+                                     Clicked="OnResidentsButtonClicked"/>
+                <Button Text=" BEWOHNER "
+                                FontSize="Small"
+                                BackgroundColor="#ff7800" 
+                                TextColor="White" 
+                                Clicked="OnResidentsButtonClicked"/>
 
             </StackLayout>
 
             <!-- ab: CD color (green) for this section: #b1d076 -->
-            <StackLayout Orientation="Vertical" HorizontalOptions="Center" BackgroundColor="#00cd3e" Spacing="-10" WidthRequest="{OnPlatform UWP=200, iOS=200, Android=200}">
+            <StackLayout BackgroundColor="#00cd3e" Spacing="0" Padding="10">
 
-                <ImageButton Source="{OnPlatform UWP=ImageSharingContent.png, iOS=ImageSharingContent, Android=ImageSharingContent}" BackgroundColor="#00cd3e" WidthRequest="{OnPlatform UWP=100, iOS=100, Android=100}" Padding="10" Clicked="OnContentButtonClicked"/>
-                <Button Text=" INHALTE " BackgroundColor="#00cd3e" TextColor="White" Padding="10" />
+                <ImageButton Source="{OnPlatform UWP=ImageSharingContent.png, iOS=ImageSharingContent, Android=ImageSharingContent}"
+                                 WidthRequest="{OnPlatform UWP=200, Android=150, iOS=150}"
+                                 HeightRequest="{OnPlatform UWP=200, Android=150, iOS=150}"
+                                 BackgroundColor="#00cd3e"  
+                                 Clicked="OnContentButtonClicked"/>
+                <Button Text=" INHALTE " 
+                            BackgroundColor="#00cd3e" 
+                            TextColor="White"
+                            FontSize="Small"
+                            Clicked="OnContentButtonClicked"/>
 
             </StackLayout>
 
             <!-- ab: CD color (gray) for this section: #91989c -->
-            <StackLayout Orientation="Vertical" HorizontalOptions="Center" BackgroundColor="#0091f1" Spacing="-10" WidthRequest="{OnPlatform UWP=200, iOS=200, Android=200}">
+            <StackLayout BackgroundColor="#0091f1" Spacing="0" Padding="10">
 
-                <ImageButton Source="{OnPlatform UWP=ImageChecklist.png, iOS=ImageChecklist, Android=ImageChecklist}" BackgroundColor="#0091f1" WidthRequest="{OnPlatform UWP=100, iOS=100, Android=100}" Padding="10" Clicked="OnSessionButtonClicked"/>
-                <Button Text=" SITZUNGEN " BackgroundColor="#0091f1" TextColor="White" Padding="10" />
+                <ImageButton Source="{OnPlatform UWP=ImageChecklist.png, iOS=ImageChecklist, Android=ImageChecklist}" 
+                                 HeightRequest="{OnPlatform UWP=200, Android=150, iOS=150}"
+                                 WidthRequest="{OnPlatform UWP=200, Android=150, iOS=150}"
+                                 BackgroundColor="#0091f1" 
+                                 Clicked="OnSessionButtonClicked"/>
+                <Button Text=" SITZUNGEN " 
+                            BackgroundColor="#0091f1" 
+                            TextColor="White" 
+                            Clicked="OnSessionButtonClicked"/>
 
             </StackLayout>
+        </StackLayout>
 
-            <!--<Label FontSize="16" Padding="30,24,30,0" HorizontalTextAlignment="Center">
+        <!--<Label FontSize="16" Padding="30,24,30,0" HorizontalTextAlignment="Center">
                 <Label.FormattedText>
                     <FormattedString>
                         <FormattedString.Spans>
@@ -64,8 +95,6 @@
                     </FormattedString>
                 </Label.FormattedText>
             </Label>-->
-
-        </StackLayout>
         <!-- Body end -->
 
         <!-- Footer begin -->
@@ -74,7 +103,7 @@
             <StackLayout Orientation="Horizontal">
 
                 <StackLayout Orientation="Horizontal" HorizontalOptions="Start">
-                    
+
                     <!--<Image Source="ImageLogoEXIST" HorizontalOptions="Start" HeightRequest="{OnPlatform UWP=60, iOS=60, Android=60}" ></Image>-->
                     <Image Source="{OnPlatform UWP=ImageLogoEXIST.png, iOS=ImageLogoEXIST, Android=ImageLogoEXIST}" HorizontalOptions="Start" HeightRequest="{OnPlatform UWP=60, iOS=60, Android=60}" ></Image>
 

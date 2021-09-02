@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Autorentool_RMT.Views.CreateOrEditResidentPage"
-             Title="BEWOHNER HINZUFÜGEN"
+             Title="{Binding Title}"
              ControlTemplate="{StaticResource HeaderPageTemplate}">
     <ContentPage.Content>
 
@@ -10,7 +10,7 @@
             <Grid>
 
                 <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2">
-                    <Label Text="Vorname(n):" FontSize="Small" Grid.Row="0" Grid.Column="0"/>
+                    <Label Text="Vorname(n):" FontSize="Small" Grid.Row="0" Grid.Column="0" HeightRequest="10"/>
                     <Entry Placeholder="Vorname(n)" FontSize="Small" Grid.Row="1" Grid.Column="0" Text="{Binding Firstname}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True"/>
                     <Label Text="Nachname:" FontSize="Small" Grid.Row="0" Grid.Column="1"/>
                     <Entry Placeholder="Nachname" FontSize="Small" Grid.Row="1" Grid.Column="1" Text="{Binding Lastname}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True"/>
@@ -28,8 +28,8 @@
 
                 <StackLayout Grid.Row="2" Grid.Column="0"  Grid.RowSpan="2" Grid.ColumnSpan="2">
                     <StackLayout BackgroundColor="Beige" Orientation="Horizontal">
-                        <Label FontAttributes="Bold" TextColor="Gray" Text="Lebensthemen" FontSize="Subtitle" Grid.Row="0" VerticalTextAlignment="Center" HorizontalOptions="StartAndExpand"/>
-                        <Button Text="{StaticResource EditIcon}" BackgroundColor="Orange" Clicked="OnShowLifethemePopupButtonClicked" FontSize="Subtitle"/>
+                        <Label FontAttributes="Bold" TextColor="Gray" Text="Lebensthemen" FontSize="Small" Grid.Row="0" VerticalTextAlignment="Center" HorizontalOptions="StartAndExpand"/>
+                        <Button Text="{StaticResource EditIcon}" BackgroundColor="Orange" WidthRequest="45" HeightRequest="40" Clicked="OnShowLifethemePopupButtonClicked" FontSize="Small"/>
                     </StackLayout>
                     <CollectionView ItemsSource="{Binding ResidentLifethemes}" ItemsLayout="VerticalGrid, 2" HeightRequest="300">
                         <CollectionView.ItemTemplate>
@@ -42,10 +42,10 @@
 
                 <StackLayout Grid.Row="4" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2">
                     <StackLayout BackgroundColor="Beige" Orientation="Horizontal">
-                        <Label FontAttributes="Bold" TextColor="Gray" FontSize="Subtitle" Text="Sitzungen" VerticalTextAlignment="Center" HorizontalOptions="StartAndExpand"/>
-                        <Button Text="{StaticResource PlayIcon}" BackgroundColor="LightGray" FontSize="Subtitle"/>
-                        <Button Text="{StaticResource DeleteIcon}" BackgroundColor="LightGray" FontSize="Subtitle"/>
-                        <Button Text="{StaticResource EditIcon}" BackgroundColor="LightGray" FontSize="Subtitle"/>
+                        <Label FontAttributes="Bold" TextColor="Gray" FontSize="Small" Text="Sitzungen" VerticalTextAlignment="Center" HorizontalOptions="StartAndExpand"/>
+                        <Button Text="{StaticResource PlayIcon}" BackgroundColor="LightGray" WidthRequest="45" HeightRequest="40" FontSize="Small"/>
+                        <Button Text="{StaticResource DeleteIcon}" BackgroundColor="LightGray" WidthRequest="45" HeightRequest="40" FontSize="Small"/>
+                        <Button Text="{StaticResource EditIcon}" BackgroundColor="LightGray" WidthRequest="45" HeightRequest="40" FontSize="Small"/>
                     </StackLayout>
                     <CollectionView ItemsSource="{Binding ResidentSessions}" ItemsLayout="VerticalGrid, 2" HeightRequest="300">
                         <CollectionView.ItemTemplate>
@@ -62,40 +62,44 @@
                                Grid.Column="0" 
                                Margin="0,10,0,10" 
                                FontAttributes="Bold" 
-                               FontSize="Subtitle" 
+                               FontSize="Small" 
                                VerticalTextAlignment="Center" 
                                HorizontalOptions="StartAndExpand" 
                                Text="Profilbild"/>
                         <Button Grid.Column="1" 
-                                Text="{StaticResource DeleteIcon}" 
+                                Text="{StaticResource DeleteIcon}"
+                                WidthRequest="45" 
+                                HeightRequest="40"
                                 BackgroundColor="{Binding DeleteProfilePicButtonColour}" 
                                 IsEnabled="{Binding IsDeleteProfilePicButtonEnabled}" 
                                 Command="{Binding DeleteSelectedImage}" 
-                                FontSize="Subtitle"/>
-                        <Button Grid.Column="2" 
+                                FontSize="Small"/>
+                        <Button Grid.Column="2"
+                                WidthRequest="45" 
+                                HeightRequest="40"
                                 Text="{StaticResource EditIcon}" 
                                 BackgroundColor="Orange" 
                                 Command="{Binding ShowFilePicker}" 
-                                FontSize="Subtitle"/>
+                                FontSize="Small"/>
                     </StackLayout>
                     <Image Grid.ColumnSpan="2" 
                            Grid.Row="1" 
                            Aspect="AspectFit" 
                            BackgroundColor="White"  
                            Source="{Binding SelectedImage}" 
-                           HeightRequest="200" 
+                           HeightRequest="150" 
                            WidthRequest="100"/>
                 </StackLayout>
 
-                <Editor Placeholder="Notizen.." Grid.Row="3" Grid.RowSpan="2" Grid.Column="2" Grid.ColumnSpan="2"  Text="{Binding Notes}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True" FontSize="Subtitle"/>
+                <Editor Placeholder="Notizen.." Grid.Row="3" Grid.RowSpan="2" Grid.Column="2" Grid.ColumnSpan="2"  Text="{Binding Notes}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True" FontSize="Small"/>
 
                 <StackLayout Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal">
                     <Button Text="&#x1F5D1; Bewohner löschen" 
                             IsVisible="{Binding IsDeleteResidentButtonVisible}"
                             FontAttributes="Bold" 
-                            FontSize="Subtitle"
-                            WidthRequest="300"
+                            FontSize="Small"
                             BackgroundColor="Orange"
+                            HorizontalOptions="StartAndExpand"
                             Clicked="OnDeleteResidentButtonClicked"/>
                     <Button Text="{StaticResource CompletedText}" 
                             Clicked="OnCompleteButtonClicked" 
@@ -103,8 +107,8 @@
                             IsEnabled="{Binding IsCompleteButtonEnabled}"
                             BackgroundColor="{Binding CompleteButtonColour}"
                             HorizontalOptions="EndAndExpand"
-                            WidthRequest="300"
-                            FontSize="Subtitle" 
+                            WidthRequest="200"
+                            FontSize="Small" 
                             />
                 </StackLayout>
             </Grid>

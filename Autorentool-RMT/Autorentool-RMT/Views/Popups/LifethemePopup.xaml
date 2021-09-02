@@ -4,45 +4,45 @@
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              xmlns:local="clr-namespace:Autorentool_RMT.Views.Popups"
              x:Class="Autorentool_RMT.Views.Popups.LifethemePopup"
-             Size="600, 600" 
+             Size="600, 500" 
              IsLightDismissEnabled="True"
              x:TypeArguments="local:LifethemePopup+Result">
 
-            <Grid BackgroundColor="White">
-                <Label Text="Lebensthemen auswählen oder neu erstellen" 
+    <Grid BackgroundColor="White">
+        <Label Text="Lebensthemen auswählen oder neu erstellen" 
                        HorizontalOptions="CenterAndExpand"
                        FontSize="Medium" 
                        Grid.Row="0"
                        Grid.Column="0"
                        Grid.ColumnSpan="2"/>
-                <Frame HasShadow="True" 
+        <Frame HasShadow="True" 
                         BorderColor="Black" 
                         Grid.Row="1" 
                         Grid.Column="0"
                         Grid.ColumnSpan="2"
                         Grid.RowSpan="3">
-                    <ScrollView Grid.ColumnSpan="2" Grid.RowSpan="3">
-                        <CollectionView ItemsSource="{Binding AllExistingLifethemes}" 
+            <ScrollView Grid.ColumnSpan="2" Grid.RowSpan="3" VerticalOptions="FillAndExpand">
+                <CollectionView ItemsSource="{Binding AllExistingLifethemes}" 
                                         ItemsLayout="VerticalGrid, 3" 
                                         SelectionMode="Single"
                                         SelectionChanged="OnDeleteLifetheme">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
 
-                                    <StackLayout Orientation="Horizontal" Spacing="0" Padding="2">
-                                        <CheckBox IsChecked="{Binding Checked}"/>
-                                        <Label Text="{Binding Name}" 
+                            <StackLayout Orientation="Horizontal" Spacing="0" Padding="2">
+                                <CheckBox IsChecked="{Binding Checked}"/>
+                                <Label Text="{Binding Name}" 
                                                FontSize="Small" 
                                                HorizontalOptions="CenterAndExpand" 
                                                VerticalOptions="CenterAndExpand"
                                                LineBreakMode="MiddleTruncation"/>
-                                    </StackLayout>
+                            </StackLayout>
 
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </ScrollView>
-                </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </ScrollView>
+        </Frame>
         <SearchBar Placeholder="Lebensthemen durchsuchen" Text="{Binding SearchText}" SearchButtonPressed="OnSearchButtonPressed" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"/>
         <StackLayout Orientation="Horizontal" 
                              Spacing="0" 
@@ -50,20 +50,20 @@
                              Grid.Row="5" 
                              Grid.Column="0"
                              Grid.ColumnSpan="2">
-                    <Entry Placeholder="Neues Lebensthema hier eingeben" 
+            <Entry Placeholder="Neues Lebensthema hier eingeben" 
                            Text="{Binding LifethemeEntryText}"
                            WidthRequest="300" 
                            HeightRequest="50"
                            IsSpellCheckEnabled="True"
                            IsTextPredictionEnabled="True"/>
-                    <Button BackgroundColor="LightGray" Text="&#43; NEU ERSTELLEN" Clicked="OnCreateLifethemeButtonClicked"/>
-                </StackLayout>
-                <Button Text="Auswahl übernehmen und Fenster schließen" 
+            <Button BackgroundColor="LightGray" Text="&#43; NEU ERSTELLEN" Clicked="OnCreateLifethemeButtonClicked"/>
+        </StackLayout>
+        <Button Text="Auswahl übernehmen und Fenster schließen" 
                         BackgroundColor="#0091EA" 
                         Clicked="OnAcceptButtonClicked" 
                         TextColor="White" 
                         Grid.Row="6" 
                         Grid.Column="1"/>
-            </Grid>
+    </Grid>
 
 </xct:Popup>
