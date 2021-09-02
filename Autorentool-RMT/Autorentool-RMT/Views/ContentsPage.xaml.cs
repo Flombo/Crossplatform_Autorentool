@@ -46,6 +46,7 @@ namespace Autorentool_RMT.Views
         }
         #endregion
 
+        #region OnFullscreenButtonClicked
         private async void OnFullscreenButtonClicked(object sender, EventArgs e)
         {
             MediaItem selectedMediaItem = contentViewModel.SelectedMediaItem;
@@ -53,10 +54,35 @@ namespace Autorentool_RMT.Views
 
             await Navigation.ShowPopupAsync(mediaItemFullscreenPopup);
         }
+        #endregion
 
+        #region OnCompleteButtonClicked
         private async void OnCompleteButtonClicked(object sender, EventArgs e)
         {
             await Navigation.PopAsync();
         }
+        #endregion
+
+        #region OnDeleteSelectedMediaItmeButtonClicked
+        /// <summary>
+        /// Deletes selected mediaitem.
+        /// If an error occurs, an error message will be prompted.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void OnDeleteSelectedMediaItemButtonClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                await contentViewModel.OnDeleteMediaItem();
+            } catch(Exception)
+            {
+                string selectedMediaItemName = contentViewModel.SelectedMediaItem.Name;
+
+                await DisplayAlert("Fehler beim Löschen des Mediums: " + selectedMediaItemName, "Ein Fehler trat auf beim Löschen des Mediums " + selectedMediaItemName, "Schließen");
+            }
+        }
+        #endregion
+
     }
 }

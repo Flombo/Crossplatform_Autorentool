@@ -25,6 +25,8 @@ namespace Autorentool_RMT.ViewModels
         private bool isMediaItemImageVisible;
         private bool isMediaItemMediaElementVisible;
         private bool isFullscreenButtonVisible;
+        private bool isDeleteSelectedMediaItemButtonEnabled;
+        private string deleteSelectedMediaItemButtonBackgroundColour;
         public ICommand ImportMediaItems { get; }
 
         #region Constructor
@@ -38,8 +40,47 @@ namespace Autorentool_RMT.ViewModels
             isMediaItemImageVisible = true;
             isMediaItemMediaElementVisible = false;
             isFullscreenButtonVisible = false;
+            isDeleteSelectedMediaItemButtonEnabled = false;
+            deleteSelectedMediaItemButtonBackgroundColour = "LightGray";
             selectedMediaItem = null;
             currentMediaItemLifethemes = new List<Lifetheme>();
+        }
+        #endregion
+
+        #region IsDeleteSelectedMediaItemButtonEnabled
+        public bool IsDeleteSelectedMediaItemButtonEnabled
+        {
+            get => isDeleteSelectedMediaItemButtonEnabled;
+            set
+            {
+                isDeleteSelectedMediaItemButtonEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region SetDeleteSelectedMediaItemBackgroundColour
+        /// <summary>
+        /// Sets the colour depending if the button is enabled or not.
+        /// </summary>
+        private void SetDeleteSelectedMediaItemBackgroundColour()
+        {
+            DeleteSelectedMediaItemButtonBackgroundColour = IsDeleteSelectedMediaItemButtonEnabled ? "Green" : "LightGray";
+        }
+        #endregion
+
+        #region DeleteSelectedMediaItemButtonBackgroundColour
+        /// <summary>
+        /// Setter and getter for the delete-selected-mediaitem-button.
+        /// </summary>
+        public string DeleteSelectedMediaItemButtonBackgroundColour
+        {
+            get => deleteSelectedMediaItemButtonBackgroundColour;
+            set
+            {
+                deleteSelectedMediaItemButtonBackgroundColour = value;
+                OnPropertyChanged();
+            }
         }
         #endregion
 
@@ -66,7 +107,6 @@ namespace Autorentool_RMT.ViewModels
             set
             {
                 isMediaItemImageVisible = value;
-                IsFullscreenButtonVisible = isMediaItemImageVisible;
                 OnPropertyChanged();
             }
         }
@@ -79,7 +119,6 @@ namespace Autorentool_RMT.ViewModels
             set
             {
                 isMediaItemMediaElementVisible = value;
-                IsFullscreenButtonVisible = !isMediaItemMediaElementVisible;
                 OnPropertyChanged();
             }
         }
@@ -116,16 +155,35 @@ namespace Autorentool_RMT.ViewModels
             set
             {
                 selectedMediaItem = value;
-                Notes = selectedMediaItem.Notes;
-                CheckFiletype();
-                LoadLifethemesOfSelectedMediaItem();
+
+                if (value != null)
+                {
+                    Notes = selectedMediaItem.Notes;
+                    IsDeleteSelectedMediaItemButtonEnabled = true;
+                    SetMediaPreviewProperties();
+                    LoadLifethemesOfSelectedMediaItem();
+                } else
+                {
+                    Notes = "";
+                    ResetMediaPreviewProperties();
+                    IsDeleteSelectedMediaItemButtonEnabled = false;
+                    CurrentMediaItemLifethemes = new List<Lifetheme>();
+                }
+
+                SetDeleteSelectedMediaItemBackgroundColour();
+
                 OnPropertyChanged();
             }
         }
         #endregion
 
-        #region CheckFiletype
-        public void CheckFiletype()
+        #region SetMediaPreviewProperties
+        /// <summary>
+        /// Sets the media preview properties 
+        /// (IsMediaItemImageVisible, IsMediaItemMediaElementVisible, SelectedMediumMediaELementPath and SelectedMediumImagePath) depending if the selected medium is an image or not.
+        /// This is necessary, because the MediaElement doesn't support images.
+        /// </summary>
+        public void SetMediaPreviewProperties()
         {
             if(selectedMediaItem.FileType.Equals("mp3") || selectedMediaItem.FileType.Equals("mp4"))
             {
@@ -133,18 +191,24 @@ namespace Autorentool_RMT.ViewModels
                 IsMediaItemMediaElementVisible = true;
                 SelectedMediumMediaElementPath = selectedMediaItem.GetFullPath;
                 SelectedMediumImagePath = "preview.png";
+                IsFullscreenButtonVisible = false;
             }
             else
             {
                 IsMediaItemImageVisible = true;
                 IsMediaItemMediaElementVisible = false;
-                SelectedMediumMediaElementPath = "https://www.youtube.com/watch?v=2DVpys50LVE";
+                SelectedMediumMediaElementPath = "https://www.youtube.com/watch?v=pr03CYqhFr4&list=PLM75ZaNQS_FaEPpqVjfQdnFaSR1EWCeNZ";
                 SelectedMediumImagePath = selectedMediaItem.GetFullPath;
+                IsFullscreenButtonVisible = true;
             }
         }
         #endregion
 
         #region Notes
+        /// <summary>
+        /// Setter and Getter for the notes-property.
+        /// If a MediaItem is selected the change of the notes property will be persisted.
+        /// </summary>
         public string Notes
         {
             get => notes;
@@ -226,10 +290,11 @@ namespace Autorentool_RMT.ViewModels
         #endregion
 
         #region OnNotesChanged
-        public async void OnNotesChanged()
+        private async void OnNotesChanged()
         {
             try
             {
+
                 await MediaItemDBHandler.UpdateMediaItem(
                     selectedMediaItem.Id,
                     selectedMediaItem.Name,
@@ -239,9 +304,44 @@ namespace Autorentool_RMT.ViewModels
                     selectedMediaItem.DisplayName,
                     selectedMediaItem.BackendMediaItemId
                     );
+
             } catch(Exception)
             {
 
+            }
+        }
+        #endregion
+
+        #region ResetMediaPreviewProperties
+        private void ResetMediaPreviewProperties()
+        {
+            SelectedMediumImagePath = "preview.png";
+            SelectedMediumMediaElementPath = "https://www.youtube.com/watch?v=pr03CYqhFr4&list=PLM75ZaNQS_FaEPpqVjfQdnFaSR1EWCeNZ";
+            IsFullscreenButtonVisible = false;
+            IsMediaItemImageVisible = true;
+            IsMediaItemMediaElementVisible = false;
+        }
+        #endregion
+
+        #region OnDeleteMediaItem
+        /// <summary>
+        /// Deletes the selected mediaitem and reloads all existing mediaitems for the ui.
+        /// If an exception was thrown, it will be re-thrown to the code-behind.
+        /// </summary>
+        /// <returns></returns>
+        public async Task OnDeleteMediaItem()
+        {
+            if(selectedMediaItem != null)
+            {
+                try
+                {
+                    await MediaItemDBHandler.DeleteMediaItem(selectedMediaItem.Id);
+                    SelectedMediaItem = null;
+                    MediaItems = await MediaItemDBHandler.GetAllMediaItems();
+                } catch(Exception exc)
+                {
+                    throw exc;
+                }
             }
         }
         #endregion

@@ -163,11 +163,14 @@
                 </StackLayout>
                 
                 <!--Buttons section-->
-                <Button Text="&#x1F5D1; Löschen" 
+                <Button Text="&#x1F5D1; Löschen"
+                        Clicked="OnDeleteSelectedMediaItemButtonClicked"
+                        IsEnabled="{Binding IsDeleteSelectedMediaItemButtonEnabled}"
                         FontAttributes="Bold" 
                         FontSize="Subtitle" 
                         Grid.Row="8"  
-                        BackgroundColor="LightGray" 
+                        BackgroundColor="{Binding DeleteSelectedMediaItemButtonBackgroundColour}"
+                        TextColor="White"
                         Grid.Column="2" 
                         Grid.RowSpan="2"/>
                 <Button 
