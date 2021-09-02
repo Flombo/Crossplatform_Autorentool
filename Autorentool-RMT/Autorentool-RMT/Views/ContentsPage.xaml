@@ -83,15 +83,33 @@
                 </StackLayout>
 
                 <!--Preview if MediaItem is an image or no MediaItem was selected-->
-                <StackLayout BackgroundColor="Black" Grid.Row="1" Grid.Column="1" Grid.RowSpan="7">
+                <Grid BackgroundColor="Black" Grid.Row="1" Grid.Column="1" Grid.RowSpan="7">
+                    <StackLayout BackgroundColor="Beige" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
+                        <Label Text="Vorschau" 
+                               FontAttributes="Bold" 
+                               FontSize="Subtitle" 
+                               TextColor="Gray" 
+                               HorizontalOptions="CenterAndExpand" 
+                               VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
                     <Image IsVisible="{Binding IsMediaItemImageVisible}" 
                            Source="{Binding SelectedMediumImagePath}" 
                            VerticalOptions="CenterAndExpand" 
                            HorizontalOptions="CenterAndExpand" 
-                           BackgroundColor="White" 
-                           WidthRequest="400"
-                           HeightRequest="340"/>
-                </StackLayout>
+                           BackgroundColor="White"
+                           Grid.Row="1"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="3"
+                           Grid.RowSpan="7"/>
+                    <Button Text="🔍" 
+                            FontSize="Small" 
+                            Grid.Row="8" 
+                            Grid.Column="2"
+                            IsVisible="{Binding IsFullscreenButtonVisible}"
+                            Clicked="OnFullscreenButtonClicked"
+                            HorizontalOptions="EndAndExpand" 
+                            VerticalOptions="EndAndExpand"/>
+                </Grid>
                 
                 <!--MediaElement for playing Audio and Video-->
                 <xct:MediaElement

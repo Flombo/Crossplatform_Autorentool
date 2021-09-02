@@ -24,6 +24,7 @@ namespace Autorentool_RMT.ViewModels
         private string notes;
         private bool isMediaItemImageVisible;
         private bool isMediaItemMediaElementVisible;
+        private bool isFullscreenButtonVisible;
         public ICommand ImportMediaItems { get; }
 
         #region Constructor
@@ -36,8 +37,25 @@ namespace Autorentool_RMT.ViewModels
             selectedMediumMediaElementPath = "https://www.youtube.com/watch?v=2DVpys50LVE";
             isMediaItemImageVisible = true;
             isMediaItemMediaElementVisible = false;
+            isFullscreenButtonVisible = false;
             selectedMediaItem = null;
             currentMediaItemLifethemes = new List<Lifetheme>();
+        }
+        #endregion
+
+        #region IsFullscreenButtonVisible
+        /// <summary>
+        /// Getter and setter for the isFullscreenButtonVisible-property.
+        /// IsFullscreenButtonVisible is used to decide, wether the fullscreen button should be visible or not.
+        /// </summary>
+        public bool IsFullscreenButtonVisible
+        {
+            get => isFullscreenButtonVisible;
+            set
+            {
+                isFullscreenButtonVisible = value;
+                OnPropertyChanged();
+            }
         }
         #endregion
 
@@ -48,6 +66,7 @@ namespace Autorentool_RMT.ViewModels
             set
             {
                 isMediaItemImageVisible = value;
+                IsFullscreenButtonVisible = isMediaItemImageVisible;
                 OnPropertyChanged();
             }
         }
@@ -60,6 +79,7 @@ namespace Autorentool_RMT.ViewModels
             set
             {
                 isMediaItemMediaElementVisible = value;
+                IsFullscreenButtonVisible = !isMediaItemMediaElementVisible;
                 OnPropertyChanged();
             }
         }

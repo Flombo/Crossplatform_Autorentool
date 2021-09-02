@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+           xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+           x:Class="Autorentool_RMT.Views.Popups.MediaItemFullscreenPopup"
+           Size="1000, 750" 
+           IsLightDismissEnabled="True"
+           BackgroundColor="White">
+
+    <StackLayout BackgroundColor="White" 
+          WidthRequest="975"
+          HeightRequest="725"
+          VerticalOptions="CenterAndExpand" 
+          HorizontalOptions="CenterAndExpand">
+        <Image Source="{Binding SelectedMediaItemPath}"  HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
+        <Button Text="Schließen" Clicked="OnCloseButtonClicked" HorizontalOptions="EndAndExpand"/>
+    </StackLayout>
+
+</xct:Popup>

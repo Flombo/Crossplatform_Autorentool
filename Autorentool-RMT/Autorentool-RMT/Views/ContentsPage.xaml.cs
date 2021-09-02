@@ -1,6 +1,8 @@
 ﻿using Autorentool_RMT.Models;
 using Autorentool_RMT.ViewModels;
+using Autorentool_RMT.Views.Popups;
 using System;
+using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -43,5 +45,13 @@ namespace Autorentool_RMT.Views
             contentViewModel.SelectedMediaItem = selectedMediaItem;
         }
         #endregion
+
+        private async void OnFullscreenButtonClicked(object sender, EventArgs e)
+        {
+            MediaItem selectedMediaItem = contentViewModel.SelectedMediaItem;
+            MediaItemFullscreenPopup mediaItemFullscreenPopup = new MediaItemFullscreenPopup(selectedMediaItem);
+
+            await Navigation.ShowPopupAsync(mediaItemFullscreenPopup);
+        }
     }
 }
