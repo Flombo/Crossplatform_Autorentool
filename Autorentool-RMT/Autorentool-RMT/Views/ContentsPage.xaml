@@ -32,7 +32,7 @@
                     <StackLayout BackgroundColor="Beige" Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
                         <Button Text="{StaticResource DeleteIcon}" BackgroundColor="Green" Padding="5" FontSize="Subtitle" FontAttributes="Bold"/>
                         <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand">
-                            <Button Text="{StaticResource ImportFromBackendIcon}" Padding="5" HeightRequest="35" WidthRequest="45"  BackgroundColor="Green" FontSize="Subtitle" FontAttributes="Bold"/>
+                            <Button Text="{StaticResource ImportFromBackendIcon}" IsEnabled="False" Padding="5" HeightRequest="35" WidthRequest="45"  BackgroundColor="Green" FontSize="Subtitle" FontAttributes="Bold"/>
                             <Button Text="{StaticResource ExportIcon}" HeightRequest="35" TextColor="White" Padding="5" WidthRequest="45" BackgroundColor="Green" FontSize="Subtitle" FontAttributes="Bold"/>
                             <Button Text="{StaticResource ImportIcon}" Command="{Binding ImportMediaItems}" HeightRequest="35" TextColor="White" Padding="5" WidthRequest="45" BackgroundColor="Green" FontSize="Subtitle" FontAttributes="Bold"/>
                         </StackLayout>
@@ -121,7 +121,7 @@
                     Aspect="AspectFit" 
                     />
                 <!--Notes section-->
-                <Editor Grid.Row="8" Grid.Column="1" Grid.RowSpan="5" Placeholder="Notizen..." Text="{Binding Notes}"/>
+                <Editor Grid.Row="8" Grid.Column="1" Grid.RowSpan="5" Placeholder="Notizen..." Text="{Binding Notes}" BackgroundColor="LightGray" FontSize="Subtitle"/>
 
                 <!--Lifethemes section-->
                 <StackLayout Grid.Row="1" Grid.Column="2" Grid.RowSpan="7">
@@ -163,7 +163,13 @@
                 </StackLayout>
                 
                 <!--Buttons section-->
-                <Button Text="&#x1F5D1; Löschen" FontAttributes="Bold" FontSize="Subtitle" Grid.Row="8"  BackgroundColor="LightGray" Grid.Column="2" Grid.RowSpan="2"/>
+                <Button Text="&#x1F5D1; Löschen" 
+                        FontAttributes="Bold" 
+                        FontSize="Subtitle" 
+                        Grid.Row="8"  
+                        BackgroundColor="LightGray" 
+                        Grid.Column="2" 
+                        Grid.RowSpan="2"/>
                 <Button 
                     Text="{StaticResource CompletedText}" 
                     FontAttributes="Bold" 
@@ -171,7 +177,8 @@
                     TextColor="White" 
                     Grid.Row="11" 
                     Grid.Column="2" 
-                    BackgroundColor="Green" 
+                    BackgroundColor="Green"
+                    Clicked="OnCompleteButtonClicked"
                     Grid.RowSpan="2"/>
             </Grid>
         </StackLayout>

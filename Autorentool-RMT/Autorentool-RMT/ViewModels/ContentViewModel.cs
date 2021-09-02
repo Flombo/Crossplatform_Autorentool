@@ -151,6 +151,13 @@ namespace Autorentool_RMT.ViewModels
             set
             {
                 notes = value;
+
+                if(selectedMediaItem != null)
+                {
+                    selectedMediaItem.Notes = notes;
+                    OnNotesChanged();
+                }
+
                 OnPropertyChanged();
             }
         }
@@ -214,6 +221,27 @@ namespace Autorentool_RMT.ViewModels
             }
             catch (Exception)
             {
+            }
+        }
+        #endregion
+
+        #region OnNotesChanged
+        public async void OnNotesChanged()
+        {
+            try
+            {
+                await MediaItemDBHandler.UpdateMediaItem(
+                    selectedMediaItem.Id,
+                    selectedMediaItem.Name,
+                    selectedMediaItem.GetFullPath,
+                    selectedMediaItem.FileType,
+                    selectedMediaItem.Notes,
+                    selectedMediaItem.DisplayName,
+                    selectedMediaItem.BackendMediaItemId
+                    );
+            } catch(Exception)
+            {
+
             }
         }
         #endregion

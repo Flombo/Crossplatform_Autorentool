@@ -53,5 +53,10 @@ namespace Autorentool_RMT.Views
 
             await Navigation.ShowPopupAsync(mediaItemFullscreenPopup);
         }
+
+        private async void OnCompleteButtonClicked(object sender, EventArgs e)
+        {
+            await Navigation.PopAsync();
+        }
     }
 }

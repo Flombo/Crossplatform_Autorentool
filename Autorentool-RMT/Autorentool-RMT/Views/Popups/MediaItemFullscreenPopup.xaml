@@ -12,7 +12,7 @@
           HeightRequest="725"
           VerticalOptions="CenterAndExpand" 
           HorizontalOptions="CenterAndExpand">
-        <Image Source="{Binding SelectedMediaItemPath}"  HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Aspect="AspectFit"/>
+        <Image Source="{Binding SelectedMediaItemPath}"  HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Aspect="AspectFit" WidthRequest="975" HeightRequest="675"/>
         <Button Text="Schließen" Clicked="OnCloseButtonClicked" HorizontalOptions="EndAndExpand"/>
     </StackLayout>
 
