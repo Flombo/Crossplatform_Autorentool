@@ -142,13 +142,13 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         #endregion
 
         #region GetCertainMediaItemLifethemesEntry
-    /// <summary>
-    /// Returns a certain MediaLifethemes-entry where the MediaItemId- and LifethemeId-properties equals the given parameters.
-    /// </summary>
-    /// <param name="mediaItemId"></param>
-    /// <param name="lifethemeId"></param>
-    /// <returns></returns>
-    public static async Task<MediaItemLifethemes> GetCertainMediaItemLifethemesEntry(int mediaItemId, int lifethemeId)
+        /// <summary>
+        /// Returns a certain MediaLifethemes-entry where the MediaItemId- and LifethemeId-properties equals the given parameters.
+        /// </summary>
+        /// <param name="mediaItemId"></param>
+        /// <param name="lifethemeId"></param>
+        /// <returns></returns>
+        public static async Task<MediaItemLifethemes> GetCertainMediaItemLifethemesEntry(int mediaItemId, int lifethemeId)
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 

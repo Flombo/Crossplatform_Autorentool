@@ -10,17 +10,17 @@
 
                 <!--Searchbar with filter options section-->
                 <StackLayout Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal">
-                    <SearchBar Placeholder="Suche..." WidthRequest="250" HeightRequest="50" Margin="0, 0, 10, 0"/>
+                    <SearchBar Placeholder="Suche..." WidthRequest="250" HeightRequest="50" Margin="0, 0, 10, 0" Text="{Binding SearchText}" SearchCommand="{Binding Search}"/>
                     <StackLayout Orientation="Horizontal">
-                        <CheckBox IsChecked="True"/>
+                        <CheckBox IsChecked="{Binding IsPhotosFilterChecked}"/>
                         <Label VerticalTextAlignment="Center" Text="Fotos" FontSize="Small" FontAttributes="Bold"/>
-                        <CheckBox IsChecked="True"/>
+                        <CheckBox IsChecked="{Binding IsFilmsFilterChecked}"/>
                         <Label VerticalTextAlignment="Center" Text="Filme" FontSize="Small" FontAttributes="Bold"/>
-                        <CheckBox IsChecked="True"/>
+                        <CheckBox IsChecked="{Binding IsMusicFilterChecked}"/>
                         <Label VerticalTextAlignment="Center" Text="Musik" FontSize="Small" FontAttributes="Bold"/>
-                        <CheckBox IsChecked="True"/>
+                        <CheckBox IsChecked="{Binding IsDocumentsFilterChecked}"/>
                         <Label VerticalTextAlignment="Center" Text="Dokumente" FontSize="Small" FontAttributes="Bold"/>
-                        <CheckBox IsChecked="True"/>
+                        <CheckBox IsChecked="{Binding IsLinksFilterChecked}"/>
                         <Label VerticalTextAlignment="Center" Text="Links" FontSize="Small" FontAttributes="Bold"/>
                     </StackLayout>
                 </StackLayout>

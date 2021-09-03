@@ -175,5 +175,81 @@ namespace Autorentool_RMT.Services.DBHandling
         }
         #endregion
 
+        #region SearchMediaItems
+        /// <summary>
+        /// Searches MediaItems that contains the searchText.
+        /// First of all filters all MediaItems depending on the given filters.
+        /// Returns all MediaItems that are matching the filters and the search string.
+        /// </summary>
+        /// <param name="searchText"></param>
+        /// <param name="photoFilter"></param>
+        /// <param name="musicFilter"></param>
+        /// <param name="documentFilter"></param>
+        /// <param name="filmFilter"></param>
+        /// <param name="linkFilter"></param>
+        /// <returns></returns>
+        public static async Task<List<MediaItem>> SearchMediaItems(string searchText, bool photoFilter, bool musicFilter, bool documentFilter, bool filmFilter, bool linkFilter)
+        {
+            List<MediaItem> filteredMediaItems = await FilterMediaItems(photoFilter, musicFilter, documentFilter, filmFilter, linkFilter);
+
+            List<MediaItem> foundMediaItems = filteredMediaItems.FindAll(filteredMediaItem => filteredMediaItem.Name.Contains(searchText));
+            
+            return foundMediaItems;
+        }
+        #endregion
+
+        #region FilterMediaItems
+        /// <summary>
+        /// Filters MediaItems depending on the given filters.
+        /// </summary>
+        /// <param name="photoFilter"></param>
+        /// <param name="musicFilter"></param>
+        /// <param name="documentFilter"></param>
+        /// <param name="filmFilter"></param>
+        /// <param name="linkFilter"></param>
+        /// <returns></returns>
+        public static async Task<List<MediaItem>> FilterMediaItems(bool photoFilter, bool musicFilter, bool documentFilter, bool filmFilter, bool linkFilter)
+        {
+            SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
+
+            List<MediaItem> filteredMediaItems = new List<MediaItem>();
+
+            if (photoFilter)
+            {
+                List<MediaItem> imageMediaItems = await sQLiteAsyncConnection.Table<MediaItem>().Where(
+                        mediaItem => 
+                        mediaItem.FileType.Equals("jpeg") 
+                        || mediaItem.FileType.Equals("jpg") 
+                        || mediaItem.FileType.Equals("png")
+                    )
+                    .ToListAsync();
+
+                filteredMediaItems.AddRange(imageMediaItems);
+            }
+
+            if(musicFilter)
+            {
+                filteredMediaItems.AddRange(await sQLiteAsyncConnection.Table<MediaItem>().Where(mediaItem => mediaItem.FileType.Equals("mp3")).ToListAsync());
+            }
+
+            if(documentFilter)
+            {
+                filteredMediaItems.AddRange(await sQLiteAsyncConnection.Table<MediaItem>().Where(mediaItem => mediaItem.FileType.Equals("txt")).ToListAsync());
+            }
+
+            if(filmFilter)
+            {
+                filteredMediaItems.AddRange(await sQLiteAsyncConnection.Table<MediaItem>().Where(mediaItem => mediaItem.FileType.Equals("mp4")).ToListAsync());
+            }
+
+            if(linkFilter)
+            {
+                filteredMediaItems.AddRange(await sQLiteAsyncConnection.Table<MediaItem>().Where(mediaItem => mediaItem.FileType.Equals("html")).ToListAsync());
+            }
+
+            return filteredMediaItems;
+        }
+        #endregion
+
     }
 }
