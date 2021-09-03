@@ -9,9 +9,9 @@ namespace Autorentool_RMT.Views.Popups
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MediaItemFullscreenPopup : Popup
     {
-        public MediaItemFullscreenPopup(MediaItem selectedMediaItem)
+        public MediaItemFullscreenPopup(MediaItem selectedMediaItem, double height, double width)
         {
-            BindingContext = new MediaItemFullscreenPopupViewModel(selectedMediaItem.GetFullPath);
+            BindingContext = new MediaItemFullscreenPopupViewModel(selectedMediaItem.GetFullPath, height, width);
             InitializeComponent();
         }
 

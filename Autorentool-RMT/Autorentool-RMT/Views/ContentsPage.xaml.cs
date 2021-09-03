@@ -50,7 +50,7 @@ namespace Autorentool_RMT.Views
         private async void OnFullscreenButtonClicked(object sender, EventArgs e)
         {
             MediaItem selectedMediaItem = contentViewModel.SelectedMediaItem;
-            MediaItemFullscreenPopup mediaItemFullscreenPopup = new MediaItemFullscreenPopup(selectedMediaItem);
+            MediaItemFullscreenPopup mediaItemFullscreenPopup = new MediaItemFullscreenPopup(selectedMediaItem, Height, Width);
 
             await Navigation.ShowPopupAsync(mediaItemFullscreenPopup);
         }

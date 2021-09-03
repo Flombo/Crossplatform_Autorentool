@@ -151,7 +151,7 @@
                 <xct:MediaElement IsVisible="{Binding IsMediaItemMediaElementVisible}" 
                                   AutoPlay="false" 
                                   ShowsPlaybackControls="True" 
-                                  Source="{Binding SelectedMediumMediaElementPath}" 
+                                  Source="{Binding SelectedMediumMediaElementPath}"
                                   BackgroundColor="Black" 
                                   Grid.Row="1" 
                                   Grid.Column="1" 

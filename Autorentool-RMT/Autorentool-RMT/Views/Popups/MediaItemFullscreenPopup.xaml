@@ -3,22 +3,21 @@
            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
            xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
            x:Class="Autorentool_RMT.Views.Popups.MediaItemFullscreenPopup"
-           HeightRequest="{OnPlatform UWP=750, Android=400, iOS=400}"
-           WidthRequest="{OnPlatform UWP=1000, Android=600, iOS=600}"
+           Size="{Binding Size}"
            IsLightDismissEnabled="True"
            BackgroundColor="White">
 
     <StackLayout BackgroundColor="White" 
-          WidthRequest="{OnPlatform UWP=1000, Android=600, iOS=600}"
-          HeightRequest="{OnPlatform UWP=725, Android=375, iOS=375}"
+          WidthRequest="{Binding PopupWidth}"
+          HeightRequest="{Binding PopupHeight}"
           VerticalOptions="CenterAndExpand" 
           HorizontalOptions="CenterAndExpand">
         <Image Source="{Binding SelectedMediaItemPath}"  
                HorizontalOptions="CenterAndExpand" 
                VerticalOptions="CenterAndExpand" 
                Aspect="AspectFit"
-               WidthRequest="{OnPlatform UWP=975, Android=575, iOS=575}"
-               HeightRequest="{OnPlatform UWP=675, Android=325, iOS=325}"/>
+               WidthRequest="{Binding ImageWidth}"
+               HeightRequest="{Binding ImageHeight}"/>
         <Button Text="Schließen" Clicked="OnCloseButtonClicked" HorizontalOptions="EndAndExpand"/>
     </StackLayout>
 
