@@ -149,24 +149,17 @@ namespace Autorentool_RMT.Models
         {
             get
             {
-                if (File.Exists(Path))
-                {
                     switch (FileType)
                     {
                         case "mp3":
-                            return "ImageOld.png";
+                            return "MusikIcon.png";
                         case "mp4":
-                            return "ImageOld.png";
+                            return "FilmIcon.png";
                         default:
                             return Path;
                     }
-                }
-                else
-                {
-                    return "ImageOld.png";
-                }
-
             }
+
         }
         #endregion
 

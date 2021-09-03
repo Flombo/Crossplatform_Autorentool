@@ -85,7 +85,7 @@
                                             Aspect="AspectFit"
                                             HeightRequest="120"
                                             WidthRequest="120"
-                                            BackgroundColor="White" 
+                                            BackgroundColor="White"
                                             Grid.Column="0"
                                             Grid.Row="0"
                                             Grid.RowSpan="2"/>
@@ -98,7 +98,8 @@
                                                 Text="{Binding Name}"
                                                 TextColor="White"
                                                 FontAttributes="Bold"
-                                                LineBreakMode="WordWrap"
+                                                LineBreakMode="CharacterWrap"
+                                                FontSize="Micro"
                                                 HorizontalOptions="CenterAndExpand"
                                                 VerticalOptions="CenterAndExpand"/>
                                         </StackLayout>

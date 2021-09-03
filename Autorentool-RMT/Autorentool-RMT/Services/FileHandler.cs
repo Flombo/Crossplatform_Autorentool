@@ -39,9 +39,9 @@ namespace Autorentool_RMT.Services
                 int pointIndex = filePath.LastIndexOf(".");
 
                 string filePathWithoutFiletype = filePath.Substring(0, pointIndex) + filenameIncrement;
-                string filetype = filePath.Substring(pointIndex, 4);
+                string filetype = ExtractFiletypeFromPath(filePath);
 
-                filePath = filePathWithoutFiletype + filetype;
+                filePath = filePathWithoutFiletype + "." + filetype;
                 filenameIncrement++;
             }
 
@@ -77,6 +77,22 @@ namespace Autorentool_RMT.Services
             }
         }
         #endregion
+
+        #region ExtractFiletypeFromPath
+        /// <summary>
+        /// Extracts the filetype from mimetype starting from the last slash.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static string ExtractFiletypeFromPath(string path)
+        {
+            int filetypeIndex = path.LastIndexOf(".");
+            int length = path.Length - filetypeIndex;
+            string filetype = path.Substring(filetypeIndex + 1, length - 1);
+            return filetype;
+        }
+        #endregion
+
     }
 
 }

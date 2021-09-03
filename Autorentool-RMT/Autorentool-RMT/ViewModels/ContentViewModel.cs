@@ -294,28 +294,20 @@ namespace Autorentool_RMT.ViewModels
                 {
                     foreach (FileResult fileResult in results)
                     {
-                        if (fileResult.FileName.EndsWith("jpg", StringComparison.OrdinalIgnoreCase) ||
-                        fileResult.FileName.EndsWith("png", StringComparison.OrdinalIgnoreCase))
-                        {
-                            Stream stream = await fileResult.OpenReadAsync();
+                        Stream stream = await fileResult.OpenReadAsync();
 
-                            string directoryPath = FileHandler.CreateDirectory("MediaItems");
+                        string directoryPath = FileHandler.CreateDirectory("MediaItems");
 
-                            string filename = fileResult.FileName;
-                            string filetype = fileResult.ContentType;
+                        string filename = fileResult.FileName;
+                        string filetype = FileHandler.ExtractFiletypeFromPath(filename);
 
-                            int filetypeIndex = filename.LastIndexOf('.');
+                        string filepath = directoryPath + filename;
 
-                            string mediaItemName = filename.Substring(0, filetypeIndex);
+                        filepath = FileHandler.GetUniqueFilenamePath(filepath);
 
-                            string filepath = directoryPath + filename;
+                        FileHandler.SaveFile(stream, filepath);
 
-                            filepath = FileHandler.GetUniqueFilenamePath(filepath);
-
-                            FileHandler.SaveFile(stream, filepath);
-
-                            await MediaItemDBHandler.AddMediaItem(mediaItemName, filepath, filetype, "", mediaItemName, 0);
-                        }
+                        await MediaItemDBHandler.AddMediaItem(filename, filepath, filetype, "", filename, 0);
                     }
                     MediaItems = await MediaItemDBHandler.GetAllMediaItems();
                 }

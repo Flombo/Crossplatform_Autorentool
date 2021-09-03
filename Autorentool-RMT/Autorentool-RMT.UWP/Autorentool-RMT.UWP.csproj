@@ -104,6 +104,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="FilmIcon.png" />
     <Content Include="ImageChecklist.png" />
     <Content Include="ImageLogoBrainDark.png" />
     <Content Include="ImageLogoBrainLight.png" />
@@ -139,6 +140,7 @@
     <Content Include="Assets\Wide310x150Logo.scale-100.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
+    <Content Include="MusikIcon.png" />
     <Content Include="preview.png" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
