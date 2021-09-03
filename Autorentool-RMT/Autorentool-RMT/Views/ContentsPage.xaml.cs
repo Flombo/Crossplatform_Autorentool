@@ -84,6 +84,29 @@ namespace Autorentool_RMT.Views
         }
         #endregion
 
+        #region OnLifethemesButtonClicked
+        /// <summary>
+        /// Opens LifethemePopup and binds the selected lifethemes with the selected mediaitem.
+        /// If an error occurs an error prompt will be displayed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void OnLifethemesButtonClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                LifethemePopup.Result result = await Navigation.ShowPopupAsync(new LifethemePopup(contentViewModel.CurrentMediaItemLifethemes));
+
+                await contentViewModel.SetCurrentMediaItemLifethemes(result.selectedLifethemes);
+            }
+            catch (Exception)
+            {
+                await DisplayAlert("Fehler beim Auswählen von Lebensthemen", "Beim Auswählen der Lebensthemen kam es zu einem Fehler", "Schließen");
+            }
+        }
+        #endregion
+
+        #region OnDeleteAllMediaItemsButtonClicked
         private async void OnDeleteAllMediaItemsButtonClicked(object sender, EventArgs e)
         {
             try
@@ -97,7 +120,7 @@ namespace Autorentool_RMT.Views
 
                 while (shouldDeleteAllMediaItems)
                 {
-                    PasswordPopup.Result result = await Navigation.ShowPopupAsync<PasswordPopup.Result>(new PasswordPopup());
+                    PasswordPopup.Result result = await Navigation.ShowPopupAsync(new PasswordPopup());
 
                     if(result != null)
                     {
@@ -120,5 +143,6 @@ namespace Autorentool_RMT.Views
                 await DisplayAlert("Fehler beim Löschen der Medien", "Ein Fehler trat auf beim Löschen der Medien", "Schließen");
             }
         }
+        #endregion
     }
 }

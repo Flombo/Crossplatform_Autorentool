@@ -29,6 +29,8 @@ namespace Autorentool_RMT.ViewModels
         private string deleteSelectedMediaItemButtonBackgroundColour;
         private bool isDeleteAllMediaItemsButtonEnabled;
         private string deleteAllMediaItemsButtonBackgroundcolour;
+        private string lifethemesBackgroundColour;
+        private bool isLifethemesButtonEnabled;
         public ICommand ImportMediaItems { get; }
 
         #region Constructor
@@ -46,8 +48,42 @@ namespace Autorentool_RMT.ViewModels
             isDeleteAllMediaItemsButtonEnabled = false;
             deleteSelectedMediaItemButtonBackgroundColour = "LightGray";
             deleteAllMediaItemsButtonBackgroundcolour = "LightGray";
+            lifethemesBackgroundColour = "LightGray";
+            isLifethemesButtonEnabled = false;
             selectedMediaItem = null;
             currentMediaItemLifethemes = new List<Lifetheme>();
+        }
+        #endregion
+
+        #region SetLifethemesBackgroundColour
+        private void SetLifethemesBackgroundColour()
+        {
+            LifethemesBackgroundColour = GetBackgroundColour(IsLifethemesButtonEnabled, "Green");
+        }
+        #endregion
+
+        #region LifethemesBackgroundColour
+        public string LifethemesBackgroundColour
+        {
+            get => lifethemesBackgroundColour;
+            set
+            {
+                lifethemesBackgroundColour = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsLifethemesButtonEnabled
+        public bool IsLifethemesButtonEnabled
+        {
+            get => isLifethemesButtonEnabled;
+            set
+            {
+                isLifethemesButtonEnabled = value;
+                SetLifethemesBackgroundColour();
+                OnPropertyChanged();
+            }
         }
         #endregion
 
@@ -185,6 +221,14 @@ namespace Autorentool_RMT.ViewModels
         #endregion
 
         #region SelectedMediaItem
+        /// <summary>
+        /// Getter and Setter for the SelectedMediaItem-property.
+        /// If the value is not null while setting,
+        /// the Notes-, IsDeleteSelectedMediaItemButtonEnabled-,
+        /// the MediaPreviewProperties-,
+        /// the CurrenMediaItemLifethemes- and the IsLifethemesButtonEnabled-properties will be set to true,
+        /// else to false.
+        /// </summary>
         public MediaItem SelectedMediaItem
         {
             get => selectedMediaItem;
@@ -198,12 +242,14 @@ namespace Autorentool_RMT.ViewModels
                     IsDeleteSelectedMediaItemButtonEnabled = true;
                     SetMediaPreviewProperties();
                     LoadLifethemesOfSelectedMediaItem();
+                    IsLifethemesButtonEnabled = true;
                 }
                 else
                 {
                     Notes = "";
                     ResetMediaPreviewProperties();
                     IsDeleteSelectedMediaItemButtonEnabled = false;
+                    IsLifethemesButtonEnabled = false;
                     CurrentMediaItemLifethemes = new List<Lifetheme>();
                 }
 
@@ -496,5 +542,153 @@ namespace Autorentool_RMT.ViewModels
             }
         }
         #endregion
+
+        #region SetCurrentMediaItemLifethemes
+        /// <summary>
+        /// Sets the CurrentMediaItemLifethemes-property with the given selectedLifethemes.
+        /// Unbinds lifethemes that aren't part of the selectedLifethemes-List.
+        /// Binds the selected lifethemes to the selected mediaitem.
+        /// While this process is ongoing, the two delete buttons will be disabled. 
+        /// </summary>
+        /// <param name="selectedLifethemes"></param>
+        /// <returns></returns>
+        public async Task SetCurrentMediaItemLifethemes(List<Lifetheme> selectedLifethemes)
+        {
+            IsDeleteAllMediaItemsButtonEnabled = false;
+            IsDeleteSelectedMediaItemButtonEnabled = false;
+
+            try
+            {
+                List<Lifetheme> unboundLifethemes = GetUnboundLifethemes(selectedLifethemes);
+
+                unboundLifethemes = await CheckIfLifethemesWereFreshlyCreated(unboundLifethemes);
+
+                await UnbindSelectedLifethemes(unboundLifethemes);
+                await BindSelectedLifethemes(selectedLifethemes);
+
+                IsDeleteAllMediaItemsButtonEnabled = true;
+                IsDeleteSelectedMediaItemButtonEnabled = true;
+            } catch(Exception exc)
+            {
+                IsDeleteAllMediaItemsButtonEnabled = true;
+                IsDeleteSelectedMediaItemButtonEnabled = true;
+
+                throw exc;
+            }
+        }
+        #endregion
+
+        #region CheckIfLifethemesWereFreshlyCreated
+        private async Task<List<Lifetheme>> CheckIfLifethemesWereFreshlyCreated(List<Lifetheme> unboundLifethemes)
+        {
+            List<Lifetheme> deleteableLifethemes = new List<Lifetheme>();
+
+            foreach(Lifetheme unboundLifetheme in unboundLifethemes)
+            {
+                int mediaItemLifethemesId = await MediaItemLifethemesDBHandler.GetID(selectedMediaItem.Id, unboundLifetheme.Id);
+
+                if(mediaItemLifethemesId == -1)
+                {
+                    await MediaItemLifethemesDBHandler.BindMediaItemLifetheme(selectedMediaItem.Id, unboundLifetheme.Id);
+                } else
+                {
+                    deleteableLifethemes.Add(unboundLifetheme);
+                }
+            }
+
+            return deleteableLifethemes;
+
+        }
+        #endregion
+
+        #region GetUnboundLifethemes
+        /// <summary>
+        /// Returns the lifethemes for unbinding.
+        /// If the selectedLifethemes-list is empty, then all lifethemes should be unbound.
+        /// Else the name-property of each CurrentMediaItemLifetheme and selectedLifetheme has to be compared;
+        /// </summary>
+        /// <param name="selectedLifethemes"></param>
+        /// <returns></returns>
+        private List<Lifetheme> GetUnboundLifethemes(List<Lifetheme> selectedLifethemes)
+        {
+            List<Lifetheme> unboundLifethemes = new List<Lifetheme>();
+
+            if (selectedLifethemes.Count > 0)
+            {
+                foreach (Lifetheme currentMediaItemLifetheme in CurrentMediaItemLifethemes)
+                {
+                    foreach (Lifetheme selectedLifetheme in selectedLifethemes)
+                    {
+                        if (!currentMediaItemLifetheme.Name.Equals(selectedLifetheme.Name))
+                        {
+                            unboundLifethemes.Add(currentMediaItemLifetheme);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                unboundLifethemes = CurrentMediaItemLifethemes;
+            }
+
+            return unboundLifethemes;
+        }
+        #endregion
+
+        #region UnbindSelectedLifethemes
+        /// <summary>
+        /// Unbinds the given lifethemes from the selected mediaitem if it isn't null.
+        /// Throws an exception if the process failed.
+        /// </summary>
+        /// <param name="unboundLifethemes"></param>
+        /// <returns></returns>
+        private async Task UnbindSelectedLifethemes(List<Lifetheme> unboundLifethemes)
+        {
+            if(unboundLifethemes.Count > 0 && selectedMediaItem != null)
+            {
+                try
+                {
+                    foreach(Lifetheme unboundLifetheme in unboundLifethemes)
+                    {
+                        int mediaItemLifethemesId = await MediaItemLifethemesDBHandler.GetID(selectedMediaItem.Id, unboundLifetheme.Id);
+                        await MediaItemLifethemesDBHandler.UnbindCertainMediaItemLifethemes(mediaItemLifethemesId);
+                    }
+
+                    CurrentMediaItemLifethemes = new List<Lifetheme>();
+                } catch(Exception exc)
+                {
+                    throw exc;
+                }
+            }
+        }
+        #endregion
+
+        #region BindSelectedLifethemes
+        /// <summary>
+        /// Binds selected lifethemes to the selected mediaitem if it isn't null.
+        /// Throws an exception if the process failed.
+        /// </summary>
+        /// <param name="selectedLifethemes"></param>
+        /// <returns></returns>
+        private async Task BindSelectedLifethemes(List<Lifetheme> selectedLifethemes)
+        {
+            if (selectedMediaItem != null)
+            {
+                try
+                {
+                    foreach (Lifetheme selectedLifetheme in selectedLifethemes)
+                    {
+                        await MediaItemLifethemesDBHandler.BindMediaItemLifetheme(selectedMediaItem.Id, selectedLifetheme.Id);
+                    }
+
+                    CurrentMediaItemLifethemes = await MediaItemLifethemesDBHandler.GetLifethemesOfMediaItem(selectedMediaItem.Id);
+                } catch(Exception exc)
+                {
+                    throw exc;
+                }
+            }
+        }
+        #endregion
+
     }
 }

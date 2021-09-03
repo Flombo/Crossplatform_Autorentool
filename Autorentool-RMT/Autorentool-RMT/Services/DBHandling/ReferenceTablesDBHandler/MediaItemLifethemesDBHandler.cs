@@ -12,7 +12,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         /// <summary>
         /// Creates and inserts a new MediaItemLifethemes-model to database asynchronously by given parameters.
         /// Returns the ID of the newly created MediaItemLifethemes-model.
-        /// If the insertion would cause duplicates, an exception will be thrown instead of an insertion.
+        /// If the insertion would cause duplicates, -1 will be returned.
         /// </summary>
         /// <param name="mediaItemId"></param>
         /// <param name="lifethemeId"></param>
@@ -36,7 +36,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
 
                 if(mediaItemLifethemes1 != null)
                 {
-                    throw new Exception();
+                    return -1;
                 }
 
                 await sQLiteAsyncConnection.InsertAsync(mediaItemLifethemes);
@@ -50,7 +50,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
 
         #region GetID
         /// <summary>
-        /// Returns the ID by given parameters or throws an exception if no entry was found.
+        /// Returns the ID by given parameters or returns -1 if no entry was found.
         /// </summary>
         /// <param name="mediaItemId"></param>
         /// <param name="lifethemeId"></param>
@@ -59,20 +59,13 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
-            try
-            {
-                MediaItemLifethemes queriedMediaItemLifethemes = await sQLiteAsyncConnection.Table<MediaItemLifethemes>()
-                    .FirstOrDefaultAsync(
-                        mediaItemLifethemes => mediaItemLifethemes.MediaItemId == mediaItemId 
-                        && mediaItemLifethemes.LifethemeId == lifethemeId
-                    );
+            MediaItemLifethemes queriedMediaItemLifethemes = await sQLiteAsyncConnection.Table<MediaItemLifethemes>()
+                .FirstOrDefaultAsync(
+                    mediaItemLifethemes => mediaItemLifethemes.MediaItemId == mediaItemId 
+                    && mediaItemLifethemes.LifethemeId == lifethemeId
+                );
 
-                return queriedMediaItemLifethemes.Id;
-            }
-            catch (Exception exc)
-            {
-                throw exc;
-            }
+            return queriedMediaItemLifethemes != null ? queriedMediaItemLifethemes.Id : -1;
         }
         #endregion
 

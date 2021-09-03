@@ -6,8 +6,7 @@
              Title="INHALTE"
              ControlTemplate="{StaticResource HeaderPageTemplate}">
     <ContentPage.Content>
-        <StackLayout>
-            <Grid>
+        <Grid>
 
                 <!--Searchbar with filter options section-->
                 <StackLayout Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal">
@@ -186,7 +185,9 @@
                             VerticalOptions="FillAndExpand"
                             />
                         <Button Text="{StaticResource EditIcon}"
-                                BackgroundColor="LightGray"
+                                BackgroundColor="{Binding LifethemesBackgroundColour}"
+                                IsEnabled="{Binding IsLifethemesButtonEnabled}"
+                                Clicked="OnLifethemesButtonClicked"
                                 HeightRequest="40"
                                 FontAttributes="Bold"
                                 FontSize="Subtitle"
@@ -199,15 +200,17 @@
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
 
-                                    <StackLayout Orientation="Horizontal">
+                                    <StackLayout Orientation="Horizontal" Spacing="0">
                                         <Label 
                                             Text="🔗" 
-                                            FontAttributes="Bold" 
+                                            FontAttributes="Bold"
+                                            VerticalOptions="CenterAndExpand"
                                             FontSize="Subtitle"/>
                                         <Label 
                                             Text="{Binding Name}"
                                             FontAttributes="Bold"
                                             FontSize="Subtitle"
+                                            VerticalOptions="CenterAndExpand"
                                             LineBreakMode="WordWrap"/>
                                     </StackLayout>
 
@@ -239,6 +242,5 @@
                     Clicked="OnCompleteButtonClicked"
                     Grid.RowSpan="2"/>
             </Grid>
-        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

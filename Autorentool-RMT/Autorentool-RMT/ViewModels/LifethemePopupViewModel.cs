@@ -118,13 +118,14 @@ namespace Autorentool_RMT.ViewModels
         /// <returns></returns>
         public async Task OnAddLifetheme()
         {
-            if (lifethemeEntryText.Length > 0)
+            if (lifethemeEntryText != null && lifethemeEntryText.Length > 0)
             {
                 try
                 {
                     int lifethemeId = await LifethemeDBHandler.AddLifetheme(lifethemeEntryText);
                     Lifetheme addedLifetheme = await LifethemeDBHandler.GetSingleLifetheme(lifethemeId);
-                    
+
+                    selectedLifethemes = GetCheckedLifethemesFromAllExistingLifethemes();
                     selectedLifethemes.Add(addedLifetheme);
 
                     OnLoadAllExistingLifethemes();
