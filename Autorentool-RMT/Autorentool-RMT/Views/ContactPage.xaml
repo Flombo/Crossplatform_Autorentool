@@ -6,7 +6,7 @@
              ControlTemplate="{StaticResource HeaderPageTemplate}">
     <ContentPage.Content>
         <Grid>
-            <StackLayout BackgroundColor="#1E88E5" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+            <StackLayout BackgroundColor="#1E88E5" Grid.Row="0" Grid.Column="0">
                 <Label Text="Kontaktformular" 
                        FontAttributes="Bold" 
                        FontSize="Large" 
@@ -17,13 +17,13 @@
                        FontAttributes="Bold" 
                        HorizontalOptions="CenterAndExpand"/>
             </StackLayout>
-            <Grid Grid.Row="1" Grid.Column="0" Grid.RowSpan="6" HorizontalOptions="CenterAndExpand" Grid.ColumnSpan="2">
-                <Entry Placeholder="Vorname*" Text="{Binding Firstname}" IsSpellCheckEnabled="True" FontSize="Subtitle" IsTextPredictionEnabled="True" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="10"/>
-                <Entry Placeholder="Nachname*" Text="{Binding Lastname}" FontSize="Subtitle" IsSpellCheckEnabled="True" IsTextPredictionEnabled="True" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="10"/>
-                <Entry Placeholder="Ihre E-Mail-Adresse*" IsSpellCheckEnabled="True" Text="{Binding Sender}" FontSize="Subtitle" IsTextPredictionEnabled="True" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="10"/>
-                <Entry Placeholder="Betreff*" IsSpellCheckEnabled="True" Text="{Binding Subject}" IsTextPredictionEnabled="True" FontSize="Subtitle" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="10"/>
-                <Editor Placeholder="Ihre Nachricht*" Text="{Binding Message}" IsSpellCheckEnabled="True" FontSize="Subtitle" IsTextPredictionEnabled="True" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="10" Grid.RowSpan="2"/>
-                <Button Text="Absenden" IsEnabled="{Binding IsSendButtonEnabled}" BackgroundColor="{Binding SendButtonColour}" Clicked="OnSendButtonClicked" Grid.Row="6" Grid.Column="9" FontSize="Subtitle"/>
+            <Grid Grid.Row="1" Grid.Column="0" Grid.RowSpan="6">
+                <Entry Placeholder="Vorname*" Text="{Binding Firstname}" IsSpellCheckEnabled="True" FontSize="Subtitle" IsTextPredictionEnabled="True" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
+                <Entry Placeholder="Nachname*" Text="{Binding Lastname}" FontSize="Subtitle" IsSpellCheckEnabled="True" IsTextPredictionEnabled="True" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
+                <Entry Placeholder="Ihre E-Mail-Adresse*" IsSpellCheckEnabled="True" Text="{Binding Sender}" FontSize="Subtitle" IsTextPredictionEnabled="True" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"/>
+                <Entry Placeholder="Betreff*" IsSpellCheckEnabled="True" Text="{Binding Subject}" IsTextPredictionEnabled="True" FontSize="Subtitle" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"/>
+                <Editor Placeholder="Ihre Nachricht*" Text="{Binding Message}" IsSpellCheckEnabled="True" FontSize="Subtitle" IsTextPredictionEnabled="True" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
+                <Button Text="Absenden" IsEnabled="{Binding IsSendButtonEnabled}" BackgroundColor="{Binding SendButtonColour}" Clicked="OnSendButtonClicked" Grid.Row="6" Grid.Column="1" FontSize="Subtitle"/>
             </Grid>
         </Grid>
     </ContentPage.Content>
