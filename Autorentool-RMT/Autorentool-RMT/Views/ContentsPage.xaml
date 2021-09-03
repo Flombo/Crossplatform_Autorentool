@@ -81,7 +81,7 @@
                                         Padding="2"
                                         HeightRequest="120">
                                         <Image
-                                            Source="{Binding GetFullPath}"
+                                            Source="{Binding GetPreviewPath}"
                                             Aspect="AspectFit"
                                             HeightRequest="120"
                                             WidthRequest="120"
@@ -148,7 +148,28 @@
                 </Grid>
 
                 <!--MediaElement for playing Audio and Video-->
-
+                <xct:MediaElement IsVisible="{Binding IsMediaItemMediaElementVisible}" 
+                                  AutoPlay="false" 
+                                  ShowsPlaybackControls="True" 
+                                  Source="{Binding SelectedMediumMediaElementPath}" 
+                                  BackgroundColor="Black" 
+                                  Grid.Row="1" 
+                                  Grid.Column="1" 
+                                  Grid.RowSpan="7"/>
+                <StackLayout BackgroundColor="Beige"
+                             Grid.Row="1" 
+                             Grid.Column="1"
+                             Grid.RowSpan="1"
+                             HeightRequest="40"
+                             VerticalOptions="Start"
+                             IsVisible="{Binding IsMediaItemMediaElementVisible}">
+                    <Label Text="Vorschau" 
+                               FontAttributes="Bold" 
+                               FontSize="Subtitle"
+                               TextColor="Gray"
+                               HorizontalOptions="CenterAndExpand" 
+                               VerticalOptions="CenterAndExpand"/>
+                </StackLayout>
                 <!--Notes section-->
                 <Editor Grid.Row="8" Grid.Column="1" Grid.RowSpan="5" Placeholder="Notizen..." Text="{Binding Notes}" BackgroundColor="LightGray" FontSize="Subtitle"/>
 

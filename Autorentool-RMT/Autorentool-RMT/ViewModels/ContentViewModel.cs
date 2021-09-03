@@ -218,15 +218,19 @@ namespace Autorentool_RMT.ViewModels
         /// <summary>
         /// Sets the media preview properties 
         /// (IsMediaItemImageVisible, IsMediaItemMediaElementVisible, SelectedMediumMediaELementPath and SelectedMediumImagePath) depending if the selected medium is an image or not.
+        /// For the MediaElement it is necessary to reload the selected mediaitem, because the selected mediaitem contains the video icon as path and not the medium path.
         /// This is necessary, because the MediaElement doesn't support images.
         /// </summary>
-        public void SetMediaPreviewProperties()
+        public async void SetMediaPreviewProperties()
         {
             if (selectedMediaItem.FileType.Equals("mp3") || selectedMediaItem.FileType.Equals("mp4"))
             {
                 IsMediaItemImageVisible = false;
                 IsMediaItemMediaElementVisible = true;
-                SelectedMediumMediaElementPath = selectedMediaItem.GetFullPath;
+
+                MediaItem mediaItem = await MediaItemDBHandler.GetSingleMediaItem(selectedMediaItem.Id);
+
+                SelectedMediumMediaElementPath = mediaItem.GetFullPath;
                 SelectedMediumImagePath = "preview.png";
                 IsFullscreenButtonVisible = false;
             }

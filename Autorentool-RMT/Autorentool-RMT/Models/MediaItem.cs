@@ -129,13 +129,7 @@ namespace Autorentool_RMT.Models
         {
             get
             {
-                if(FileType.Equals("mp3") || FileType.Equals("mp4"))
-                {
-                    return false;
-                } else
-                {
-                    return true;
-                }
+                return !FileType.Equals("mp3") && !FileType.Equals("mp4");
             }
         }
         #endregion
@@ -143,23 +137,32 @@ namespace Autorentool_RMT.Models
         #region GetFullPath
         /// <summary>
         /// Returns the Path property if a file exists under this path.
-        /// Else the default image path will be returned.
         /// </summary>
         public string GetFullPath
         {
             get
             {
-                    switch (FileType)
-                    {
-                        case "mp3":
-                            return "MusikIcon.png";
-                        case "mp4":
-                            return "FilmIcon.png";
-                        default:
-                            return Path;
-                    }
+                return Path;
             }
 
+        }
+        #endregion
+
+        #region GetPreviewPath
+        public string GetPreviewPath
+        {
+            get
+            {
+                switch (FileType)
+                {
+                    case "mp3":
+                        return "MusikIcon.png";
+                    case "mp4":
+                        return "FilmIcon.png";
+                    default:
+                        return Path;
+                }
+            }
         }
         #endregion
 
