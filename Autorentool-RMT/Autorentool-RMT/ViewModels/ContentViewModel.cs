@@ -38,7 +38,7 @@ namespace Autorentool_RMT.ViewModels
             ImportMediaItems = new Command(ShowFilePicker);
             notes = "";
             selectedMediumImagePath = "preview.png";
-            selectedMediumMediaElementPath = "https://www.youtube.com/watch?v=2DVpys50LVE";
+            selectedMediumMediaElementPath = null;
             isMediaItemImageVisible = true;
             isMediaItemMediaElementVisible = false;
             isFullscreenButtonVisible = false;
@@ -219,6 +219,7 @@ namespace Autorentool_RMT.ViewModels
         /// Sets the media preview properties 
         /// (IsMediaItemImageVisible, IsMediaItemMediaElementVisible, SelectedMediumMediaELementPath and SelectedMediumImagePath) depending if the selected medium is an image or not.
         /// For the MediaElement it is necessary to reload the selected mediaitem, because the selected mediaitem contains the video icon as path and not the medium path.
+        /// An uri instance must be built of the path, to retrieve local media on android.
         /// This is necessary, because the MediaElement doesn't support images.
         /// </summary>
         public async void SetMediaPreviewProperties()
@@ -230,7 +231,8 @@ namespace Autorentool_RMT.ViewModels
 
                 MediaItem mediaItem = await MediaItemDBHandler.GetSingleMediaItem(selectedMediaItem.Id);
 
-                SelectedMediumMediaElementPath = mediaItem.GetFullPath;
+                SelectedMediumMediaElementPath = new Uri(mediaItem.GetFullPath).LocalPath;
+
                 SelectedMediumImagePath = "preview.png";
                 IsFullscreenButtonVisible = false;
             }
@@ -238,7 +240,7 @@ namespace Autorentool_RMT.ViewModels
             {
                 IsMediaItemImageVisible = true;
                 IsMediaItemMediaElementVisible = false;
-                SelectedMediumMediaElementPath = "https://www.youtube.com/watch?v=pr03CYqhFr4&list=PLM75ZaNQS_FaEPpqVjfQdnFaSR1EWCeNZ";
+                SelectedMediumMediaElementPath = null;
                 SelectedMediumImagePath = selectedMediaItem.GetFullPath;
                 IsFullscreenButtonVisible = true;
             }
@@ -351,7 +353,7 @@ namespace Autorentool_RMT.ViewModels
         private void ResetMediaPreviewProperties()
         {
             SelectedMediumImagePath = "preview.png";
-            SelectedMediumMediaElementPath = "https://www.youtube.com/watch?v=pr03CYqhFr4&list=PLM75ZaNQS_FaEPpqVjfQdnFaSR1EWCeNZ";
+            SelectedMediumMediaElementPath = null;
             IsFullscreenButtonVisible = false;
             IsMediaItemImageVisible = true;
             IsMediaItemMediaElementVisible = false;
