@@ -1,8 +1,5 @@
 ﻿using SQLite;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using Xamarin.Forms;
 
 namespace Autorentool_RMT.Models
 {
@@ -89,8 +86,6 @@ namespace Autorentool_RMT.Models
         public Session Session { get; set; }
         [Ignore]
         public int Position { get; set; }
-        [Ignore]
-        public Image PreviewImage { get; set; }
         #endregion
 
         #region Empty Constructor
@@ -129,6 +124,22 @@ namespace Autorentool_RMT.Models
         public bool IsImage => FileType.Equals("jpeg") || FileType.Equals("png") || FileType.Equals("jpg");
         #endregion
 
+        #region IsVideo
+        public bool IsVideo => FileType.Equals("mp4");
+        #endregion
+
+        #region IsAudio
+        public bool IsAudio => FileType.Equals("mp3");
+        #endregion
+
+        #region IsTxt
+        public bool IsTxt => FileType.Equals("txt");
+        #endregion
+
+        #region IsHTML
+        public bool IsHTML => FileType.Equals("html");
+        #endregion
+
         #region GetFullPath
         /// <summary>
         /// Returns the Path property if a file exists under this path.
@@ -154,6 +165,8 @@ namespace Autorentool_RMT.Models
                         return "MusikIcon.png";
                     case "mp4":
                         return "FilmIcon.png";
+                    case "txt":
+                        return "TextIcon.png";
                     default:
                         return Path;
                 }

@@ -54,7 +54,7 @@
                                     FontSize="Subtitle" 
                                     FontAttributes="Bold"/>
                             <Button Text="{StaticResource ImportIcon}" 
-                                    Command="{Binding ImportMediaItems}"
+                                    Clicked="OnImportButtonClicked"
                                     HeightRequest="30"
                                     TextColor="White"
                                     Padding="5"
@@ -110,7 +110,7 @@
                     </ScrollView>
                 </StackLayout>
 
-                <!--Preview if MediaItem is an image or no MediaItem was selected-->
+                <!--Preview if MediaItem is an image, or text file or no MediaItem was selected-->
                 <Grid BackgroundColor="Black" Grid.Row="1" Grid.Column="1" Grid.RowSpan="7">
                     <StackLayout BackgroundColor="Beige"
                                  Grid.Row="0" 
@@ -135,6 +135,19 @@
                            Grid.Column="0"
                            Grid.ColumnSpan="3"
                            Grid.RowSpan="4"/>
+                    <ScrollView IsVisible="{Binding IsMediaItemTextVisible}"
+                                Orientation="Vertical"
+                                Grid.Row="1" 
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3" 
+                                Grid.RowSpan="5"
+                                BackgroundColor="White">
+                        <Label Text="{Binding SelectedMediumTextContent}" 
+                               FontSize="Small"  
+                               VerticalOptions="CenterAndExpand" 
+                               HorizontalOptions="CenterAndExpand"/>
+                    </ScrollView>
+
                     <Button Text="🔍" 
                             FontSize="Small" 
                             Grid.Row="5"

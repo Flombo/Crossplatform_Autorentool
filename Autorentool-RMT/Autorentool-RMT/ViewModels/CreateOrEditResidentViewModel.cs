@@ -363,11 +363,9 @@ namespace Autorentool_RMT.ViewModels
 
                     string directoryPath = FileHandler.CreateDirectory("ResidentProfilePics");
 
-                    string filename = fileResult.FileName;
+                    string filename = FileHandler.GetUniqueFilename(fileResult.FileName, directoryPath);
 
-                    selectedImagePath = directoryPath + filename;
-
-                    selectedImagePath = FileHandler.GetUniqueFilenamePath(selectedImagePath);
+                    selectedImagePath = Path.Combine(directoryPath, filename);
 
                     FileHandler.SaveFile(stream, selectedImagePath);
 

@@ -144,5 +144,25 @@ namespace Autorentool_RMT.Views
             }
         }
         #endregion
+
+        #region OnImportButtonClicked
+        /// <summary>
+        /// Shows file picker, saves selected files and displays them.
+        /// If an error occured an error prompt will be displayed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void OnImportButtonClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                contentViewModel.ShowFilePicker();
+            } catch(Exception)
+            {
+                await DisplayAlert("Fehler beim Hinzufügen neuer Inhalte", "Beim Hinzufügen neuer Inhalte trat ein Fehler auf", "Schließen");
+            }
+        }
+        #endregion
+
     }
 }

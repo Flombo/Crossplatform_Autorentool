@@ -143,6 +143,7 @@
     <Content Include="MusikIcon.png" />
     <Content Include="preview.png" />
     <Content Include="Properties\Default.rd.xml" />
+    <Content Include="TextIcon.png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

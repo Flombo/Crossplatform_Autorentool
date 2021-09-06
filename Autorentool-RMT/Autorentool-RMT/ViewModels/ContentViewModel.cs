@@ -38,7 +38,8 @@ namespace Autorentool_RMT.ViewModels
         private bool isDocumentsFilterChecked;
         private bool isLinksFilterChecked;
         private string searchText;
-        public ICommand ImportMediaItems { get; }
+        private bool isMediaItemTextVisible;
+        private string selectedMediumTextContent;
         public ICommand Search { get; }
         #endregion
 
@@ -46,7 +47,6 @@ namespace Autorentool_RMT.ViewModels
         public ContentViewModel()
         {
             mediaItems = new List<MediaItem>();
-            ImportMediaItems = new Command(ShowFilePicker);
             Search = new Command(OnSearch);
             notes = "";
             searchText = "";
@@ -68,6 +68,30 @@ namespace Autorentool_RMT.ViewModels
             isDocumentsFilterChecked = true;
             isLinksFilterChecked = true;
             currentMediaItemLifethemes = new List<Lifetheme>();
+        }
+        #endregion
+
+        #region SelectedMediumTextContent
+        public string SelectedMediumTextContent
+        {
+            get => selectedMediumTextContent;
+            set
+            {
+                selectedMediumTextContent = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsMediaItemTextVisible
+        public bool IsMediaItemTextVisible
+        {
+            get => isMediaItemTextVisible;
+            set
+            {
+                isMediaItemTextVisible = value;
+                OnPropertyChanged();
+            }
         }
         #endregion
 
@@ -408,25 +432,43 @@ namespace Autorentool_RMT.ViewModels
         /// </summary>
         public async void SetMediaPreviewProperties()
         {
-            if (selectedMediaItem.FileType.Equals("mp3") || selectedMediaItem.FileType.Equals("mp4"))
+            if (selectedMediaItem.IsAudio || selectedMediaItem.IsVideo)
             {
                 IsMediaItemImageVisible = false;
                 IsMediaItemMediaElementVisible = true;
+                IsMediaItemTextVisible = false;
 
                 MediaItem mediaItem = await MediaItemDBHandler.GetSingleMediaItem(selectedMediaItem.Id);
 
                 SelectedMediumMediaElementPath = new Uri(mediaItem.GetFullPath).LocalPath;
 
                 SelectedMediumImagePath = "preview.png";
+                SelectedMediumTextContent = "";
                 IsFullscreenButtonVisible = false;
             }
-            else
+
+            else if(selectedMediaItem.IsImage)
             {
                 IsMediaItemImageVisible = true;
                 IsMediaItemMediaElementVisible = false;
+                IsMediaItemTextVisible = false;
                 SelectedMediumMediaElementPath = null;
+                SelectedMediumTextContent = "";
                 SelectedMediumImagePath = selectedMediaItem.GetFullPath;
                 IsFullscreenButtonVisible = true;
+
+            } else if(selectedMediaItem.IsTxt)
+            {
+                IsMediaItemImageVisible = false;
+                IsMediaItemMediaElementVisible = false;
+                IsMediaItemTextVisible = true;
+                SelectedMediumMediaElementPath = null;
+                SelectedMediumImagePath = selectedMediaItem.GetFullPath;
+                IsFullscreenButtonVisible = false;
+                SelectedMediumTextContent = File.ReadAllText(selectedMediaItem.GetFullPath);
+            } else
+            {
+                SelectedMediaItem = null;
             }
         }
         #endregion
@@ -473,11 +515,29 @@ namespace Autorentool_RMT.ViewModels
         #endregion
 
         #region ShowFilePicker
+        /// <summary>
+        /// Shows file picker for valid filetypes(jpg/jpeg, png, html, mp3, txt, mp4), saves them and builds MediaItems as representation.
+        /// After that all new MediaItems will be displayed.
+        /// If an exception occurs, it will be re-thrown to the code behind for displaying an error prompt.
+        /// </summary>
         public async void ShowFilePicker()
         {
             try
             {
-                IEnumerable<FileResult> pickedFiles = await FilePicker.PickMultipleAsync();
+                FilePickerFileType filePickerFileType = new FilePickerFileType(
+                    new Dictionary<DevicePlatform, IEnumerable<string>> {
+                        { DevicePlatform.iOS, new [] { "jpeg", "png", "mp3", "mpeg4Movie", "plaintext", "utf8PlainText", "html" } },
+                        { DevicePlatform.Android, new [] { "image/jpeg", "image/png", "audio/mp3", "audio/mpeg", "video/mp4", "text/*", "text/html" } },
+                        { DevicePlatform.UWP, new []{ "*.jpg", "*.jpeg", "*.png", "*.mp3", "*.mp4", "*.txt", "*.html" } }
+                    });
+
+                PickOptions pickOptions = new PickOptions
+                {
+                    PickerTitle = "Wählen Sie eine oder mehrere Dateien aus",
+                    FileTypes = filePickerFileType,
+                };
+
+                IEnumerable<FileResult> pickedFiles = await FilePicker.PickMultipleAsync(pickOptions);
                 List<FileResult> results = pickedFiles.ToList();
 
                 if (results.Count > 0)
@@ -488,12 +548,10 @@ namespace Autorentool_RMT.ViewModels
 
                         string directoryPath = FileHandler.CreateDirectory("MediaItems");
 
-                        string filename = fileResult.FileName;
+                        string filename = FileHandler.GetUniqueFilename(fileResult.FileName, directoryPath);
                         string filetype = FileHandler.ExtractFiletypeFromPath(filename);
 
-                        string filepath = directoryPath + filename;
-
-                        filepath = FileHandler.GetUniqueFilenamePath(filepath);
+                        string filepath = Path.Combine(directoryPath, filename);
 
                         FileHandler.SaveFile(stream, filepath);
 
@@ -503,8 +561,9 @@ namespace Autorentool_RMT.ViewModels
                 }
 
             }
-            catch (Exception)
+            catch (Exception exc)
             {
+                throw exc;
             }
         }
         #endregion

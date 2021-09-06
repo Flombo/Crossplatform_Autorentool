@@ -24,28 +24,28 @@ namespace Autorentool_RMT.Services
         }
         #endregion
 
-        #region GetUniqueFilenamePath
+        #region GetUniqueFilename
         /// <summary>
-        /// Returns unqiue filepath.
+        /// Returns unqiue filename.
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="filename"></param>
         /// <returns></returns>
-        public static string GetUniqueFilenamePath(string filePath)
+        public static string GetUniqueFilename(string filename, string directoryPath)
         {
             int filenameIncrement = 1;
 
-            while (File.Exists(filePath))
+            while (File.Exists(Path.Combine(directoryPath, filename)))
             {
-                int pointIndex = filePath.LastIndexOf(".");
+                int pointIndex = filename.LastIndexOf(".");
 
-                string filePathWithoutFiletype = filePath.Substring(0, pointIndex) + filenameIncrement;
-                string filetype = ExtractFiletypeFromPath(filePath);
+                string filenameWithoutFiletype = filename.Substring(0, pointIndex) + filenameIncrement;
+                string filetype = ExtractFiletypeFromPath(filename);
 
-                filePath = filePathWithoutFiletype + "." + filetype;
+                filename = filenameWithoutFiletype + "." + filetype;
                 filenameIncrement++;
             }
 
-            return filePath;
+            return filename;
         }
         #endregion
 
@@ -80,7 +80,7 @@ namespace Autorentool_RMT.Services
 
         #region ExtractFiletypeFromPath
         /// <summary>
-        /// Extracts the filetype from mimetype starting from the last slash.
+        /// Extracts the filetype from path starting from the last slash.
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
