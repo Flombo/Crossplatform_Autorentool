@@ -2,6 +2,7 @@
 using SQLite;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Autorentool_RMT.Services.DBHandling
@@ -23,10 +24,9 @@ namespace Autorentool_RMT.Services.DBHandling
         /// <param name="path"></param>
         /// <param name="filetype"></param>
         /// <param name="notes"></param>
-        /// <param name="displayname"></param>
         /// <param name="backendMediaItemID"></param>
         /// <returns></returns>
-        public static async Task<int> AddMediaItem(string name, string path, string filetype, string notes, string displayname, int backendMediaItemID)
+        public static async Task<int> AddMediaItem(string name, string path, string filetype, string notes, int backendMediaItemID)
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
@@ -36,7 +36,6 @@ namespace Autorentool_RMT.Services.DBHandling
                 Path = path,
                 FileType = filetype,
                 Notes = notes,
-                DisplayName = displayname,
                 BackendMediaItemId = backendMediaItemID
             };
 
@@ -100,10 +99,9 @@ namespace Autorentool_RMT.Services.DBHandling
         /// <param name="path"></param>
         /// <param name="filetype"></param>
         /// <param name="notes"></param>
-        /// <param name="displayname"></param>
         /// <param name="backendMediaItemID"></param>
         /// <returns></returns>
-        public static async Task UpdateMediaItem(int mediaItemID, string name, string path, string filetype, string notes, string displayname, int backendMediaItemID)
+        public static async Task UpdateMediaItem(int mediaItemID, string name, string path, string filetype, string notes, int backendMediaItemID)
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
@@ -114,7 +112,6 @@ namespace Autorentool_RMT.Services.DBHandling
                 Path = path,
                 FileType = filetype,
                 Notes = notes,
-                DisplayName = displayname,
                 BackendMediaItemId = backendMediaItemID
             };
 
@@ -131,7 +128,7 @@ namespace Autorentool_RMT.Services.DBHandling
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
-            return await sQLiteAsyncConnection.Table<MediaItem>().ToListAsync();
+            return await sQLiteAsyncConnection.Table<MediaItem>().OrderBy(MediaItem => MediaItem.Id).ToListAsync();
         }
         #endregion
 
@@ -201,6 +198,7 @@ namespace Autorentool_RMT.Services.DBHandling
         #region FilterMediaItems
         /// <summary>
         /// Filters MediaItems depending on the given filters.
+        /// Orders the MediaItems by there id.
         /// </summary>
         /// <param name="photoFilter"></param>
         /// <param name="musicFilter"></param>
@@ -213,38 +211,44 @@ namespace Autorentool_RMT.Services.DBHandling
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
             List<MediaItem> filteredMediaItems = new List<MediaItem>();
+            int mediaItemsCount = await sQLiteAsyncConnection.Table<MediaItem>().CountAsync();
 
-            if (photoFilter)
+            if (mediaItemsCount > 0)
             {
-                List<MediaItem> imageMediaItems = await sQLiteAsyncConnection.Table<MediaItem>().Where(
-                        mediaItem => 
-                        mediaItem.FileType.Equals("jpeg") 
-                        || mediaItem.FileType.Equals("jpg") 
-                        || mediaItem.FileType.Equals("png")
-                    )
-                    .ToListAsync();
+                if (photoFilter)
+                {
+                    List<MediaItem> imageMediaItems = await sQLiteAsyncConnection.Table<MediaItem>().Where(
+                            mediaItem =>
+                            mediaItem.FileType.Equals("jpeg")
+                            || mediaItem.FileType.Equals("jpg")
+                            || mediaItem.FileType.Equals("png")
+                        )
+                        .ToListAsync();
 
-                filteredMediaItems.AddRange(imageMediaItems);
-            }
+                    filteredMediaItems.AddRange(imageMediaItems);
+                }
 
-            if(musicFilter)
-            {
-                filteredMediaItems.AddRange(await sQLiteAsyncConnection.Table<MediaItem>().Where(mediaItem => mediaItem.FileType.Equals("mp3")).ToListAsync());
-            }
+                if (musicFilter)
+                {
+                    filteredMediaItems.AddRange(await sQLiteAsyncConnection.Table<MediaItem>().Where(mediaItem => mediaItem.FileType.Equals("mp3")).ToListAsync());
+                }
 
-            if(documentFilter)
-            {
-                filteredMediaItems.AddRange(await sQLiteAsyncConnection.Table<MediaItem>().Where(mediaItem => mediaItem.FileType.Equals("txt")).ToListAsync());
-            }
+                if (documentFilter)
+                {
+                    filteredMediaItems.AddRange(await sQLiteAsyncConnection.Table<MediaItem>().Where(mediaItem => mediaItem.FileType.Equals("txt")).ToListAsync());
+                }
 
-            if(filmFilter)
-            {
-                filteredMediaItems.AddRange(await sQLiteAsyncConnection.Table<MediaItem>().Where(mediaItem => mediaItem.FileType.Equals("mp4")).ToListAsync());
-            }
+                if (filmFilter)
+                {
+                    filteredMediaItems.AddRange(await sQLiteAsyncConnection.Table<MediaItem>().Where(mediaItem => mediaItem.FileType.Equals("mp4")).ToListAsync());
+                }
 
-            if(linkFilter)
-            {
-                filteredMediaItems.AddRange(await sQLiteAsyncConnection.Table<MediaItem>().Where(mediaItem => mediaItem.FileType.Equals("html")).ToListAsync());
+                if (linkFilter)
+                {
+                    filteredMediaItems.AddRange(await sQLiteAsyncConnection.Table<MediaItem>().Where(mediaItem => mediaItem.FileType.Equals("html")).ToListAsync());
+                }
+
+                filteredMediaItems = filteredMediaItems.OrderBy(mediaItem => mediaItem.Id).ToList();
             }
 
             return filteredMediaItems;

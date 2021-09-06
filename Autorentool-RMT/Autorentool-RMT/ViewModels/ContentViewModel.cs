@@ -438,9 +438,15 @@ namespace Autorentool_RMT.ViewModels
                 IsMediaItemMediaElementVisible = true;
                 IsMediaItemTextVisible = false;
 
-                MediaItem mediaItem = await MediaItemDBHandler.GetSingleMediaItem(selectedMediaItem.Id);
+                try
+                {
+                    MediaItem mediaItem = await MediaItemDBHandler.GetSingleMediaItem(selectedMediaItem.Id);
 
-                SelectedMediumMediaElementPath = new Uri(mediaItem.GetFullPath).LocalPath;
+                    SelectedMediumMediaElementPath = new Uri(mediaItem.GetFullPath).LocalPath;
+                } catch(Exception)
+                {
+                    SelectedMediumMediaElementPath = null;
+                }
 
                 SelectedMediumImagePath = "preview.png";
                 SelectedMediumTextContent = "";
@@ -555,9 +561,9 @@ namespace Autorentool_RMT.ViewModels
 
                         FileHandler.SaveFile(stream, filepath);
 
-                        await MediaItemDBHandler.AddMediaItem(filename, filepath, filetype, "", filename, 0);
+                        await MediaItemDBHandler.AddMediaItem(filename, filepath, filetype, "", 0);
                     }
-                    MediaItems = await MediaItemDBHandler.GetAllMediaItems();
+                    MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
                 }
 
             }
@@ -580,7 +586,6 @@ namespace Autorentool_RMT.ViewModels
                     selectedMediaItem.GetFullPath,
                     selectedMediaItem.FileType,
                     selectedMediaItem.Notes,
-                    selectedMediaItem.DisplayName,
                     selectedMediaItem.BackendMediaItemId
                     );
 
@@ -618,7 +623,7 @@ namespace Autorentool_RMT.ViewModels
                     await DeleteMediaItem(selectedMediaItem);
 
                     SelectedMediaItem = null;
-                    MediaItems = await MediaItemDBHandler.GetAllMediaItems();
+                    MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
                 }
                 catch (Exception exc)
                 {
@@ -710,7 +715,7 @@ namespace Autorentool_RMT.ViewModels
         {
             try
             {
-                MediaItems = await MediaItemDBHandler.GetAllMediaItems();
+                MediaItems = await MediaItemDBHandler.FilterMediaItems(true, true, true, true, true);
             }
             catch (Exception exc)
             {

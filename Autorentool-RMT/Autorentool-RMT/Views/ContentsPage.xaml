@@ -75,10 +75,10 @@
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
 
-                                    <Grid 
-                                        BackgroundColor="White" 
-                                        Padding="2"
-                                        HeightRequest="120">
+                                    <Grid
+                                        BackgroundColor="White"
+                                        HeightRequest="120"
+                                        Padding="2">
                                         <Image
                                             Source="{Binding GetPreviewPath}"
                                             Aspect="AspectFit"

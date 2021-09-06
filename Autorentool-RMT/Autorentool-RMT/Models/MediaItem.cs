@@ -15,8 +15,6 @@ namespace Autorentool_RMT.Models
         public string Path { get; set; }
         public string FileType { get; set; }
         public string Notes { get; set; }
-        public string DisplayName { get; set; }
-
         [Ignore]
         public List<Lifetheme> Lifethemes { get; set; }
 
@@ -84,8 +82,6 @@ namespace Autorentool_RMT.Models
 
         [Ignore]
         public Session Session { get; set; }
-        [Ignore]
-        public int Position { get; set; }
         #endregion
 
         #region Empty Constructor
