@@ -12,9 +12,9 @@
                 <StackLayout BackgroundColor="Beige" Orientation="Horizontal" Grid.Row="0" Grid.Column="0" HeightRequest="40">
                     <Label Text="" FontSize="Subtitle"/>
                     <StackLayout HorizontalOptions="EndAndExpand" Orientation="Horizontal">
-                        <Button Text="{StaticResource ImportFromBackendIcon}" TextColor="White" HeightRequest="40" WidthRequest="45" BackgroundColor="LightGray" FontSize="Subtitle" FontAttributes="Bold"/>
-                        <Button Text="{StaticResource ExportIcon}" TextColor="White" BackgroundColor="LightGray"  HeightRequest="40" WidthRequest="45" FontSize="Subtitle" FontAttributes="Bold"/>
-                        <Button Text="{StaticResource ImportIcon}" TextColor="White" BackgroundColor="LightGray"  HeightRequest="40" WidthRequest="45" FontSize="Subtitle" FontAttributes="Bold"/>
+                        <Button Text="{StaticResource ImportFromBackendIcon}" TextColor="White" HeightRequest="50" WidthRequest="45" BackgroundColor="LightGray" FontSize="Subtitle" FontAttributes="Bold"/>
+                        <Button Text="{StaticResource ExportIcon}" TextColor="White" BackgroundColor="LightGray"  HeightRequest="50" WidthRequest="45" FontSize="Subtitle" FontAttributes="Bold"/>
+                        <Button Text="{StaticResource ImportIcon}" TextColor="White" BackgroundColor="LightGray"  HeightRequest="50" WidthRequest="45" FontSize="Subtitle" FontAttributes="Bold"/>
                     </StackLayout>
                 </StackLayout>
 

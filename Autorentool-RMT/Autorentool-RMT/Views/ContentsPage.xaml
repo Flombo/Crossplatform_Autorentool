@@ -28,37 +28,59 @@
                 <!--Content section-->
                 <StackLayout Grid.Row="1" Grid.Column="0" BackgroundColor="White" Grid.RowSpan="12">
                     <!--Content controls-->
-                    <StackLayout BackgroundColor="Beige" Grid.Row="1" Grid.Column="0" Orientation="Horizontal" HeightRequest="40">
+                    <StackLayout BackgroundColor="Beige" Grid.Row="1" Grid.Column="0" Orientation="Horizontal" HeightRequest="50">
                         <Button Text="{StaticResource DeleteIcon}" 
                                 BackgroundColor="{Binding DeleteAllMediaItemsButtonBackgroundcolour}" 
                                 IsEnabled="{Binding IsDeleteAllMediaItemsButtonEnabled}"
                                 Clicked="OnDeleteAllMediaItemsButtonClicked"
-                                Padding="5" 
+                                Padding="5"
+                                WidthRequest="{OnPlatform UWP=45, Android=35}"
+                                HeightRequest="50"
                                 FontSize="Subtitle" 
                                 FontAttributes="Bold"/>
+                        
+                        <!--Progress section-->
+                        <StackLayout IsVisible="{Binding IsProgressBarVisible}" Spacing="0" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                            <Label Text="{Binding ProgressText}" 
+                                   FontSize="Micro" 
+                                   HorizontalOptions="CenterAndExpand" 
+                                   VerticalOptions="Start"/>
+                            <ProgressBar Progress="{Binding Progress}" 
+                                         ProgressColor="#0091EA"
+                                         HorizontalOptions="CenterAndExpand"
+                                         VerticalOptions="CenterAndExpand"
+                                         WidthRequest="{OnPlatform UWP=200, Android=100}" />
+                            <Label Text="{Binding StatusText}"
+                                   FontSize="Micro"
+                                   HorizontalOptions="CenterAndExpand"
+                                   VerticalOptions="EndAndExpand"
+                                   FontAttributes="Bold"/>
+                        </StackLayout>
+                        <!--End progress section-->
+                        
                         <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand">
                             <Button Text="{StaticResource ImportFromBackendIcon}" 
                                     IsEnabled="False" 
                                     Padding="5" 
-                                    HeightRequest="40"
-                                    WidthRequest="45"
+                                    HeightRequest="50"
+                                    WidthRequest="{OnPlatform UWP=45, Android=35}"
                                     BackgroundColor="Green"
                                     FontSize="Subtitle"
                                     FontAttributes="Bold"/>
                             <Button Text="{StaticResource ExportIcon}"
-                                    HeightRequest="40"
+                                    HeightRequest="50"
                                     TextColor="White"
                                     Padding="5"
-                                    WidthRequest="45"
+                                    WidthRequest="{OnPlatform UWP=45, Android=35}"
                                     BackgroundColor="Green"
                                     FontSize="Subtitle" 
                                     FontAttributes="Bold"/>
                             <Button Text="{StaticResource ImportIcon}" 
                                     Clicked="OnImportButtonClicked"
-                                    HeightRequest="30"
+                                    HeightRequest="50"
                                     TextColor="White"
                                     Padding="5"
-                                    WidthRequest="45"
+                                    WidthRequest="{OnPlatform UWP=45, Android=35}"
                                     BackgroundColor="Green"
                                     FontSize="Subtitle"
                                     FontAttributes="Bold"/>
@@ -117,7 +139,7 @@
                                  Grid.Column="0"
                                  Grid.ColumnSpan="3"
                                  Grid.RowSpan="1"
-                                 HeightRequest="40"
+                                 HeightRequest="50"
                                  VerticalOptions="Start">
                         <Label Text="Vorschau" 
                                FontAttributes="Bold" 
@@ -172,7 +194,7 @@
                              Grid.Row="1" 
                              Grid.Column="1"
                              Grid.RowSpan="1"
-                             HeightRequest="40"
+                             HeightRequest="50"
                              VerticalOptions="Start"
                              IsVisible="{Binding IsMediaItemMediaElementVisible}">
                     <Label Text="Vorschau" 
@@ -201,7 +223,7 @@
                                 BackgroundColor="{Binding LifethemesBackgroundColour}"
                                 IsEnabled="{Binding IsLifethemesButtonEnabled}"
                                 Clicked="OnLifethemesButtonClicked"
-                                HeightRequest="40"
+                                HeightRequest="50"
                                 FontAttributes="Bold"
                                 FontSize="Subtitle"
                                 HorizontalOptions="EndAndExpand"/>

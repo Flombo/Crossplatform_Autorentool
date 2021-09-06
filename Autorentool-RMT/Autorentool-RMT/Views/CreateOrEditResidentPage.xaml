@@ -29,7 +29,7 @@
                 <StackLayout Grid.Row="2" Grid.Column="0"  Grid.RowSpan="2" Grid.ColumnSpan="2">
                     <StackLayout BackgroundColor="Beige" Orientation="Horizontal">
                         <Label FontAttributes="Bold" TextColor="Gray" Text="Lebensthemen" FontSize="Small" Grid.Row="0" VerticalTextAlignment="Center" HorizontalOptions="StartAndExpand"/>
-                        <Button Text="{StaticResource EditIcon}" BackgroundColor="Orange" WidthRequest="45" HeightRequest="40" Clicked="OnShowLifethemePopupButtonClicked" FontSize="Small"/>
+                        <Button Text="{StaticResource EditIcon}" BackgroundColor="Orange" WidthRequest="45" HeightRequest="50" Clicked="OnShowLifethemePopupButtonClicked" FontSize="Small"/>
                     </StackLayout>
                     <CollectionView ItemsSource="{Binding ResidentLifethemes}" ItemsLayout="VerticalGrid, 2" HeightRequest="300">
                         <CollectionView.ItemTemplate>
@@ -43,9 +43,9 @@
                 <StackLayout Grid.Row="4" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2">
                     <StackLayout BackgroundColor="Beige" Orientation="Horizontal">
                         <Label FontAttributes="Bold" TextColor="Gray" FontSize="Small" Text="Sitzungen" VerticalTextAlignment="Center" HorizontalOptions="StartAndExpand"/>
-                        <Button Text="{StaticResource PlayIcon}" BackgroundColor="LightGray" WidthRequest="45" HeightRequest="40" FontSize="Small"/>
-                        <Button Text="{StaticResource DeleteIcon}" BackgroundColor="LightGray" WidthRequest="45" HeightRequest="40" FontSize="Small"/>
-                        <Button Text="{StaticResource EditIcon}" BackgroundColor="LightGray" WidthRequest="45" HeightRequest="40" FontSize="Small"/>
+                        <Button Text="{StaticResource PlayIcon}" BackgroundColor="LightGray" WidthRequest="45" HeightRequest="50" FontSize="Small"/>
+                        <Button Text="{StaticResource DeleteIcon}" BackgroundColor="LightGray" WidthRequest="45" HeightRequest="50" FontSize="Small"/>
+                        <Button Text="{StaticResource EditIcon}" BackgroundColor="LightGray" WidthRequest="45" HeightRequest="50" FontSize="Small"/>
                     </StackLayout>
                     <CollectionView ItemsSource="{Binding ResidentSessions}" ItemsLayout="VerticalGrid, 2" HeightRequest="300">
                         <CollectionView.ItemTemplate>
@@ -69,14 +69,14 @@
                         <Button Grid.Column="1" 
                                 Text="{StaticResource DeleteIcon}"
                                 WidthRequest="45" 
-                                HeightRequest="40"
+                                HeightRequest="50"
                                 BackgroundColor="{Binding DeleteProfilePicButtonColour}" 
                                 IsEnabled="{Binding IsDeleteProfilePicButtonEnabled}" 
                                 Command="{Binding DeleteSelectedImage}" 
                                 FontSize="Small"/>
                         <Button Grid.Column="2"
                                 WidthRequest="45" 
-                                HeightRequest="40"
+                                HeightRequest="50"
                                 Text="{StaticResource EditIcon}" 
                                 BackgroundColor="Orange" 
                                 Command="{Binding ShowFilePicker}" 

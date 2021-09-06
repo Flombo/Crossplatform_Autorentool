@@ -10,6 +10,7 @@ using Xamarin.Forms;
 using System.Linq;
 using System.IO;
 using Autorentool_RMT.Services;
+using System.Diagnostics;
 
 namespace Autorentool_RMT.ViewModels
 {
@@ -40,6 +41,10 @@ namespace Autorentool_RMT.ViewModels
         private string searchText;
         private bool isMediaItemTextVisible;
         private string selectedMediumTextContent;
+        private bool isProgressBarVisible;
+        private float progress;
+        private string statusText;
+        private string progressText;
         public ICommand Search { get; }
         #endregion
 
@@ -67,7 +72,59 @@ namespace Autorentool_RMT.ViewModels
             isPhotosFilterChecked = true;
             isDocumentsFilterChecked = true;
             isLinksFilterChecked = true;
+            isProgressBarVisible = false;
+            progress = 0;
+            statusText = "";
+            progressText = "";
             currentMediaItemLifethemes = new List<Lifetheme>();
+        }
+        #endregion
+
+        #region ProgressText
+        public string ProgressText
+        {
+            get => progressText;
+            set
+            {
+                progressText = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region StatusText
+        public string StatusText
+        {
+            get => statusText;
+            set
+            {
+                statusText = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region Progress
+        public float Progress
+        {
+            get => progress;
+            set
+            {
+                progress = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsProgressBarVisible
+        public bool IsProgressBarVisible
+        {
+            get => isProgressBarVisible;
+            set
+            {
+                isProgressBarVisible = value;
+                OnPropertyChanged();
+            }
         }
         #endregion
 
@@ -546,10 +603,22 @@ namespace Autorentool_RMT.ViewModels
                 IEnumerable<FileResult> pickedFiles = await FilePicker.PickMultipleAsync(pickOptions);
                 List<FileResult> results = pickedFiles.ToList();
 
-                if (results.Count > 0)
+                if (results != null && results.Count > 0)
                 {
+                    IsProgressBarVisible = true;
+                    float maxProgress = results.Count;
+                    float currentProgress = 0;
+                    Progress = currentProgress;
+                    IsDeleteAllMediaItemsButtonEnabled = false;
+                    IsDeleteSelectedMediaItemButtonEnabled = false;
+                    Stopwatch stopwatch = new Stopwatch();
+                    stopwatch.Start();
+
                     foreach (FileResult fileResult in results)
                     {
+                        currentProgress++;
+                        SetProgressElements(currentProgress, maxProgress, stopwatch);
+                        
                         Stream stream = await fileResult.OpenReadAsync();
 
                         string directoryPath = FileHandler.CreateDirectory("MediaItems");
@@ -563,7 +632,13 @@ namespace Autorentool_RMT.ViewModels
 
                         await MediaItemDBHandler.AddMediaItem(filename, filepath, filetype, "", 0);
                     }
+
+                    stopwatch.Stop();
+
                     MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
+                    IsProgressBarVisible = false;
+                    IsDeleteAllMediaItemsButtonEnabled = true;
+                    IsDeleteSelectedMediaItemButtonEnabled = true;
                 }
 
             }
@@ -571,6 +646,25 @@ namespace Autorentool_RMT.ViewModels
             {
                 throw exc;
             }
+        }
+        #endregion
+
+        #region SetProgressElements
+        /// <summary>
+        /// Sets the progress elements ProgressBar-Progress, StatusText and ProgressText.
+        /// </summary>
+        /// <param name="currentProgress"></param>
+        /// <param name="maxProgress"></param>
+        /// <param name="stopwatch"></param>
+        private void SetProgressElements(float currentProgress, float maxProgress, Stopwatch stopwatch)
+        {
+            Progress = currentProgress / maxProgress;
+            StatusText = currentProgress + " / " + maxProgress;
+
+            TimeSpan t = TimeSpan.FromMilliseconds(stopwatch.ElapsedMilliseconds);
+            string formattedTime = $"{t.Minutes:D2}m:{t.Seconds:D2}s";
+
+            ProgressText = $"{currentProgress} Dateien von {maxProgress} in {formattedTime} hinzugefügt.";
         }
         #endregion
 
@@ -620,10 +714,25 @@ namespace Autorentool_RMT.ViewModels
             {
                 try
                 {
-                    await DeleteMediaItem(selectedMediaItem);
+                    float currentProgress = 0;
+                    float maxProgress = 1;
+                    IsProgressBarVisible = true;
+                    Progress = currentProgress;
+                    IsDeleteAllMediaItemsButtonEnabled = false;
+                    IsDeleteSelectedMediaItemButtonEnabled = false;
+                    Stopwatch stopwatch = new Stopwatch();
+                    stopwatch.Start();
+
+                    await DeleteMediaItem(selectedMediaItem, currentProgress, maxProgress, stopwatch);
+
+                    stopwatch.Stop();
 
                     SelectedMediaItem = null;
                     MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
+
+                    IsProgressBarVisible = false;
+                    IsDeleteAllMediaItemsButtonEnabled = true;
+                    IsDeleteSelectedMediaItemButtonEnabled = true;
                 }
                 catch (Exception exc)
                 {
@@ -639,11 +748,18 @@ namespace Autorentool_RMT.ViewModels
         /// If an error occured an exception will be thrown.
         /// </summary>
         /// <param name="mediaItem"></param>
+        /// <param name="currentProgress"></param>
+        /// <param name="maxProgress"></param>
+        /// <param name="stopwatch"></param>
         /// <returns></returns>
-        private async Task DeleteMediaItem(MediaItem mediaItem)
+        private async Task DeleteMediaItem(MediaItem mediaItem, float currentProgress, float maxProgress, Stopwatch stopwatch)
         {
             try
             {
+
+                currentProgress++;
+                SetProgressElements(currentProgress, maxProgress, stopwatch);
+
                 if (File.Exists(mediaItem.GetFullPath))
                 {
                     File.Delete(mediaItem.GetFullPath);
@@ -671,10 +787,25 @@ namespace Autorentool_RMT.ViewModels
             {
                 List<MediaItem> mediaItemsForDeletion = await MediaItemDBHandler.GetAllMediaItems();
 
+                float currentProgress = 0;
+                float maxProgress = mediaItemsForDeletion.Count;
+                IsProgressBarVisible = true;
+                Progress = currentProgress;
+                IsDeleteAllMediaItemsButtonEnabled = false;
+                IsDeleteSelectedMediaItemButtonEnabled = false;
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+
                 foreach (MediaItem mediaItem in mediaItemsForDeletion)
                 {
-                    await DeleteMediaItem(mediaItem);
+                    await DeleteMediaItem(mediaItem, currentProgress, maxProgress, stopwatch);
                 }
+
+                stopwatch.Stop();
+
+                IsProgressBarVisible = false;
+                IsDeleteAllMediaItemsButtonEnabled = true;
+                IsDeleteSelectedMediaItemButtonEnabled = true;
 
                 SelectedMediaItem = null;
                 MediaItems = new List<MediaItem>();
