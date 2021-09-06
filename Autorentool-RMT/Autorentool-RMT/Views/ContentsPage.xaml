@@ -103,8 +103,8 @@
                                                 VerticalOptions="CenterAndExpand"/>
                                         </StackLayout>
                                     </Grid>
-
-                                </DataTemplate>
+                                    
+                            </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
                     </ScrollView>

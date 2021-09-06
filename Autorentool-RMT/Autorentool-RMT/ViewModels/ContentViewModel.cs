@@ -667,23 +667,21 @@ namespace Autorentool_RMT.ViewModels
         /// <returns></returns>
         public async Task OnDeleteAllMediaItems()
         {
-            if(mediaItems.Count > 0)
+            try
             {
-                try
+                List<MediaItem> mediaItemsForDeletion = await MediaItemDBHandler.GetAllMediaItems();
+
+                foreach (MediaItem mediaItem in mediaItemsForDeletion)
                 {
-                    SelectedMediaItem = null;
-
-                    foreach(MediaItem mediaItem in mediaItems)
-                    {
-                        await DeleteMediaItem(mediaItem);
-                    }
-
-                    MediaItems = new List<MediaItem>();
-
-                } catch(Exception exc)
-                {
-                    throw exc;
+                    await DeleteMediaItem(mediaItem);
                 }
+
+                SelectedMediaItem = null;
+                MediaItems = new List<MediaItem>();
+
+            } catch(Exception exc)
+            {
+                throw exc;
             }
         }
         #endregion
