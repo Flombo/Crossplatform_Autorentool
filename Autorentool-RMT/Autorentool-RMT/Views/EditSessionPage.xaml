@@ -95,8 +95,9 @@
                     Grid.Column="2"
                     Grid.RowSpan="2"
                     Grid.ColumnSpan="2"
-                    Text="&#x1F5D1; BAUSTEIN LÖSCHEN" 
-                    BackgroundColor="LightGray" 
+                    Text="&#x1F5D1; BAUSTEIN LÖSCHEN"
+                    IsEnabled="{Binding IsUnbindMediaItemButtonEnabled}"
+                    BackgroundColor="{Binding UnbindMediaItemButtonBackgroundColour}" 
                     FontAttributes="Bold" 
                     FontSize="Subtitle"
                     TextColor="White"/>

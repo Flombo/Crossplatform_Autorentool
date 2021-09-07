@@ -19,6 +19,8 @@ namespace Autorentool_RMT.ViewModels
         private string mediaItemText;
         private Session selectedSession;
         private MediaItem selectedMediaItem;
+        private bool isUnbindMediaItemButtonEnabled;
+        private string unbindMediaItemButtonBackgroundColour;
 
         #region Constructor
         public EditSessionViewModel(Session selectedSession)
@@ -32,6 +34,31 @@ namespace Autorentool_RMT.ViewModels
             mediaElementSource = null;
             mediaItemText = "";
             isMediaItemTextVisible = false;
+        }
+        #endregion
+
+        #region IsUnbindMediaItemButtonEnabled
+        public bool IsUnbindMediaItemButtonEnabled
+        {
+            get => isUnbindMediaItemButtonEnabled;
+            set
+            {
+                isUnbindMediaItemButtonEnabled = value;
+                UnbindMediaItemButtonBackgroundColour = GetBackgroundColour(isUnbindMediaItemButtonEnabled, "#0091EA");
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region UnbindMediaItemButtonBackgroundColour
+        public string UnbindMediaItemButtonBackgroundColour
+        {
+            get => unbindMediaItemButtonBackgroundColour;
+            set
+            {
+                unbindMediaItemButtonBackgroundColour = value;
+                OnPropertyChanged();
+            }
         }
         #endregion
 
@@ -67,6 +94,7 @@ namespace Autorentool_RMT.ViewModels
             {
                 selectedMediaItem = value;
                 SetPreviewProperties();
+                IsUnbindMediaItemButtonEnabled = selectedMediaItem != null;
                 OnPropertyChanged();
             }
         }
