@@ -23,10 +23,11 @@ namespace Autorentool_RMT.Services.DBHandling
         /// <param name="name"></param>
         /// <param name="path"></param>
         /// <param name="filetype"></param>
+        /// <param name="hash"></param>
         /// <param name="notes"></param>
         /// <param name="backendMediaItemID"></param>
         /// <returns></returns>
-        public static async Task<int> AddMediaItem(string name, string path, string filetype, string notes, int backendMediaItemID)
+        public static async Task<int> AddMediaItem(string name, string path, string filetype, string hash, string notes, int backendMediaItemID)
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
@@ -36,7 +37,8 @@ namespace Autorentool_RMT.Services.DBHandling
                 Path = path,
                 FileType = filetype,
                 Notes = notes,
-                BackendMediaItemId = backendMediaItemID
+                BackendMediaItemId = backendMediaItemID,
+                Hash = hash
             };
 
             try
@@ -252,6 +254,20 @@ namespace Autorentool_RMT.Services.DBHandling
             }
 
             return filteredMediaItems;
+        }
+        #endregion
+
+        #region SearchMediaItemWithGivenHash
+        /// <summary>
+        /// Returns the count for mediaitems which are containing the given hash.
+        /// </summary>
+        /// <param name="hash"></param>
+        /// <returns></returns>
+        public static async Task<int> SearchMediaItemWithGivenHash(string hash)
+        {
+            SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
+
+            return await sQLiteAsyncConnection.Table<MediaItem>().CountAsync(MediaItem => MediaItem.Hash.Equals(hash));
         }
         #endregion
 

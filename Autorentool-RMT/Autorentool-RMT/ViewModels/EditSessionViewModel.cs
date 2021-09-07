@@ -42,8 +42,8 @@ namespace Autorentool_RMT.ViewModels
         {
             SessionMediaItems = new List<MediaItem>()
                 {
-                    {new MediaItem(1, "Test", "png", "ImageOld.png", "Test", 0) },
-                    {new MediaItem(2, "Hello", "png", "ImageOld.png", "Test2", 0) }
+                    {new MediaItem(1, "Test", "png", "sdfkasjkfklösalöslöfd", "ImageOld.png", "Test", 0) },
+                    {new MediaItem(2, "Hello", "png", "sdfkasjkfklösalöslöfd222","ImageOld.png", "Test2", 0) }
                 };
 
         }

@@ -27,8 +27,8 @@ namespace Autorentool_RMT.ViewModels
             IsNextButtonVisible = true;
             SessionMediaItems = new List<MediaItem>()
             {
-                {new MediaItem(1, "test.jpg", "jpg", "ImageOld.png", "Test", 0) },
-                {new MediaItem(2, "test2.jpg", "jpg", "ImageOld.png", "Test2", 0) }
+                {new MediaItem(1, "test.jpg", "jpg", "sdfkasjkfklösalöslöfd1111", "ImageOld.png", "Test", 0) },
+                {new MediaItem(2, "test2.jpg", "jpg", "sdfkasjkfklösalöslöfd53454","ImageOld.png", "Test2", 0) }
             };
         }
         #endregion
@@ -127,8 +127,8 @@ namespace Autorentool_RMT.ViewModels
             //MediaItems = await MediaItemDBHandler.GetAllMediaItems();
             SessionMediaItems = new List<MediaItem>()
             {
-                {new MediaItem(1, "test.jpg", "jpg", "ImageOld.png", "Test", 0) },
-                {new MediaItem(2, "test2.jpg", "jpg", "ImageOld.png", "Test2", 0) }
+                {new MediaItem(1, "test.jpg", "jpg", "sdfkasjkfklösalöslöfd000","ImageOld.png", "Test", 0) },
+                {new MediaItem(2, "test2.jpg", "jpg", "sdfkasjkfklösalöslöfd0010", "ImageOld.png", "Test2", 0) }
             };
         }
         #endregion

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Security.Cryptography;
 
 namespace Autorentool_RMT.Services
 {
@@ -69,12 +70,33 @@ namespace Autorentool_RMT.Services
                     int length = bArray.Length;
                     fs.Write(bArray, 0, length);
                 }
-
             }
             catch (Exception exc)
             {
                 throw exc;
             }
+        }
+        #endregion
+
+        #region GetFileHashAsString
+        /// <summary>
+        /// Computes a sha512-hash from stream and returns it as string.
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public static string GetFileHashAsString(Stream stream)
+        {
+            string hashAsString = "";
+            byte[] bytes = new byte[stream.Length];
+
+            using (SHA512 sha512 = new SHA512Managed())
+            {
+                stream.Read(bytes, 0, (int)stream.Length);
+                byte[] hashCode = sha512.ComputeHash(bytes);
+                hashAsString = BitConverter.ToString(hashCode).Replace("-", "");
+            }
+
+            return hashAsString;
         }
         #endregion
 

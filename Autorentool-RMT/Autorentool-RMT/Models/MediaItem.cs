@@ -14,6 +14,8 @@ namespace Autorentool_RMT.Models
         public string Name { get; set; }
         public string Path { get; set; }
         public string FileType { get; set; }
+        [Unique, NotNull]
+        public string Hash { get; set; }
         public string Notes { get; set; }
         [Ignore]
         public List<Lifetheme> Lifethemes { get; set; }
@@ -101,13 +103,14 @@ namespace Autorentool_RMT.Models
         /// <param name="path"></param>
         /// <param name="notes"></param>
         /// <param name="backendMediaItemId"></param>
-        public MediaItem(int id, string name, string filetype, string path, string notes, int backendMediaItemId)
+        public MediaItem(int id, string name, string filetype, string hash, string path, string notes, int backendMediaItemId)
         {
             Id = id;
             Name = name;
             FileType = filetype;
             Path = path;
             Notes = notes;
+            Hash = hash;
             BackendMediaItemId = backendMediaItemId;
         }
         #endregion

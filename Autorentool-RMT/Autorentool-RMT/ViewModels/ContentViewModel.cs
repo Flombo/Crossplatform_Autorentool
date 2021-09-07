@@ -583,7 +583,7 @@ namespace Autorentool_RMT.ViewModels
         /// After that all new MediaItems will be displayed.
         /// If an exception occurs, it will be re-thrown to the code behind for displaying an error prompt.
         /// </summary>
-        public async void ShowFilePicker()
+        public async Task ShowFilePicker()
         {
             try
             {
@@ -620,17 +620,36 @@ namespace Autorentool_RMT.ViewModels
                         SetProgressElements(currentProgress, maxProgress, stopwatch);
                         
                         Stream stream = await fileResult.OpenReadAsync();
+                        string hash = FileHandler.GetFileHashAsString(stream);
 
-                        string directoryPath = FileHandler.CreateDirectory("MediaItems");
+                        int duplicate = await MediaItemDBHandler.SearchMediaItemWithGivenHash(hash);
 
-                        string filename = FileHandler.GetUniqueFilename(fileResult.FileName, directoryPath);
-                        string filetype = FileHandler.ExtractFiletypeFromPath(filename);
+                        if (duplicate == 0)
+                        {
 
-                        string filepath = Path.Combine(directoryPath, filename);
+                            string directoryPath = FileHandler.CreateDirectory("MediaItems");
 
-                        FileHandler.SaveFile(stream, filepath);
+                            string filename = FileHandler.GetUniqueFilename(fileResult.FileName, directoryPath);
+                            string filetype = FileHandler.ExtractFiletypeFromPath(filename);
 
-                        await MediaItemDBHandler.AddMediaItem(filename, filepath, filetype, "", 0);
+                            string filepath = Path.Combine(directoryPath, filename);
+
+                            stream = await fileResult.OpenReadAsync();
+
+                            FileHandler.SaveFile(stream, filepath);
+
+                            await MediaItemDBHandler.AddMediaItem(filename, filepath, filetype, hash, "", 0);
+                        } else
+                        {
+                            stopwatch.Stop();
+
+                            MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
+                            IsProgressBarVisible = false;
+                            IsDeleteAllMediaItemsButtonEnabled = true;
+                            IsDeleteSelectedMediaItemButtonEnabled = true;
+
+                            throw new Exception("Es dürfen keine bereits existierenden Dateien hinzugefügt werden");
+                        }
                     }
 
                     stopwatch.Stop();

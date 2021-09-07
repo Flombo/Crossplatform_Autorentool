@@ -61,7 +61,7 @@ namespace Autorentool_RMT.ViewModels
         {
             SelectedSessionMediaItems = new List<MediaItem>()
                 {
-                    {new MediaItem(1, "Test", "png", "ImageOld.png", "Test", 0) }
+                    {new MediaItem(1, "Test", "png", "sdfkasjkfklösalöslöfd0002424", "ImageOld.png", "Test", 0) }
                 };
 
             Sessions = new List<Session>()

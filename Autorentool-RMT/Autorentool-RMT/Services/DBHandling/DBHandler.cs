@@ -31,12 +31,13 @@ namespace Autorentool_RMT.Services.DBHandling
                 string databasePath = Path.Combine(FileSystem.AppDataDirectory, "autorentool.db");
                 sQLiteAsyncConnection = new SQLiteAsyncConnection(databasePath);
 
+                await sQLiteAsyncConnection.CreateTableAsync<MediaItem>();
+
                 await sQLiteAsyncConnection.CreateTableAsync<Resident>();
                 await sQLiteAsyncConnection.CreateTableAsync<MediaItem>();
                 await sQLiteAsyncConnection.CreateTableAsync<Lifetheme>();
                 await sQLiteAsyncConnection.CreateTableAsync<Session>();
 
-                await sQLiteAsyncConnection.CreateTableAsync<MediaItemFileHashes>();
                 await sQLiteAsyncConnection.CreateTableAsync<MediaItemLifethemes>();
                 await sQLiteAsyncConnection.CreateTableAsync<ResidentLifethemes>();
                 await sQLiteAsyncConnection.CreateTableAsync<SessionMediaItems>();
@@ -87,7 +88,6 @@ namespace Autorentool_RMT.Services.DBHandling
             await sQLiteAsyncConnection.DropTableAsync<SessionMediaItems>();
             await sQLiteAsyncConnection.DropTableAsync<ResidentLifethemes>();
             await sQLiteAsyncConnection.DropTableAsync<MediaItemLifethemes>();
-            await sQLiteAsyncConnection.DropTableAsync<MediaItemFileHashes>();
 
             sQLiteAsyncConnection = null;
         }

@@ -156,10 +156,11 @@ namespace Autorentool_RMT.Views
         {
             try
             {
-                contentViewModel.ShowFilePicker();
-            } catch(Exception)
+                await contentViewModel.ShowFilePicker();
+
+            } catch (Exception exc)
             {
-                await DisplayAlert("Fehler beim Hinzufügen neuer Inhalte", "Beim Hinzufügen neuer Inhalte trat ein Fehler auf", "Schließen");
+                await DisplayAlert("Fehler beim Hinzufügen neuer Inhalte", exc.Message, "Schließen");
             }
         }
         #endregion
