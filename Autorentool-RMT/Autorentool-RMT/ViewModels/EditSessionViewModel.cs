@@ -1,5 +1,8 @@
 ﻿using Autorentool_RMT.Models;
+using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Autorentool_RMT.ViewModels
@@ -8,11 +11,170 @@ namespace Autorentool_RMT.ViewModels
     {
 
         private List<MediaItem> sessionMediaItems;
+        private bool isImageVisble;
+        private bool isMediaElementVisible;
+        private bool isMediaItemTextVisible;
+        private string imagePath;
+        private string mediaElementSource;
+        private string mediaItemText;
+        private Session selectedSession;
+        private MediaItem selectedMediaItem;
 
         #region Constructor
-        public EditSessionViewModel()
+        public EditSessionViewModel(Session selectedSession)
         {
             sessionMediaItems = new List<MediaItem>();
+            this.selectedSession = selectedSession;
+            isImageVisble = true;
+            imagePath = "preview.png";
+            selectedMediaItem = null;
+            isMediaElementVisible = false;
+            mediaElementSource = null;
+            mediaItemText = "";
+            isMediaItemTextVisible = false;
+        }
+        #endregion
+
+        #region IsMediaItemTextVisible
+        public bool IsMediaItemTextVisible
+        {
+            get => isMediaItemTextVisible;
+            set
+            {
+                isMediaItemTextVisible = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region MediaItemText
+        public string MediaItemText
+        {
+            get => mediaItemText;
+            set
+            {
+                mediaItemText = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region SelectedMediaItem
+        public MediaItem SelectedMediaItem
+        {
+            get => selectedMediaItem;
+            set
+            {
+                selectedMediaItem = value;
+                SetPreviewProperties();
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region SetPreviewProperties
+        /// <summary>
+        /// Sets the media preview properties 
+        /// (IsImageVisible, IsMediaElementVisible, IsMediaItemTextVisible, MediaElementSource, ImagePath and MediaItemText) depending if the selected medium is an image or not.
+        /// For the MediaElement it is necessary to reload the selected mediaitem, because the selected mediaitem contains the video icon as path and not the medium path.
+        /// An uri instance must be built of the path, to retrieve local media on android.
+        /// This is necessary, because the MediaElement doesn't support images.
+        /// </summary>
+        private void SetPreviewProperties()
+        {
+            if(selectedMediaItem != null)
+            {
+                if (selectedMediaItem.IsAudio || selectedMediaItem.IsVideo)
+                {
+                    IsImageVisible = false;
+                    IsMediaElementVisible = true;
+                    IsMediaItemTextVisible = false;
+
+                    try
+                    {
+                        MediaElementSource = new Uri(selectedMediaItem.GetFullPath).LocalPath;
+                    }
+                    catch (Exception)
+                    {
+                        MediaElementSource = null;
+                    }
+
+                    ImagePath = "preview.png";
+                    MediaItemText = "";
+                }
+
+                else if (selectedMediaItem.IsImage)
+                {
+                    IsImageVisible = true;
+                    IsMediaElementVisible = false;
+                    IsMediaItemTextVisible = false;
+                    MediaElementSource = null;
+                    MediaItemText = "";
+                    ImagePath = selectedMediaItem.GetFullPath;
+
+                }
+                else if (selectedMediaItem.IsTxt)
+                {
+                    IsImageVisible = false;
+                    IsMediaElementVisible = false;
+                    IsMediaItemTextVisible = true;
+                    MediaElementSource = null;
+                    ImagePath = selectedMediaItem.GetFullPath;
+                    MediaItemText = File.ReadAllText(selectedMediaItem.GetFullPath);
+                }
+                else
+                {
+                    SelectedMediaItem = null;
+                }
+            }
+        }
+        #endregion
+
+        #region IsImageVisible
+        public bool IsImageVisible
+        {
+            get => isImageVisble;
+            set
+            {
+                isImageVisble = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsMediaElementVisible
+        public bool IsMediaElementVisible
+        {
+            get => isMediaElementVisible;
+            set
+            {
+                isMediaElementVisible = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region ImagePath
+        public string ImagePath
+        {
+            get => imagePath;
+            set
+            {
+                imagePath = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region MediaElementSource
+        public string MediaElementSource
+        {
+            get => mediaElementSource;
+            set
+            {
+                mediaElementSource = value;
+                OnPropertyChanged();
+            }
         }
         #endregion
 
@@ -40,11 +202,7 @@ namespace Autorentool_RMT.ViewModels
         /// <returns></returns>
         public async Task OnLoadAllSessions()
         {
-            SessionMediaItems = new List<MediaItem>()
-                {
-                    {new MediaItem(1, "Test", "png", "sdfkasjkfklösalöslöfd", "ImageOld.png", "Test", 0) },
-                    {new MediaItem(2, "Hello", "png", "sdfkasjkfklösalöslöfd222","ImageOld.png", "Test2", 0) }
-                };
+            SessionMediaItems = await SessionMediaItemsDBHandler.GetMediaItemsOfSession(selectedSession.Id);
 
         }
         #endregion

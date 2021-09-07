@@ -33,7 +33,7 @@ namespace Autorentool_RMT.Views
         #region OnEditSessionButtonClicked
         private async void OnEditSessionButtonClicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new EditSessionPage());
+            await Navigation.PushAsync(new EditSessionPage(selectedSession));
         }
         #endregion
 

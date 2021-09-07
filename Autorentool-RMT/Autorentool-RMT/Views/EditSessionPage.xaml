@@ -16,46 +16,59 @@
                            VerticalTextAlignment="Center"/>
                 </StackLayout>
 
-                <ListView ItemsSource="{Binding SessionMediaItems}" 
-                          BackgroundColor="White"
-                          Grid.Row="1" 
-                          Grid.Column="0" 
-                          Grid.RowSpan="7">
-                    <ListView.ItemTemplate>
+                <CollectionView ItemsSource="{Binding SessionMediaItems}"
+                                SelectionMode="Single"
+                                BackgroundColor="White"
+                                Grid.Row="1"
+                                SelectionChanged="OnSelectionChanged"
+                                Grid.Column="0"
+                                Grid.RowSpan="7">
+                    <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <StackLayout Orientation="Horizontal">
+                            <StackLayout Orientation="Horizontal" Spacing="0">
                                 <Image Source="{Binding GetFullPath}"
                                        Aspect="AspectFit"
                                        HeightRequest="60"
                                        WidthRequest="60"
                                        BackgroundColor="White"/>
-                                <Label Text="{Binding Name}" FontSize="Subtitle" FontAttributes="Bold"/>
+                                <Label Text="{Binding Name}" FontSize="Subtitle" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" FontAttributes="Bold"/>
                             </StackLayout>
                         </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
             </StackLayout>
 
             <StackLayout BackgroundColor="Black" Grid.Row="0" Grid.Column="1" Grid.RowSpan="8">
-                <Image Source="preview.png" 
+                <Image Source="{Binding ImagePath}" 
                        BackgroundColor="White"
                        Aspect="AspectFit" 
                        HeightRequest="375" 
                        WidthRequest="450" 
                        HorizontalOptions="CenterAndExpand" 
                        VerticalOptions="CenterAndExpand" 
-                       IsVisible="True"/>
+                       IsVisible="{Binding IsImageVisible}"/>
+                <ScrollView IsVisible="{Binding IsMediaItemTextVisible}"
+                            Orientation="Vertical"
+                            Grid.Row="1" 
+                            Grid.Column="0"
+                            Grid.ColumnSpan="3" 
+                            Grid.RowSpan="5"
+                            BackgroundColor="White">
+                    <Label Text="{Binding MediaItemText}" 
+                            FontSize="Small"  
+                            VerticalOptions="CenterAndExpand" 
+                            HorizontalOptions="CenterAndExpand"/>
+                </ScrollView>
             </StackLayout>
 
             <!--MediaElement for playing Audio and Video-->
-            <!--<xct:MediaElement
-                IsVisible="False"
-                Source="https://sec.ch9.ms/ch9/5d93/a1eab4bf-3288-4faf-81c4-294402a85d93/XamarinShow_mid.mp4"
+            <xct:MediaElement
+                IsVisible="{Binding IsMediaElementVisible}"
+                Source="{Binding MediaElementSource}"
                 ShowsPlaybackControls="True"
                 AutoPlay="False"
                 Grid.Row="0" Grid.Column="1"  Grid.RowSpan="8"
-                Aspect="AspectFit"
-                />-->
+                Aspect="AspectFit"/>
 
             <Button Text="&#43; BAUSTEIN HINZUFÜGEN" 
                     BackgroundColor="Green" 
