@@ -298,6 +298,8 @@ namespace Autorentool_RMT.ViewModels
                     selectedSession = null;
 
                     EnableOrDisableButtons();
+                    IsSelectedSessionTextVisible = false;
+                    SelectedSessionText = "";
 
                 } catch(Exception exc)
                 {
