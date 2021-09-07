@@ -618,37 +618,41 @@ namespace Autorentool_RMT.ViewModels
                     {
                         currentProgress++;
                         SetProgressElements(currentProgress, maxProgress, stopwatch);
-                        
-                        Stream stream = await fileResult.OpenReadAsync();
-                        string hash = FileHandler.GetFileHashAsString(stream);
 
-                        int duplicate = await MediaItemDBHandler.SearchMediaItemWithGivenHash(hash);
-
-                        if (duplicate == 0)
+                        using (Stream stream = await fileResult.OpenReadAsync())
                         {
+                            string hash = FileHandler.GetFileHashAsString(stream);
 
-                            string directoryPath = FileHandler.CreateDirectory("MediaItems");
+                            int duplicate = await MediaItemDBHandler.SearchMediaItemWithGivenHash(hash);
 
-                            string filename = FileHandler.GetUniqueFilename(fileResult.FileName, directoryPath);
-                            string filetype = FileHandler.ExtractFiletypeFromPath(filename);
+                            if (duplicate == 0)
+                            {
 
-                            string filepath = Path.Combine(directoryPath, filename);
+                                string directoryPath = FileHandler.CreateDirectory("MediaItems");
 
-                            stream = await fileResult.OpenReadAsync();
+                                string filename = FileHandler.GetUniqueFilename(fileResult.FileName, directoryPath);
+                                string filetype = FileHandler.ExtractFiletypeFromPath(filename);
 
-                            FileHandler.SaveFile(stream, filepath);
+                                string filepath = Path.Combine(directoryPath, filename);
 
-                            await MediaItemDBHandler.AddMediaItem(filename, filepath, filetype, hash, "", 0);
-                        } else
-                        {
-                            stopwatch.Stop();
+                                using (Stream fileSaveStream = await fileResult.OpenReadAsync())
+                                {
+                                    FileHandler.SaveFile(fileSaveStream, filepath);
+                                }
 
-                            MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
-                            IsProgressBarVisible = false;
-                            IsDeleteAllMediaItemsButtonEnabled = true;
-                            IsDeleteSelectedMediaItemButtonEnabled = true;
+                                await MediaItemDBHandler.AddMediaItem(filename, filepath, filetype, hash, "", 0);
+                            }
+                            else
+                            {
+                                stopwatch.Stop();
 
-                            throw new Exception("Es dürfen keine bereits existierenden Dateien hinzugefügt werden");
+                                MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
+                                IsProgressBarVisible = false;
+                                IsDeleteAllMediaItemsButtonEnabled = true;
+                                IsDeleteSelectedMediaItemButtonEnabled = true;
+
+                                throw new Exception("Es dürfen keine bereits existierenden Dateien hinzugefügt werden");
+                            }
                         }
                     }
 

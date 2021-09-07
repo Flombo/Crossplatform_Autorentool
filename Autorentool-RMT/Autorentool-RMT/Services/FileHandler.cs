@@ -56,7 +56,6 @@ namespace Autorentool_RMT.Services
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="filePath"></param>
-        /// <returns></returns>
         public static void SaveFile(Stream stream, string filePath)
         {
             try

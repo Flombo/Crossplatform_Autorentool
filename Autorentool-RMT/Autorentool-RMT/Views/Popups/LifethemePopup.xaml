@@ -10,60 +10,61 @@
 
     <Grid BackgroundColor="White">
         <Label Text="Lebensthemen auswählen oder neu erstellen" 
-                       HorizontalOptions="CenterAndExpand"
-                       FontSize="Medium" 
-                       Grid.Row="0"
-                       Grid.Column="0"
-                       Grid.ColumnSpan="2"/>
+               HorizontalOptions="CenterAndExpand"
+               FontSize="Medium" 
+               Grid.Row="0"
+               Grid.Column="0"
+               Grid.ColumnSpan="2"/>
         <Frame HasShadow="True" 
-                        BorderColor="Black" 
-                        Grid.Row="1" 
-                        Grid.Column="0"
-                        Grid.ColumnSpan="2"
-                        Grid.RowSpan="3">
-            <ScrollView Grid.ColumnSpan="2" Grid.RowSpan="3" VerticalOptions="FillAndExpand">
-                <CollectionView ItemsSource="{Binding AllExistingLifethemes}" 
-                                        ItemsLayout="VerticalGrid, 3" 
-                                        SelectionMode="Single"
-                                        SelectionChanged="OnDeleteLifetheme">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
+               BorderColor="Black" 
+               Grid.Row="1" 
+               Grid.Column="0"
+               Grid.ColumnSpan="2"
+               Grid.RowSpan="3">
+            <CollectionView ItemsSource="{Binding AllExistingLifethemes}" 
+                            ItemsLayout="VerticalGrid, 3" 
+                            SelectionMode="Single"
+                            Grid.ColumnSpan="2" 
+                            Grid.RowSpan="3" 
+                            VerticalOptions="FillAndExpand"
+                            SelectionChanged="OnDeleteLifetheme">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
 
-                            <StackLayout Orientation="Horizontal" Spacing="0" Padding="2">
-                                <CheckBox IsChecked="{Binding Checked}"/>
-                                <Label Text="{Binding Name}" 
-                                               FontSize="Small" 
-                                               HorizontalOptions="CenterAndExpand" 
-                                               VerticalOptions="CenterAndExpand"
-                                               LineBreakMode="MiddleTruncation"/>
-                            </StackLayout>
+                        <StackLayout Orientation="Horizontal" Spacing="0" Padding="2">
+                            <CheckBox IsChecked="{Binding Checked}"/>
+                            <Label Text="{Binding Name}" 
+                                   FontSize="Small" 
+                                   HorizontalOptions="CenterAndExpand" 
+                                   VerticalOptions="CenterAndExpand"
+                                   LineBreakMode="MiddleTruncation"/>
+                        </StackLayout>
 
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </ScrollView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
         </Frame>
         <SearchBar Placeholder="Lebensthemen durchsuchen" Text="{Binding SearchText}" SearchButtonPressed="OnSearchButtonPressed" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"/>
         <StackLayout Orientation="Horizontal" 
-                             Spacing="0" 
-                             HorizontalOptions="CenterAndExpand"
-                             Grid.Row="5" 
-                             Grid.Column="0"
-                             Grid.ColumnSpan="2">
+                     Spacing="0" 
+                     HorizontalOptions="CenterAndExpand"
+                     Grid.Row="5" 
+                     Grid.Column="0"
+                     Grid.ColumnSpan="2">
             <Entry Placeholder="Neues Lebensthema hier eingeben" 
-                           Text="{Binding LifethemeEntryText}"
-                           WidthRequest="300" 
-                           HeightRequest="50"
-                           IsSpellCheckEnabled="True"
-                           IsTextPredictionEnabled="True"/>
+                   Text="{Binding LifethemeEntryText}"
+                   WidthRequest="300" 
+                   HeightRequest="50"
+                   IsSpellCheckEnabled="True"
+                   IsTextPredictionEnabled="True"/>
             <Button BackgroundColor="LightGray" Text="&#43; NEU ERSTELLEN" Clicked="OnCreateLifethemeButtonClicked"/>
         </StackLayout>
         <Button Text="Auswahl übernehmen und Fenster schließen" 
-                        BackgroundColor="#0091EA" 
-                        Clicked="OnAcceptButtonClicked" 
-                        TextColor="White" 
-                        Grid.Row="6" 
-                        Grid.Column="1"/>
+                BackgroundColor="#0091EA" 
+                Clicked="OnAcceptButtonClicked" 
+                TextColor="White" 
+                Grid.Row="6" 
+                Grid.Column="1"/>
     </Grid>
 
 </xct:Popup>
