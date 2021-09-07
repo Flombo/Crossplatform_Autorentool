@@ -10,7 +10,7 @@
             <StackLayout Grid.Row="0" Grid.Column="0" Grid.RowSpan="10">
                 <!--Session import/export controls-->
                 <StackLayout BackgroundColor="Beige" Orientation="Horizontal" Grid.Row="0" Grid.Column="0" HeightRequest="40">
-                    <Label Text="" FontSize="Subtitle"/>
+                    <Label Text="{Binding SelectedSessionText}" IsVisible="{Binding IsSelectedSessionTextVisible}" FontSize="Micro" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
                     <StackLayout HorizontalOptions="EndAndExpand" Orientation="Horizontal">
                         <Button Text="{StaticResource ImportFromBackendIcon}" TextColor="White" HeightRequest="50" WidthRequest="45" BackgroundColor="LightGray" FontSize="Subtitle" FontAttributes="Bold"/>
                         <Button Text="{StaticResource ExportIcon}" TextColor="White" BackgroundColor="LightGray"  HeightRequest="50" WidthRequest="45" FontSize="Subtitle" FontAttributes="Bold"/>
@@ -18,12 +18,14 @@
                     </StackLayout>
                 </StackLayout>
 
-                <CollectionView ItemsSource="{Binding Sessions}">
+                <CollectionView ItemsSource="{Binding Sessions}" SelectionMode="Single" SelectionChanged="OnSelectionChanged">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             
-                            <Button Text="{Binding Name}" 
-                                   FontAttributes="Bold" 
+                            <Label Text="{Binding Name}" 
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                   HorizontalOptions="Center"
                                    FontSize="Subtitle"
                                    BackgroundColor="LightGray"/>
 
@@ -68,6 +70,7 @@
             <Button 
                 Text="&#43; Neue Sitzung hinzufügen"
                 BackgroundColor="Green"
+                Clicked="OnCreateSessionButtonClicked"
                 TextColor="White"
                 FontSize="Subtitle"
                 Grid.Row="10" 
@@ -84,17 +87,19 @@
                     Text="&#x270F; Sitzung bearbeiten"
                     Clicked="OnEditSessionButtonClicked"
                     FontAttributes="Bold" 
-                    BackgroundColor="LightGray" 
+                    BackgroundColor="{Binding EditSessionButtonBackgroundColour}"
+                    IsEnabled="{Binding IsEditSessionButtonEnabled}"
                     TextColor="White"
                     Padding="5"
                     FontSize="Subtitle"/>
                 <Button
                     Grid.Row="0" 
                     Grid.Column="1"
-                    Text="&#x25b6; Sitzung starten" 
+                    Text="&#x25b6; Sitzung starten"
+                    IsEnabled="{Binding IsStartSessionButtonEnabled}"
                     FontAttributes="Bold"
                     Clicked="OnStartSessionButtonClicked"
-                    BackgroundColor="LightGray" 
+                    BackgroundColor="{Binding StartSessionButtonBackgroundColour}" 
                     TextColor="White"
                     Padding="5"
                     FontSize="Subtitle"/>
@@ -104,7 +109,9 @@
                     Padding="5"
                     Text="&#x1F5D1; Sitzung löschen" 
                     FontAttributes="Bold" 
-                    BackgroundColor="LightGray"
+                    BackgroundColor="{Binding DeleteSessionButtonBackgroundColour}"
+                    IsEnabled="{Binding IsDeleteSessionButtonEnabled}"
+                    Clicked="OnDeleteSessionButtonClicked"
                     TextColor="White"
                     FontSize="Subtitle"/>
                 <Button
@@ -113,7 +120,9 @@
                     Text="Name ändern"
                     Padding="5"
                     FontAttributes="Bold" 
-                    BackgroundColor="LightGray" 
+                    BackgroundColor="{Binding ChangeNameSessionButtonBackgroundColour}"
+                    IsEnabled="{Binding IsChangeNameSessionButtonEnabled}"
+                    Clicked="OnEditSessionNameButtonClicked"
                     TextColor="White"
                     FontSize="Subtitle"/>
             </Grid>

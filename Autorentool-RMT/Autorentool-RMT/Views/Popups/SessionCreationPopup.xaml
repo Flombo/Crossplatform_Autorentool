@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+           xmlns:local="clr-namespace:Autorentool_RMT.Views.Popups"
+           xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+           x:Class="Autorentool_RMT.Views.Popups.SessionCreationPopup"
+           x:TypeArguments="local:SessionCreationPopup+Result"
+           IsLightDismissEnabled="False"
+           Size="350, 150"
+           BackgroundColor="White">
+
+    <StackLayout BackgroundColor="White" 
+          WidthRequest="350"
+          HeightRequest="150"
+          VerticalOptions="CenterAndExpand" 
+          HorizontalOptions="CenterAndExpand">
+        <Label Text="Neue Sitzung erstellen" HorizontalOptions="CenterAndExpand" VerticalOptions="StartAndExpand"/>
+        <Entry Placeholder="Sitzungsname" Text="{Binding SessionName}" />
+        <StackLayout Orientation="Horizontal">
+            <Button Text="Erstellen" Clicked="OnCreateButtonClicked" WidthRequest="150" IsEnabled="{Binding IsCreateButtonEnabled}" BackgroundColor="{Binding CreateButtonBackgroundColour}" HorizontalOptions="StartAndExpand"/>
+            <Button Text="Abbrechen" Clicked="OnAbortButtonClicked" BackgroundColor="LightGray" HorizontalOptions="EndAndExpand" WidthRequest="150"/>
+        </StackLayout>
+    </StackLayout>
+
+</xct:Popup>

@@ -127,6 +127,20 @@ namespace Autorentool_RMT.Services.DBHandling
         }
         #endregion
 
+        #region GetSessionByName
+        /// <summary>
+        /// Returns a single Session or null by given session name.
+        /// </summary>
+        /// <param name="sessionName"></param>
+        /// <returns></returns>
+        public static async Task<Session> GetSessionByName(string sessionName)
+        {
+            SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
+
+            return await sQLiteAsyncConnection.Table<Session>().Where(Session => Session.Name.Equals(sessionName)).FirstOrDefaultAsync();
+        }
+        #endregion
+
         #region DeleteAllEntries
         /// <summary>
         /// Deletes all entries from Session-table.

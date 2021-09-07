@@ -8,7 +8,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
 {
     public class ResidentSessionsDBHandler
     {
-        #region BindResidentSessions
+        #region BindResidentSession
         /// <summary>
         /// Creates and inserts a new ResidentSessions-model to database asynchronously by given parameters.
         /// Returns the ID of the newly created ResidentSessions-model if there aren't any entries with the same ResidentId and SessionId combination.
@@ -18,7 +18,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         /// <param name="residentId"></param>
         /// <param name="sessionId"></param>
         /// <returns></returns>
-        public static async Task<int> BindResidentLifethemes(int residentId, int sessionId)
+        public static async Task<int> BindResidentSession(int residentId, int sessionId)
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
@@ -80,7 +80,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         /// </summary>
         /// <param name="residentSessionsId"></param>
         /// <returns></returns>
-        public static async Task UnbindCertainResidentLifethemes(int residentSessionsId)
+        public static async Task UnbindCertainResidentSession(int residentSessionsId)
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
@@ -106,13 +106,13 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         }
         #endregion
 
-        #region UnbindAllResidentSessionsByLifethemeId
+        #region UnbindAllResidentSessionsBySessionId
         /// <summary>
         /// Unbinds all ResidentSessions where the SessionId equals the given sessionId.
         /// </summary>
         /// <param name="sessionId"></param>
         /// <returns></returns>
-        public static async Task UnbindAllResidentSessionsByLifethemeId(int sessionId)
+        public static async Task UnbindAllResidentSessionsBySessionId(int sessionId)
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
@@ -224,7 +224,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         /// </summary>
         /// <param name="sessionId"></param>
         /// <returns></returns>
-        public static async Task<List<Resident>> GetResidentsOfLifethemes(int sessionId)
+        public static async Task<List<Resident>> GetResidentsOfSession(int sessionId)
         {
             List<ResidentSessions> queriedResidentSessions = await GetResidentSessionsBySessionId(sessionId);
 
@@ -245,7 +245,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         /// Returns all ResidentSessions as a List.
         /// </summary>
         /// <returns></returns>
-        public static async Task<List<ResidentSessions>> GetAllResidentLifethemes()
+        public static async Task<List<ResidentSessions>> GetAllResidentSessions()
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
