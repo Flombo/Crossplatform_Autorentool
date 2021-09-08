@@ -1,9 +1,12 @@
 ﻿using Autorentool_RMT.Models;
+using Autorentool_RMT.Services.DBHandling;
 using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using Xamarin.Forms;
 
 namespace Autorentool_RMT.ViewModels
 {
@@ -22,6 +25,7 @@ namespace Autorentool_RMT.ViewModels
         private MediaItem selectedMediaItem;
         private bool isUnbindMediaItemButtonEnabled;
         private string unbindMediaItemButtonBackgroundColour;
+        public MediaItem DraggedMediaItem { get; set; }
         #endregion
 
         #region Constructor
@@ -263,6 +267,28 @@ namespace Autorentool_RMT.ViewModels
             } catch(Exception exc)
             {
                 throw exc;
+            }
+        }
+        #endregion
+
+        #region ChangePosition
+        /// <summary>
+        /// Changes position of the dragged mediaitem and the mediaitem, where it dropped.
+        /// </summary>
+        /// <param name="targetMediaItem"></param>
+        public async Task ChangePosition(MediaItem targetMediaItem)
+        {
+            if(targetMediaItem.Id != DraggedMediaItem.Id)
+            {
+                
+
+                int targetIndex = sessionMediaItems.IndexOf(targetMediaItem);
+                int draggedMediaItemIndex = sessionMediaItems.IndexOf(DraggedMediaItem);
+
+                await MediaItemDBHandler.UpdatePosition(targetMediaItem.Id, draggedMediaItemIndex + 1);
+                await MediaItemDBHandler.UpdatePosition(DraggedMediaItem.Id, targetIndex + 1);
+
+                await OnLoadAllSessionMediaItems();
             }
         }
         #endregion

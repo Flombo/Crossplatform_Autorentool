@@ -193,7 +193,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
                 mediaItemsOfSession.Add(mediaItem);
             }
 
-            mediaItemsOfSession.OrderBy(mediaItem => mediaItem.Position);
+            mediaItemsOfSession = mediaItemsOfSession.OrderBy(mediaItem => mediaItem.Position).ToList();
 
             return mediaItemsOfSession;
         }

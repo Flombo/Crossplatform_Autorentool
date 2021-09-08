@@ -92,5 +92,32 @@ namespace Autorentool_RMT.Views
             await Navigation.PopAsync();
         }
         #endregion
+
+        #region OnDragStart
+        /// <summary>
+        /// Selects the dragged mediaitem and sets the DraggedMediaItem property.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnDrag(DragGestureRecognizer sender, DragStartingEventArgs e)
+        {
+            MediaItem draggedMediaItem = sender.BindingContext as MediaItem;
+            editSessionViewModel.DraggedMediaItem = draggedMediaItem;
+        }
+        #endregion
+
+        #region OnDrop
+        /// <summary>
+        /// Selects the mediaitem, where the dragged mediaitem was dropped and changes the position-attribute of both.
+        /// In the end the UI will be refreshed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void OnDrop(DragGestureRecognizer sender, DropEventArgs e)
+        {
+            MediaItem targetMediaItem = sender.BindingContext as MediaItem;
+            await editSessionViewModel.ChangePosition(targetMediaItem);
+        }
+        #endregion
     }
 }
