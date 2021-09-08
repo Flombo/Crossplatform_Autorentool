@@ -179,7 +179,6 @@ namespace Autorentool_RMT.ViewModels
             {
                 selectedSession = value;
                 EnableOrDisableButtons();
-                SetSelectedSessionText();
                 LoadSelectedSessionMediaItems();
                 OnPropertyChanged();
             }
@@ -193,7 +192,11 @@ namespace Autorentool_RMT.ViewModels
         private void SetSelectedSessionText()
         {
             IsSelectedSessionTextVisible = selectedSession != null;
-            SelectedSessionText = $"Die Sitzung '{selectedSession.Name}' hat {SelectedSessionMediaItems.Count} Baustein(e)";
+            
+            if (selectedSession != null)
+            {
+                SelectedSessionText = $"Die Sitzung '{selectedSession.Name}' hat {SelectedSessionMediaItems.Count} Baustein(e)";
+            }
         }
         #endregion
 
@@ -219,12 +222,21 @@ namespace Autorentool_RMT.ViewModels
         /// </summary>
         private async void LoadSelectedSessionMediaItems()
         {
-            if(selectedSession != null)
+            try
             {
-                SelectedSessionMediaItems = await SessionMediaItemsDBHandler.GetMediaItemsOfSession(selectedSession.Id);
-            } else
+                if (selectedSession != null)
+                {
+                    SelectedSessionMediaItems = await SessionMediaItemsDBHandler.GetMediaItemsOfSession(selectedSession.Id);
+                }
+                else
+                {
+                    SelectedSessionMediaItems = new List<MediaItem>();
+                }
+
+                SetSelectedSessionText();
+            } catch(Exception)
             {
-                SelectedSessionMediaItems = new List<MediaItem>();
+
             }
         }
         #endregion
@@ -273,6 +285,7 @@ namespace Autorentool_RMT.ViewModels
         public async Task OnLoadAllSessions()
         {
 
+            SelectedSession = null;
             Sessions = await SessionDBHandler.GetAllSessions();
 
         }
@@ -296,6 +309,7 @@ namespace Autorentool_RMT.ViewModels
                     await SessionDBHandler.DeleteSession(selectedSession.Id);
 
                     selectedSession = null;
+                    SelectedSessionMediaItems = new List<MediaItem>();
 
                     EnableOrDisableButtons();
                     IsSelectedSessionTextVisible = false;

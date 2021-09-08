@@ -28,7 +28,7 @@
                 <!--Content section-->
                 <StackLayout Grid.Row="1" Grid.Column="0" BackgroundColor="White" Grid.RowSpan="12">
                     <!--Content controls-->
-                    <StackLayout BackgroundColor="Beige" Grid.Row="1" Grid.Column="0" Orientation="Horizontal" HeightRequest="50">
+                    <StackLayout BackgroundColor="Beige" Grid.Row="1" Grid.Column="0" Orientation="Horizontal" HeightRequest="50" IsVisible="{Binding IsContentPage}">
                         <Button Text="{StaticResource DeleteIcon}" 
                                 BackgroundColor="{Binding DeleteAllMediaItemsButtonBackgroundcolour}" 
                                 IsEnabled="{Binding IsDeleteAllMediaItemsButtonEnabled}"
@@ -99,7 +99,7 @@
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
 
-                                <Grid Padding="2" HeightRequest="120">
+                                <Grid Padding="2" HeightRequest="120" x:Uid="{Binding Id}">
                                     <Image
                                         Source="{Binding GetPreviewPath}"
                                         Aspect="AspectFit"
@@ -120,6 +120,14 @@
                                             HorizontalOptions="CenterAndExpand"
                                             VerticalOptions="CenterAndExpand"/>
                                     </StackLayout>
+                                    <CheckBox IsChecked="False" 
+                                              BindingContext="{x:Reference AddMediaItemButton}" 
+                                              IsVisible="{Binding IsVisible}"
+                                              CheckedChanged="OnMediaItemCheckboxChanged"
+                                              HorizontalOptions="End"
+                                              VerticalOptions="Start"
+                                              Grid.Column="0" 
+                                              Grid.Row="0"/>
                                 </Grid>
 
                             </DataTemplate>
@@ -205,18 +213,20 @@
                 <!--Lifethemes section-->
                 <StackLayout Grid.Row="1" Grid.Column="2" Grid.RowSpan="7">
                     <!--Lifethemes control panel-->
-                    <StackLayout Grid.Row="1" Grid.Column="2" BackgroundColor="Beige" Orientation="Horizontal">
+                    <StackLayout Grid.Row="1" Grid.Column="2" BackgroundColor="Beige" Orientation="Horizontal" HeightRequest="50">
                         <Label 
                             Text="Lebensthemen" 
                             FontAttributes="Bold"
                             FontSize="Subtitle" 
                             VerticalTextAlignment="Center" 
-                            HorizontalTextAlignment="Center" 
+                            HorizontalTextAlignment="Center"
+                            HeightRequest="50"
                             VerticalOptions="FillAndExpand"
                             />
                         <Button Text="{StaticResource EditIcon}"
                                 BackgroundColor="{Binding LifethemesBackgroundColour}"
                                 IsEnabled="{Binding IsLifethemesButtonEnabled}"
+                                IsVisible="{Binding IsContentPage}"
                                 Clicked="OnLifethemesButtonClicked"
                                 HeightRequest="50"
                                 FontAttributes="Bold"
@@ -252,6 +262,7 @@
                 <Button Text="&#x1F5D1; Löschen"
                         Clicked="OnDeleteSelectedMediaItemButtonClicked"
                         IsEnabled="{Binding IsDeleteSelectedMediaItemButtonEnabled}"
+                        IsVisible="{Binding IsContentPage}"
                         FontAttributes="Bold" 
                         FontSize="Subtitle" 
                         Grid.Row="8"  
@@ -260,7 +271,8 @@
                         Grid.Column="2" 
                         Grid.RowSpan="2"/>
                 <Button 
-                    Text="{StaticResource CompletedText}" 
+                    Text="{StaticResource CompletedText}"
+                    IsVisible="{Binding IsContentPage}"
                     FontAttributes="Bold" 
                     FontSize="Subtitle" 
                     TextColor="White" 
@@ -269,6 +281,19 @@
                     BackgroundColor="Green"
                     Clicked="OnCompleteButtonClicked"
                     Grid.RowSpan="2"/>
-            </Grid>
+            <Button 
+                Text="&#43; BAUSTEIN HINZUFÜGEN"
+                BackgroundColor="{Binding AddMediaItemButtonBackgroundColour}"
+                Clicked="OnAddMediaItemButtonClicked"
+                IsVisible="{Binding IsAddMediaItemButtonVisible}"
+                IsEnabled="{Binding IsAddMediaItemButtonEnabled}"
+                x:Name="AddMediaItemButton"
+                TextColor="White"
+                FontSize="Subtitle"
+                Grid.Row="11" 
+                Grid.Column="2"
+                Grid.RowSpan="2"
+                FontAttributes="Bold"/>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

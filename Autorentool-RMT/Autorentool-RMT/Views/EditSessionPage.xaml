@@ -77,7 +77,8 @@
                     HorizontalOptions="Center"
                     FontAttributes="Bold"
                     FontSize="Subtitle"
-                    TextColor="White"/>
+                    TextColor="White"
+                    Clicked="OnAddMediaItemButtonClicked"/>
 
             <Grid Grid.Row="8" Grid.Column="1" Grid.RowSpan="2">
                 <Button
@@ -98,7 +99,8 @@
                     Text="&#x1F5D1; BAUSTEIN LÖSCHEN"
                     IsEnabled="{Binding IsUnbindMediaItemButtonEnabled}"
                     BackgroundColor="{Binding UnbindMediaItemButtonBackgroundColour}" 
-                    FontAttributes="Bold" 
+                    FontAttributes="Bold"
+                    Clicked="OnUnbindMediaItemButtonClicked"
                     FontSize="Subtitle"
                     TextColor="White"/>
                 <Button
@@ -107,6 +109,7 @@
                     Grid.RowSpan="2"
                     Grid.ColumnSpan="2"
                     Text="{StaticResource CompletedText}" 
+                    Clicked="OnCompleteButtonClicked"
                     BackgroundColor="#0091EA" 
                     FontAttributes="Bold"
                     FontSize="Subtitle" 

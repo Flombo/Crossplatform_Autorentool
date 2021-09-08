@@ -82,6 +82,10 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ViewModels\ViewModelHelper\" />
+  </ItemGroup>
+
   <!--<ItemGroup>
 	<None Remove="Resources.resw" />
   </ItemGroup>

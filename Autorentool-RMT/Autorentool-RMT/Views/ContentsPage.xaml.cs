@@ -12,26 +12,63 @@ namespace Autorentool_RMT.Views
     public partial class ContentsPage : ContentPage
     {
 
-        private ContentViewModel contentViewModel;
+        private ContentViewModel viewModel;
+        private Session selectedSession;
+
+        #region Empty Constructor
+        /// <summary>
+        /// Constructor for the management of mediaitems.
+        /// </summary>
         public ContentsPage()
         {
             InitializeComponent();
+            selectedSession = null;
             NavigationPage.SetHasNavigationBar(this, false);
-            contentViewModel = new ContentViewModel();
-            BindingContext = contentViewModel;
+            viewModel = new ContentManagementViewModel();
+            BindingContext = viewModel;
         }
+        #endregion
 
+        #region Constructor with the selected session parameter
+        /// <summary>
+        /// Constructor for the selection of mediaitems.
+        /// Is used by EditSessionPage and takes the selected session for binding the selected mediaitems.
+        /// </summary>
+        /// <param name="selectedSession"></param>
+        public ContentsPage(Session selectedSession)
+        {
+            InitializeComponent();
+            this.selectedSession = selectedSession;
+            NavigationPage.SetHasNavigationBar(this, false);
+            viewModel = new SelectContentViewModel(selectedSession);
+            BindingContext = viewModel;
+        }
+        #endregion
+
+        #region OnAppearing
+        /// <summary>
+        /// Inits the ContentManagementViewModel or the SelectContentViewModel depending on the selectedSession-attribute.
+        /// If it is null, the user was on the main menu before, else the user was on the EditSessionPage.
+        /// </summary>
         protected override async void OnAppearing()
         {
             try
             {
-                await contentViewModel.OnLoadAllMediaItems();
+                if (selectedSession == null)
+                {
+                    await viewModel.OnLoadAllMediaItems();
+                } else
+                {
+                    SelectContentViewModel selectContentViewModel = viewModel as SelectContentViewModel;
+                    await selectContentViewModel.OnLoadRemainingMediaItems();
+                }
             }
             catch (Exception)
             {
                 await DisplayAlert("Fehler beim Laden der Medieninhalte", "Ein Fehler trat auf beim Laden der Medieninhalte", "Schließen");
             }
         }
+        #endregion
 
         #region OnSelectionChanged
         /// <summary>
@@ -42,14 +79,14 @@ namespace Autorentool_RMT.Views
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             MediaItem selectedMediaItem = e.CurrentSelection[0] as MediaItem;
-            contentViewModel.SelectedMediaItem = selectedMediaItem;
+            viewModel.SelectedMediaItem = selectedMediaItem;
         }
         #endregion
 
         #region OnFullscreenButtonClicked
         private async void OnFullscreenButtonClicked(object sender, EventArgs e)
         {
-            MediaItem selectedMediaItem = contentViewModel.SelectedMediaItem;
+            MediaItem selectedMediaItem = viewModel.SelectedMediaItem;
             MediaItemFullscreenPopup mediaItemFullscreenPopup = new MediaItemFullscreenPopup(selectedMediaItem, Height, Width);
 
             await Navigation.ShowPopupAsync(mediaItemFullscreenPopup);
@@ -74,10 +111,11 @@ namespace Autorentool_RMT.Views
         {
             try
             {
+                ContentManagementViewModel contentViewModel = viewModel as ContentManagementViewModel;
                 await contentViewModel.OnDeleteMediaItem();
             } catch(Exception)
             {
-                string selectedMediaItemName = contentViewModel.SelectedMediaItem.Name;
+                string selectedMediaItemName = viewModel.SelectedMediaItem.Name;
 
                 await DisplayAlert("Fehler beim Löschen des Mediums: " + selectedMediaItemName, "Ein Fehler trat auf beim Löschen des Mediums " + selectedMediaItemName, "Schließen");
             }
@@ -95,7 +133,9 @@ namespace Autorentool_RMT.Views
         {
             try
             {
-                LifethemePopup.Result result = await Navigation.ShowPopupAsync(new LifethemePopup(contentViewModel.CurrentMediaItemLifethemes));
+                LifethemePopup.Result result = await Navigation.ShowPopupAsync(new LifethemePopup(viewModel.CurrentMediaItemLifethemes));
+
+                ContentManagementViewModel contentViewModel = viewModel as ContentManagementViewModel;
 
                 await contentViewModel.SetCurrentMediaItemLifethemes(result.selectedLifethemes);
             }
@@ -126,6 +166,8 @@ namespace Autorentool_RMT.Views
                     {
                         if (result.IsPasswordValid)
                         {
+                            ContentManagementViewModel contentViewModel = viewModel as ContentManagementViewModel;
+
                             await contentViewModel.OnDeleteAllMediaItems();
                             shouldDeleteAllMediaItems = false;
                         } else
@@ -156,11 +198,59 @@ namespace Autorentool_RMT.Views
         {
             try
             {
+                ContentManagementViewModel contentViewModel = viewModel as ContentManagementViewModel;
+
                 await contentViewModel.ShowFilePicker();
 
             } catch (Exception exc)
             {
                 await DisplayAlert("Fehler beim Hinzufügen neuer Inhalte", exc.Message, "Schließen");
+            }
+        }
+        #endregion
+
+        #region OnAddMediaItemButtonClicked
+        /// <summary>
+        /// Binds all checked mediaitems to the selected session and Navigates back to the EditSessionPage.
+        /// If an error occured, an error message will be prompted.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void OnAddMediaItemButtonClicked(object sender, EventArgs e)
+        {
+            SelectContentViewModel selectContentViewModel = viewModel as SelectContentViewModel;
+
+            try
+            {
+                await selectContentViewModel.BindCheckedMediaItemsToSession();
+                await Navigation.PopAsync();
+            } catch(Exception)
+            {
+                await DisplayAlert("Fehler beim Hinzufügen der Bausteine","Beim Hinzufügen der Bausteine kam es zu einem Fehler", "Schließen");
+            }
+        }
+        #endregion
+
+        #region OnMediaItemCheckboxChanged
+        /// <summary>
+        /// Adds or removes a mediaItem from the CheckedMediaItems-list if the checkbox is checked or unchecked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnMediaItemCheckboxChanged(object sender, CheckedChangedEventArgs e)
+        {
+            CheckBox checkBox = sender as CheckBox;
+            Grid grid = checkBox.Parent as Grid;
+            MediaItem mediaItem = grid.BindingContext as MediaItem;
+
+            SelectContentViewModel selectContentViewModel = viewModel as SelectContentViewModel;
+
+            if (checkBox.IsChecked)
+            {
+                selectContentViewModel.AddMediaItemToCheckedMediaItems(mediaItem);
+            } else
+            {
+                selectContentViewModel.RemoveMediaItemFromCheckedMediaItems(mediaItem);
             }
         }
         #endregion

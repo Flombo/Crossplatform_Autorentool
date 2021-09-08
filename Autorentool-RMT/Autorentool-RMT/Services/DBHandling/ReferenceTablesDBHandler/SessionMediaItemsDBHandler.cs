@@ -2,6 +2,7 @@
 using SQLite;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
@@ -191,6 +192,8 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
                 MediaItem mediaItem = await MediaItemDBHandler.GetSingleMediaItem(queriedSessionMediaItem.MediaItemId);
                 mediaItemsOfSession.Add(mediaItem);
             }
+
+            mediaItemsOfSession.OrderBy(mediaItem => mediaItem.Position);
 
             return mediaItemsOfSession;
         }

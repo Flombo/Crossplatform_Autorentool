@@ -19,69 +19,9 @@ namespace Autorentool_RMT.Models
         public string Notes { get; set; }
         [Ignore]
         public List<Lifetheme> Lifethemes { get; set; }
-
+        [Ignore]
         public int BackendMediaItemId { get; set; }
-
-        #region IconVisibility
-        /// <summary>
-        /// returns IconVisibility of MediaItem as boolean.
-        /// if the FileType-property equals null, false will be returned.
-        /// else the corresponding IconVisibility for the FileType-property will be returned.
-        /// </summary>
-        [Ignore]
-        public bool IconVisibility
-        {
-            get
-            {
-                if (FileType == null) 
-                    return false;
-
-                switch (FileType.ToLower())
-                {
-                    case ".jpg":
-                    case ".jpeg":
-                    case ".png":
-                        return false;
-                    default: return true;
-                }
-            }
-        }
-        #endregion
-
-        #region ItemSymbolIcon
-        /// <summary>
-        /// returns ItemSymbolIcon as string.
-        /// if the filetype property equals null, Important will be returned.
-        /// else the ItemSymbolIcon of the medium will be returned as string
-        /// </summary>
-        [Ignore]
-        public string ItemsSymbolIcon
-        {
-            get
-            {
-                if (FileType == null)
-                {
-                    return "Important";
-                }
-
-                switch (FileType.ToLower())
-                {
-                    case ".jpg":
-                    case ".jpeg":
-                    case ".png":
-                        return "Pictures";
-                    case ".mp3":
-                        return "MusicInfo";
-                    case ".mp4":
-                        return "Video";
-                    case ".txt":
-                        return "Font";
-                    default: return "Important";
-                }
-            }
-        }
-        #endregion
-
+        public int Position { get; set; }
         [Ignore]
         public Session Session { get; set; }
         #endregion
@@ -169,6 +109,45 @@ namespace Autorentool_RMT.Models
                     default:
                         return Path;
                 }
+            }
+        }
+        #endregion
+
+        #region Equals method for objects
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            MediaItem lifetheme = obj as MediaItem;
+
+            return Id.Equals(lifetheme.Id);
+        }
+        #endregion
+
+        #region Equals method for MediaItems
+        public bool Equals(MediaItem mediaItem)
+        {
+            return mediaItem != null && Id.Equals(mediaItem.Id);
+        }
+        #endregion
+
+        #region GetHashCode
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 23 + Id.GetHashCode();
+                hash = hash * 23 + Name.GetHashCode();
+                hash = hash * 23 + FileType.GetHashCode();
+                hash = hash * 23 + BackendMediaItemId.GetHashCode();
+                hash = hash * 23 + Notes.GetHashCode();
+                hash = hash * 23 + Path.GetHashCode();
+                hash = hash * 23 + Hash.GetHashCode();
+                return hash;
             }
         }
         #endregion

@@ -31,6 +31,8 @@ namespace Autorentool_RMT.Services.DBHandling
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
+            int count = await sQLiteAsyncConnection.Table<MediaItem>().CountAsync();
+
             MediaItem mediaItem = new MediaItem()
             {
                 Name = name,
@@ -38,7 +40,8 @@ namespace Autorentool_RMT.Services.DBHandling
                 FileType = filetype,
                 Notes = notes,
                 BackendMediaItemId = backendMediaItemID,
-                Hash = hash
+                Hash = hash,
+                Position = count + 1
             };
 
             try
@@ -50,6 +53,21 @@ namespace Autorentool_RMT.Services.DBHandling
             {
                 throw exc;
             }
+        }
+        #endregion
+
+        #region UpdatePosition
+        /// <summary>
+        /// Updates the position field where the id equals the given mediaItemId-parameter.
+        /// </summary>
+        /// <param name="mediaItemId"></param>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        public static async Task UpdatePosition(int mediaItemId, int position)
+        {
+            SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
+
+            await sQLiteAsyncConnection.ExecuteAsync("UPDATE Mediaitems SET position = ? WHERE id == ?", position, mediaItemId);
         }
         #endregion
 
@@ -103,7 +121,7 @@ namespace Autorentool_RMT.Services.DBHandling
         /// <param name="notes"></param>
         /// <param name="backendMediaItemID"></param>
         /// <returns></returns>
-        public static async Task UpdateMediaItem(int mediaItemID, string name, string path, string filetype, string notes, int backendMediaItemID)
+        public static async Task UpdateMediaItem(int mediaItemID, string name, string path, string filetype, string notes, int backendMediaItemID, int position)
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
@@ -114,7 +132,8 @@ namespace Autorentool_RMT.Services.DBHandling
                 Path = path,
                 FileType = filetype,
                 Notes = notes,
-                BackendMediaItemId = backendMediaItemID
+                BackendMediaItemId = backendMediaItemID,
+                Position = position
             };
 
             await sQLiteAsyncConnection.UpdateAsync(mediaItem);
@@ -200,7 +219,7 @@ namespace Autorentool_RMT.Services.DBHandling
         #region FilterMediaItems
         /// <summary>
         /// Filters MediaItems depending on the given filters.
-        /// Orders the MediaItems by there id.
+        /// Orders the MediaItems by there position.
         /// </summary>
         /// <param name="photoFilter"></param>
         /// <param name="musicFilter"></param>
@@ -250,7 +269,7 @@ namespace Autorentool_RMT.Services.DBHandling
                     filteredMediaItems.AddRange(await sQLiteAsyncConnection.Table<MediaItem>().Where(mediaItem => mediaItem.FileType.Equals("html")).ToListAsync());
                 }
 
-                filteredMediaItems = filteredMediaItems.OrderBy(mediaItem => mediaItem.Id).ToList();
+                filteredMediaItems = filteredMediaItems.OrderBy(mediaItem => mediaItem.Position).ToList();
             }
 
             return filteredMediaItems;

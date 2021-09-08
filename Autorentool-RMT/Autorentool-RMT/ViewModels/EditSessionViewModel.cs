@@ -10,6 +10,7 @@ namespace Autorentool_RMT.ViewModels
     public class EditSessionViewModel : ViewModel
     {
 
+        #region Attributes
         private List<MediaItem> sessionMediaItems;
         private bool isImageVisble;
         private bool isMediaElementVisible;
@@ -21,6 +22,7 @@ namespace Autorentool_RMT.ViewModels
         private MediaItem selectedMediaItem;
         private bool isUnbindMediaItemButtonEnabled;
         private string unbindMediaItemButtonBackgroundColour;
+        #endregion
 
         #region Constructor
         public EditSessionViewModel(Session selectedSession)
@@ -154,6 +156,14 @@ namespace Autorentool_RMT.ViewModels
                 {
                     SelectedMediaItem = null;
                 }
+            } else
+            {
+                IsImageVisible = true;
+                IsMediaElementVisible = false;
+                IsMediaItemTextVisible = false;
+                MediaElementSource = null;
+                MediaItemText = "";
+                ImagePath = "preview.png";
             }
         }
         #endregion
@@ -228,10 +238,31 @@ namespace Autorentool_RMT.ViewModels
         /// Loads all existing MediaItems into SessionMediaItems-property.
         /// </summary>
         /// <returns></returns>
-        public async Task OnLoadAllSessions()
+        public async Task OnLoadAllSessionMediaItems()
         {
             SessionMediaItems = await SessionMediaItemsDBHandler.GetMediaItemsOfSession(selectedSession.Id);
 
+        }
+        #endregion
+
+        #region OnUnbindMediaItemFromSession
+        /// <summary>
+        /// Unbinds the selected mediaitem from the selected session
+        /// </summary>
+        /// <returns></returns>
+        public async Task OnUnbindMediaItemFromSession()
+        {
+            try
+            {
+                int sessionMediaItemsID = await SessionMediaItemsDBHandler.GetID(selectedMediaItem.Id, selectedSession.Id);
+                await SessionMediaItemsDBHandler.UnbindCertainSessionMediaItems(sessionMediaItemsID);
+                SelectedMediaItem = null;
+
+                await OnLoadAllSessionMediaItems();
+            } catch(Exception exc)
+            {
+                throw exc;
+            }
         }
         #endregion
     }
