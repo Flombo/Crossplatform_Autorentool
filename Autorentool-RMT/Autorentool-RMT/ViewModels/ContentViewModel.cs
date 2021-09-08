@@ -572,15 +572,7 @@ namespace Autorentool_RMT.ViewModels
             try
             {
 
-                await MediaItemDBHandler.UpdateMediaItem(
-                    selectedMediaItem.Id,
-                    selectedMediaItem.Name,
-                    selectedMediaItem.GetFullPath,
-                    selectedMediaItem.FileType,
-                    selectedMediaItem.Notes,
-                    selectedMediaItem.BackendMediaItemId,
-                    selectedMediaItem.Position
-                    );
+                await MediaItemDBHandler.UpdateNotes(selectedMediaItem.Id, notes);
 
             }
             catch (Exception)

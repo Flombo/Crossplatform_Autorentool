@@ -71,6 +71,21 @@ namespace Autorentool_RMT.Services.DBHandling
         }
         #endregion
 
+        #region UpdateNotes
+        /// <summary>
+        /// Updates the notes field where the id equals the given mediaItemId-parameter.
+        /// </summary>
+        /// <param name="mediaItemId"></param>
+        /// <param name="notes"></param>
+        /// <returns></returns>
+        public static async Task UpdateNotes(int mediaItemId, string notes)
+        {
+            SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
+
+            await sQLiteAsyncConnection.ExecuteAsync("UPDATE Mediaitems SET notes = ? WHERE id == ?", notes, mediaItemId);
+        }
+        #endregion
+
         #region GetID
         /// <summary>
         /// Returns the ID of a MediaItem by the given name.
@@ -107,36 +122,6 @@ namespace Autorentool_RMT.Services.DBHandling
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
             await sQLiteAsyncConnection.DeleteAsync<MediaItem>(mediaItemID);
-        }
-        #endregion
-
-        #region UpdateMediaItem
-        /// <summary>
-        /// Updates MediaItem by given ID and parameters.
-        /// </summary>
-        /// <param name="mediaItemID"></param>
-        /// <param name="name"></param>
-        /// <param name="path"></param>
-        /// <param name="filetype"></param>
-        /// <param name="notes"></param>
-        /// <param name="backendMediaItemID"></param>
-        /// <returns></returns>
-        public static async Task UpdateMediaItem(int mediaItemID, string name, string path, string filetype, string notes, int backendMediaItemID, int position)
-        {
-            SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
-
-            MediaItem mediaItem = new MediaItem()
-            {
-                Id = mediaItemID,
-                Name = name,
-                Path = path,
-                FileType = filetype,
-                Notes = notes,
-                BackendMediaItemId = backendMediaItemID,
-                Position = position
-            };
-
-            await sQLiteAsyncConnection.UpdateAsync(mediaItem);
         }
         #endregion
 
