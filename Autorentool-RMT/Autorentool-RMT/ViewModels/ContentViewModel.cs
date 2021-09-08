@@ -47,14 +47,12 @@ namespace Autorentool_RMT.ViewModels
         protected string addMediaItemButtonBackgroundColour;
         protected bool isContentPage;
         protected string title;
-        public ICommand Search { get; }
         #endregion
 
         #region Constructor
         public ContentViewModel()
         {
             mediaItems = new List<MediaItem>();
-            Search = new Command(OnSearch);
             notes = "";
             searchText = "";
             title = "";
@@ -257,116 +255,6 @@ namespace Autorentool_RMT.ViewModels
             set
             {
                 searchText = value;
-                OnPropertyChanged();
-            }
-        }
-        #endregion
-
-        #region IsPhotosFilterChecked
-        public bool IsPhotosFilterChecked
-        {
-            get => isPhotosFilterChecked;
-            set
-            {
-                isPhotosFilterChecked = value;
-
-                if (searchText.Length > 0)
-                {
-                    OnSearch();
-                }
-                else
-                {
-                    OnFilter();
-                }
-
-                OnPropertyChanged();
-            }
-        }
-        #endregion
-
-        #region IsLinksFilterChecked
-        public bool IsLinksFilterChecked
-        {
-            get => isLinksFilterChecked;
-            set
-            {
-                isLinksFilterChecked = value;
-
-                if (searchText.Length > 0)
-                {
-                    OnSearch();
-                }
-                else
-                {
-                    OnFilter();
-                }
-
-                OnPropertyChanged();
-            }
-        }
-        #endregion
-
-        #region IsDocumentsFilterChecked
-        public bool IsDocumentsFilterChecked
-        {
-            get => isDocumentsFilterChecked;
-            set
-            {
-                isDocumentsFilterChecked = value;
-
-                if (searchText.Length > 0)
-                {
-                    OnSearch();
-                }
-                else
-                {
-                    OnFilter();
-                }
-
-                OnPropertyChanged();
-            }
-        }
-        #endregion
-
-        #region IsMusicFilterChecked
-        public bool IsMusicFilterChecked
-        {
-            get => isMusicFilterChecked;
-            set
-            {
-                isMusicFilterChecked = value;
-
-                if (searchText.Length > 0)
-                {
-                    OnSearch();
-                }
-                else
-                {
-                    OnFilter();
-                }
-
-                OnPropertyChanged();
-            }
-        }
-        #endregion
-
-        #region IsFilmsFilterChecked
-        public bool IsFilmsFilterChecked
-        {
-            get => isFilmsFilterChecked;
-            set
-            {
-                isFilmsFilterChecked = value;
-
-                if (searchText.Length > 0)
-                {
-                    OnSearch();
-                }
-                else
-                {
-                    OnFilter();
-                }
-
                 OnPropertyChanged();
             }
         }
@@ -750,59 +638,6 @@ namespace Autorentool_RMT.ViewModels
                     throw exc;
                 }
             }
-        }
-        #endregion
-
-        #region OnSearch
-        /// <summary>
-        /// Searches MediaItems which contain the search string.
-        /// If no search string was given, the MediaItems will be reloaded.
-        /// </summary>
-        protected async void OnSearch()
-        {
-            SelectedMediaItem = null;
-            CurrentMediaItemLifethemes = new List<Lifetheme>();
-
-            if (searchText.Length > 0)
-            {
-                MediaItems = await MediaItemDBHandler.SearchMediaItems(
-                        searchText,
-                        IsPhotosFilterChecked,
-                        IsMusicFilterChecked,
-                        IsDocumentsFilterChecked,
-                        IsFilmsFilterChecked,
-                        IsLinksFilterChecked
-                    );
-            }
-            else
-            {
-                MediaItems = await MediaItemDBHandler.FilterMediaItems(
-                        IsPhotosFilterChecked,
-                        IsMusicFilterChecked,
-                        IsDocumentsFilterChecked,
-                        IsFilmsFilterChecked,
-                        IsLinksFilterChecked
-                    );
-            }
-        }
-        #endregion
-
-        #region OnFilter
-        /// <summary>
-        /// Filters MediaItems depending on, which filter is disabled/enabled.
-        /// </summary>
-        protected async void OnFilter()
-        {
-            SelectedMediaItem = null;
-            CurrentMediaItemLifethemes = new List<Lifetheme>();
-
-            MediaItems = await MediaItemDBHandler.FilterMediaItems(
-                    IsPhotosFilterChecked,
-                    IsMusicFilterChecked,
-                    IsDocumentsFilterChecked,
-                    IsFilmsFilterChecked,
-                    IsLinksFilterChecked
-                );
         }
         #endregion
 

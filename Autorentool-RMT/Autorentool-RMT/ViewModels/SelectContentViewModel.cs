@@ -4,6 +4,8 @@ using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using Xamarin.Forms;
 
 namespace Autorentool_RMT.ViewModels
 {
@@ -12,8 +14,9 @@ namespace Autorentool_RMT.ViewModels
 
         public List<MediaItem> checkedMediaItems { get; set; }
         private Session selectedSession;
+        public ICommand Search { get; }
 
-        public SelectContentViewModel(Session selectedSession)
+        public SelectContentViewModel(Session selectedSession) : base()
         {
             Title = "BAUSTEINE HINZUFÜGEN";
             checkedMediaItems = new List<MediaItem>();
@@ -21,7 +24,118 @@ namespace Autorentool_RMT.ViewModels
             IsLifethemesButtonVisible = false;
             this.selectedSession = selectedSession;
             IsAddMediaItemButtonVisible = true;
+            Search = new Command(OnSearch);
         }
+
+        #region IsPhotosFilterChecked
+        public bool IsPhotosFilterChecked
+        {
+            get => isPhotosFilterChecked;
+            set
+            {
+                isPhotosFilterChecked = value;
+
+                if (searchText.Length > 0)
+                {
+                    OnSearch();
+                }
+                else
+                {
+                    OnFilter();
+                }
+
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsLinksFilterChecked
+        public bool IsLinksFilterChecked
+        {
+            get => isLinksFilterChecked;
+            set
+            {
+                isLinksFilterChecked = value;
+
+                if (searchText.Length > 0)
+                {
+                    OnSearch();
+                }
+                else
+                {
+                    OnFilter();
+                }
+
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsDocumentsFilterChecked
+        public bool IsDocumentsFilterChecked
+        {
+            get => isDocumentsFilterChecked;
+            set
+            {
+                isDocumentsFilterChecked = value;
+
+                if (searchText.Length > 0)
+                {
+                    OnSearch();
+                }
+                else
+                {
+                    OnFilter();
+                }
+
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsMusicFilterChecked
+        public bool IsMusicFilterChecked
+        {
+            get => isMusicFilterChecked;
+            set
+            {
+                isMusicFilterChecked = value;
+
+                if (searchText.Length > 0)
+                {
+                    OnSearch();
+                }
+                else
+                {
+                    OnFilter();
+                }
+
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsFilmsFilterChecked
+        public bool IsFilmsFilterChecked
+        {
+            get => isFilmsFilterChecked;
+            set
+            {
+                isFilmsFilterChecked = value;
+
+                if (searchText.Length > 0)
+                {
+                    OnSearch();
+                }
+                else
+                {
+                    OnFilter();
+                }
+
+                OnPropertyChanged();
+            }
+        }
+        #endregion
 
         #region AddMediaItemToCheckedMediaItems
         public void AddMediaItemToCheckedMediaItems(MediaItem mediaItem)
@@ -64,40 +178,75 @@ namespace Autorentool_RMT.ViewModels
         }
         #endregion
 
-        #region OnLoadAllMediaItems
+
+        #region OnSearch
         /// <summary>
-        /// Loads all existing MediaItems into MediaItems-property.
-        /// Throws an exception if an error occured while loading.
+        /// Searches MediaItems which contain the search string.
+        /// If no search string was given, the MediaItems will be reloaded.
         /// </summary>
-        /// <returns></returns>
-        public async new Task OnLoadAllMediaItems()
+        public async void OnSearch()
         {
-            try
+            SelectedMediaItem = null;
+            CurrentMediaItemLifethemes = new List<Lifetheme>();
+
+            if (searchText.Length > 0)
             {
-                MediaItems = await MediaItemDBHandler.FilterMediaItems(true, true, true, true, true);
+                List<MediaItem> foundMediaItems = await MediaItemDBHandler.SearchMediaItems(
+                    searchText,
+                    IsPhotosFilterChecked,
+                    IsMusicFilterChecked,
+                    IsDocumentsFilterChecked,
+                    IsFilmsFilterChecked,
+                    IsLinksFilterChecked
+                    );
+
+                SetBindableMediaItems(foundMediaItems);
             }
-            catch (Exception exc)
+            else
             {
-                throw exc;
+                OnFilter();
             }
         }
         #endregion
 
-        #region OnLoadRemainingMediaItems
+        #region SetBindableMediaItems
         /// <summary>
-        /// Loads all mediaItems which weren't already bound to the selected session
+        /// Removes all mediaItems that are already bound to the selected session.
         /// </summary>
-        public async Task OnLoadRemainingMediaItems()
+        /// <param name="mediaItems"></param>
+        /// <returns></returns>
+        private async void SetBindableMediaItems(List<MediaItem> mediaItems)
         {
             List<MediaItem> sessionMediaItems = await SessionMediaItemsDBHandler.GetMediaItemsOfSession(selectedSession.Id);
-            List<MediaItem> allExistingMediaItems = await MediaItemDBHandler.GetAllMediaItems();
             
-            foreach(MediaItem sessionMediaItem in sessionMediaItems)
+            foreach (MediaItem sessionMediaItem in sessionMediaItems)
             {
-                allExistingMediaItems.Remove(sessionMediaItem);
+                mediaItems.Remove(sessionMediaItem);
             }
 
-            MediaItems = allExistingMediaItems;
+            MediaItems = mediaItems;
+        }
+        #endregion
+
+        #region OnFilter
+        /// <summary>
+        /// Filters MediaItems depending on, which filter is disabled/enabled.
+        /// Removes all mediaItems that are already bound to the selected session.
+        /// </summary>
+        public async new void OnFilter()
+        {
+            SelectedMediaItem = null;
+            CurrentMediaItemLifethemes = new List<Lifetheme>();
+
+            List<MediaItem> filteredMediaItems = await MediaItemDBHandler.FilterMediaItems(
+                IsPhotosFilterChecked,
+                IsMusicFilterChecked,
+                IsDocumentsFilterChecked,
+                IsFilmsFilterChecked,
+                IsLinksFilterChecked
+                );
+
+            SetBindableMediaItems(filteredMediaItems);
         }
         #endregion
 

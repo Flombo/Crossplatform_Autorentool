@@ -36,6 +36,7 @@ namespace Autorentool_RMT.ViewModels
             mediaElementSource = null;
             mediaItemText = "";
             isMediaItemTextVisible = false;
+            unbindMediaItemButtonBackgroundColour = "LightGray";
         }
         #endregion
 

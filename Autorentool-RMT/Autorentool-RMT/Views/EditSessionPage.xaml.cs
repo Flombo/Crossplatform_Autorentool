@@ -28,6 +28,7 @@ namespace Autorentool_RMT.Views
         protected override async void OnAppearing()
         {
             await editSessionViewModel.OnLoadAllSessionMediaItems();
+            editSessionViewModel.SelectedMediaItem = null;
         }
         #endregion
 

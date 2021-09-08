@@ -149,7 +149,7 @@ namespace Autorentool_RMT.Services.DBHandling
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
-            return await sQLiteAsyncConnection.Table<MediaItem>().OrderBy(MediaItem => MediaItem.Id).ToListAsync();
+            return await sQLiteAsyncConnection.Table<MediaItem>().OrderBy(MediaItem => MediaItem.Position).ToListAsync();
         }
         #endregion
 

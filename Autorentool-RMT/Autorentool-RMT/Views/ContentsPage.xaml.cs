@@ -60,7 +60,7 @@ namespace Autorentool_RMT.Views
                 } else
                 {
                     SelectContentViewModel selectContentViewModel = viewModel as SelectContentViewModel;
-                    await selectContentViewModel.OnLoadRemainingMediaItems();
+                    selectContentViewModel.OnFilter();
                 }
             }
             catch (Exception)
