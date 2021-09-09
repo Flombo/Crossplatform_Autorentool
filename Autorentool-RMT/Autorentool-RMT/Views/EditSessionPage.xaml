@@ -56,6 +56,7 @@
                        HorizontalOptions="CenterAndExpand" 
                        VerticalOptions="CenterAndExpand" 
                        IsVisible="{Binding IsImageVisible}"/>
+
                 <ScrollView IsVisible="{Binding IsMediaItemTextVisible}"
                             Orientation="Vertical"
                             VerticalOptions="CenterAndExpand"
@@ -68,16 +69,18 @@
                             HorizontalOptions="CenterAndExpand"/>
                 </ScrollView>
 
+            </StackLayout>
 
-                <!--MediaElement for playing Audio and Video-->
-                <xct:MediaElement
+            <!--MediaElement for playing Audio and Video-->
+            <xct:MediaElement
                     IsVisible="{Binding IsMediaElementVisible}"
                     Source="{Binding MediaElementSource}"
                     ShowsPlaybackControls="True"
                     AutoPlay="False"
-                    Grid.RowSpan="8" 
+                    Grid.Row="0"
+                    Grid.RowSpan="8"
+                    Grid.Column="1"
                     Aspect="AspectFit"/>
-            </StackLayout>
 
             <Button Text="&#43; BAUSTEIN HINZUFÜGEN" 
                     BackgroundColor="Green" 

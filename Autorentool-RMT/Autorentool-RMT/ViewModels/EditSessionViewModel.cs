@@ -119,49 +119,14 @@ namespace Autorentool_RMT.ViewModels
         {
             if(selectedMediaItem != null)
             {
-                if (selectedMediaItem.IsAudio || selectedMediaItem.IsVideo)
-                {
-                    IsImageVisible = false;
-                    IsMediaElementVisible = true;
-                    IsMediaItemTextVisible = false;
-
-                    try
-                    {
-                        MediaElementSource = new Uri(selectedMediaItem.GetFullPath).LocalPath;
-                    }
-                    catch (Exception)
-                    {
-                        MediaElementSource = null;
-                    }
-
-                    ImagePath = "preview.png";
-                    MediaItemText = "";
-                }
-
-                else if (selectedMediaItem.IsImage)
-                {
-                    IsImageVisible = true;
-                    IsMediaElementVisible = false;
-                    IsMediaItemTextVisible = false;
-                    MediaElementSource = null;
-                    MediaItemText = "";
-                    ImagePath = selectedMediaItem.GetFullPath;
-
-                }
-                else if (selectedMediaItem.IsTxt)
-                {
-                    IsImageVisible = false;
-                    IsMediaElementVisible = false;
-                    IsMediaItemTextVisible = true;
-                    MediaElementSource = null;
-                    ImagePath = selectedMediaItem.GetFullPath;
-                    MediaItemText = File.ReadAllText(selectedMediaItem.GetFullPath);
-                }
-                else
-                {
-                    SelectedMediaItem = null;
-                }
-            } else
+                IsImageVisible = selectedMediaItem.IsImage;
+                IsMediaElementVisible = selectedMediaItem.IsAudioOrVideo;
+                IsMediaItemTextVisible = selectedMediaItem.IsTxt;
+                ImagePath = selectedMediaItem.GetFullPath;
+                MediaElementSource = selectedMediaItem.GetAudioOrVideoSource;
+                MediaItemText = selectedMediaItem.GetTextContent;
+            }
+            else
             {
                 IsImageVisible = true;
                 IsMediaElementVisible = false;

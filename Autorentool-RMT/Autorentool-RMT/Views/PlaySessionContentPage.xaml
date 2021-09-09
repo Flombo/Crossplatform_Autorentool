@@ -68,8 +68,7 @@
                 BackgroundColor="LightGray" 
                 Grid.Column="0" 
                 Grid.Row="10" 
-                Grid.ColumnSpan="1" 
-                Padding="5">
+                Grid.ColumnSpan="1" >
                 <Button Text="&#63;" 
                         FontAttributes="Bold" 
                         FontSize="Subtitle" 

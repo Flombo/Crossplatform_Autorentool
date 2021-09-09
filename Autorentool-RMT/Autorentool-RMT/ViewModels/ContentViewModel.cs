@@ -473,55 +473,14 @@ namespace Autorentool_RMT.ViewModels
         /// An uri instance must be built of the path, to retrieve local media on android.
         /// This is necessary, because the MediaElement doesn't support images.
         /// </summary>
-        public async void SetMediaPreviewProperties()
+        public void SetMediaPreviewProperties()
         {
-            if (selectedMediaItem.IsAudio || selectedMediaItem.IsVideo)
-            {
-                IsMediaItemImageVisible = false;
-                IsMediaItemMediaElementVisible = true;
-                IsMediaItemTextVisible = false;
-
-                try
-                {
-                    MediaItem mediaItem = await MediaItemDBHandler.GetSingleMediaItem(selectedMediaItem.Id);
-
-                    SelectedMediumMediaElementPath = new Uri(mediaItem.GetFullPath).LocalPath;
-                }
-                catch (Exception)
-                {
-                    SelectedMediumMediaElementPath = null;
-                }
-
-                SelectedMediumImagePath = "preview.png";
-                SelectedMediumTextContent = "";
-                IsFullscreenButtonVisible = false;
-            }
-
-            else if (selectedMediaItem.IsImage)
-            {
-                IsMediaItemImageVisible = true;
-                IsMediaItemMediaElementVisible = false;
-                IsMediaItemTextVisible = false;
-                SelectedMediumMediaElementPath = null;
-                SelectedMediumTextContent = "";
-                SelectedMediumImagePath = selectedMediaItem.GetFullPath;
-                IsFullscreenButtonVisible = true;
-
-            }
-            else if (selectedMediaItem.IsTxt)
-            {
-                IsMediaItemImageVisible = false;
-                IsMediaItemMediaElementVisible = false;
-                IsMediaItemTextVisible = true;
-                SelectedMediumMediaElementPath = null;
-                SelectedMediumImagePath = selectedMediaItem.GetFullPath;
-                IsFullscreenButtonVisible = false;
-                SelectedMediumTextContent = File.ReadAllText(selectedMediaItem.GetFullPath);
-            }
-            else
-            {
-                SelectedMediaItem = null;
-            }
+            IsMediaItemImageVisible = selectedMediaItem.IsImage;
+            IsMediaItemMediaElementVisible = selectedMediaItem.IsAudioOrVideo;
+            IsMediaItemTextVisible = selectedMediaItem.IsTxt;
+            SelectedMediumImagePath = selectedMediaItem.GetFullPath;
+            SelectedMediumMediaElementPath = selectedMediaItem.GetAudioOrVideoSource;
+            SelectedMediumTextContent = selectedMediaItem.GetTextContent;
         }
         #endregion
 
