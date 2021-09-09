@@ -104,7 +104,16 @@ namespace Autorentool_RMT.ViewModels.PopupViewModels
                     }
                 }
 
-                await RatingDBHandler.AddRating(session.Id, resident.Id, session.DurationInSeconds, ratingValue);
+                Rating rating = await RatingDBHandler.GetRatingOfSessionAndResident(session.Id, resident.Id);
+
+                if(rating == null)
+                {
+                    await RatingDBHandler.AddRating(session.Id, resident.Id, session.DurationInSeconds, ratingValue);
+                }
+                else
+                {
+                    await RatingDBHandler.UpdateRatingValue(rating.Id, ratingValue);
+                }
 
             } catch(Exception exc)
             {

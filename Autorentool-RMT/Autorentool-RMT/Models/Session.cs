@@ -21,7 +21,8 @@ namespace Autorentool_RMT.Models
         public int RatingId { get; set; }
         [Ignore]
         public int DurationInSeconds { get; set; }
-        //public Visibility RatingVisibility = Visibility.Visible;
+        [Ignore]
+        public int RatingValue { get; set; }
         #endregion
 
         #region Empty constructor
@@ -61,6 +62,40 @@ namespace Autorentool_RMT.Models
         /// Converts DurationInSeconds to seconds and saves it as a string.
         /// </summary>
         public string ConvertSeconds => $"{" " + DurationInSeconds % 60 + "s"}";
+
+        /// <summary>
+        /// Concatenates the minutes and the seconds strings.
+        /// </summary>
+        public string DurationText => $"{ConvertMinutes}{ConvertSeconds}";
+        #endregion
+
+        #region RatingText
+        /// <summary>
+        /// Delivers the rating of the session as string.
+        /// </summary>
+        public string RatingText
+        {
+            get
+            {
+                switch (RatingValue)
+                {
+                    case 0:
+                        return "✩✩✩✩✩";
+                    case 1:
+                        return "★✩✩✩✩";
+                    case 2:
+                        return "★★✩✩✩";
+                    case 3:
+                        return "★★★✩✩";
+                    case 4:
+                        return "★★★★✩";
+                    case 5:
+                        return "★★★★★";
+                    default:
+                        return "✩✩✩✩✩";
+                }
+            }
+        }
         #endregion
 
     }

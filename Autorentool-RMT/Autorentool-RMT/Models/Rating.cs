@@ -10,11 +10,11 @@ namespace Autorentool_RMT.Models
         [Column("id")]
         public int Id { get; set; }
         
-        [Unique, NotNull]
+        [NotNull]
         [Column("session_id")]
         public int SessionId { get; set; }
         
-        [Unique, NotNull]
+        [NotNull]
         [Column("resident_id")]
         public int ResidentId { get; set; }
         

@@ -20,7 +20,7 @@ namespace Autorentool_RMT.Views
             this.selectedResident = selectedResident;
             this.selectedSession = selectedSession;
             NavigationPage.SetHasNavigationBar(this, false);
-            playSessionContentViewModel = new PlaySessionContentViewModel(selectedSession, selectedResident);
+            playSessionContentViewModel = new PlaySessionContentViewModel(selectedSession);
             BindingContext = playSessionContentViewModel;
         }
 

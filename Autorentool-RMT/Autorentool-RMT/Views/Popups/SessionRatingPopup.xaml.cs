@@ -37,11 +37,11 @@ namespace Autorentool_RMT.Views.Popups
                 await sessionRatingPopupViewModel.PersistRating();
 
                 result.WasSuccessfull = true;
+                Dismiss(result);
             }
             catch (Exception)
             {
                 result.WasSuccessfull = false;
-
                 Dismiss(result);
             }
         }

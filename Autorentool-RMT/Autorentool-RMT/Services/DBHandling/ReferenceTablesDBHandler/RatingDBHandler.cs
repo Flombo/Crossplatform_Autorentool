@@ -11,7 +11,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         #region AddRating
         /// <summary>
         /// Creates and inserts a new Rating to database asynchronously by given parameters.
-        /// Returns the ID of the newly created Rating or an exception will be thrown if no entry exists.
+        /// Returns the ID of the newly created Rating or -1 if no entry exists.
         /// </summary>
         /// <param name="sessionId"></param>
         /// <param name="residentId"></param>
@@ -36,8 +36,23 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
                 return await GetID(sessionId, residentId);
             } catch(Exception exc)
             {
-                throw exc;
+                return -1;
             }
+        }
+        #endregion
+
+        #region UpdateRatingValue
+        /// <summary>
+        /// Updates ratingValue by given ratingValue.
+        /// </summary>
+        /// <param name="ratingId"></param>
+        /// <param name="ratingValue"></param>
+        /// <returns></returns>
+        public static async Task UpdateRatingValue(int ratingId, int ratingValue)
+        {
+            SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
+
+            await sQLiteAsyncConnection.QueryAsync<Rating>("UPDATE Ratings SET rating_value = ? WHERE id == ?", ratingValue, ratingId);
         }
         #endregion
 
@@ -161,6 +176,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         #region GetRatingOfSessionAndResident
         /// <summary>
         /// Returns Rating for corresponding SessionId and ResidentId.
+        /// If no Rating exists null will be returned.
         /// </summary>
         /// <param name="sessionId"></param>
         /// <param name="residentId"></param>
@@ -171,7 +187,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
 
             return await sQLiteAsyncConnection.Table<Rating>()
                 .Where(rating => rating.SessionId == sessionId && rating.ResidentId == residentId)
-                .FirstAsync();
+                .FirstOrDefaultAsync();
         }
         #endregion
 

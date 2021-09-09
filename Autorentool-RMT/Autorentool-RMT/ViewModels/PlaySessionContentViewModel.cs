@@ -3,7 +3,6 @@ using Autorentool_RMT.Services.DBHandling;
 using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -16,7 +15,6 @@ namespace Autorentool_RMT.ViewModels
         private MediaItem currentMediaItem;
         private string sessionDuration;
         private Session selectedSession;
-        private Resident selectedResident;
         private bool isSessionOngoing;
         private bool isPreviousButtonVisible;
         private bool isNextButtonVisible;
@@ -25,10 +23,9 @@ namespace Autorentool_RMT.ViewModels
         private string selectedMediaItemNotes;
 
         #region Constructor
-        public PlaySessionContentViewModel(Session selectedSession, Resident selectedResident)
+        public PlaySessionContentViewModel(Session selectedSession)
         {
             this.selectedSession = selectedSession;
-            this.selectedResident = selectedResident;
             isNotesPanelVisible = false;
             duration = 0;
             IsPreviousButtonVisible = false;

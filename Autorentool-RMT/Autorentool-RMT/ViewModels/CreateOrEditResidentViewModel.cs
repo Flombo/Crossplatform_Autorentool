@@ -555,7 +555,20 @@ namespace Autorentool_RMT.ViewModels
         /// <param name="residentId"></param>
         public async void LoadResidentSessions(int residentId)
         {
-            ResidentSessions = await ResidentSessionsDBHandler.GetSessionsOfResident(residentId);
+            List<Session> sessions = await ResidentSessionsDBHandler.GetSessionsOfResident(residentId);
+
+            foreach(Session session in sessions)
+            {
+                Rating rating = await RatingDBHandler.GetRatingOfSessionAndResident(session.Id, residentId);
+
+                if(rating != null)
+                {
+                    session.RatingValue = rating.RatingValue;
+                    session.DurationInSeconds = rating.DurationInSeconds;
+                }
+            }
+
+            ResidentSessions = sessions;
         }
         #endregion
 
