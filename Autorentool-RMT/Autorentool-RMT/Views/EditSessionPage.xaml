@@ -99,7 +99,9 @@
                     Grid.RowSpan="2"
                     Grid.ColumnSpan="2"
                     Text="&#x25b6; SITZUNG STARTEN" 
-                    BackgroundColor="#0091EA" 
+                    BackgroundColor="{Binding StartSessionButtonBackgroundColour}"
+                    IsEnabled="{Binding IsStartSessionButtonEnabled}"
+                    Clicked="OnStartSessionButtonClicked"
                     FontAttributes="Bold"
                     FontSize="Subtitle"
                     TextColor="White"/>

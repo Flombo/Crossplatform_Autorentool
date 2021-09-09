@@ -3,10 +3,7 @@ using Autorentool_RMT.Services.DBHandling;
 using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using Xamarin.Forms;
 
 namespace Autorentool_RMT.ViewModels
 {
@@ -25,6 +22,8 @@ namespace Autorentool_RMT.ViewModels
         private MediaItem selectedMediaItem;
         private bool isUnbindMediaItemButtonEnabled;
         private string unbindMediaItemButtonBackgroundColour;
+        private string startSessionButtonBackgroundColour;
+        private bool isStartSessionButtonEnabled;
         public MediaItem DraggedMediaItem { get; set; }
         #endregion
 
@@ -41,6 +40,31 @@ namespace Autorentool_RMT.ViewModels
             mediaItemText = "";
             isMediaItemTextVisible = false;
             unbindMediaItemButtonBackgroundColour = "LightGray";
+        }
+        #endregion
+
+        #region StartSessionButtonBackgroundColour
+        public string StartSessionButtonBackgroundColour
+        {
+            get => startSessionButtonBackgroundColour;
+            set
+            {
+                startSessionButtonBackgroundColour = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsStartSessionButtonEnabled
+        public bool IsStartSessionButtonEnabled
+        {
+            get => isStartSessionButtonEnabled;
+            set
+            {
+                isStartSessionButtonEnabled = value;
+                StartSessionButtonBackgroundColour = GetBackgroundColour(isStartSessionButtonEnabled, "#0091EA");
+                OnPropertyChanged();
+            }
         }
         #endregion
 
@@ -198,6 +222,7 @@ namespace Autorentool_RMT.ViewModels
             set
             {
                 sessionMediaItems = value;
+                IsStartSessionButtonEnabled = sessionMediaItems.Count > 0;
                 OnPropertyChanged();
             }
         }

@@ -133,5 +133,10 @@ namespace Autorentool_RMT.Views
             editSessionViewModel.SelectedMediaItem = selectedMediaItem;
         }
         #endregion
+
+        private async void OnStartSessionButtonClicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new PlaySessionContentPage(selectedSession, null));
+        }
     }
 }
