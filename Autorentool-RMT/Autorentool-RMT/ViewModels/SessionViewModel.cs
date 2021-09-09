@@ -178,8 +178,8 @@ namespace Autorentool_RMT.ViewModels
             set
             {
                 selectedSession = value;
-                EnableOrDisableButtons();
                 LoadSelectedSessionMediaItems();
+                EnableOrDisableButtons();
                 OnPropertyChanged();
             }
         }
@@ -209,7 +209,6 @@ namespace Autorentool_RMT.ViewModels
             bool shouldBeEnabled = selectedSession != null;
             IsChangeNameSessionButtonEnabled = shouldBeEnabled;
             IsDeleteSessionButtonEnabled = shouldBeEnabled;
-            IsStartSessionButtonEnabled = shouldBeEnabled && selectedSessionMediaItems.Count > 0;
             IsEditSessionButtonEnabled = shouldBeEnabled;
         }
         #endregion
@@ -227,6 +226,7 @@ namespace Autorentool_RMT.ViewModels
                 if (selectedSession != null)
                 {
                     SelectedSessionMediaItems = await SessionMediaItemsDBHandler.GetMediaItemsOfSession(selectedSession.Id);
+                    IsStartSessionButtonEnabled = SelectedSessionMediaItems.Count > 0;
                 }
                 else
                 {
