@@ -1,6 +1,9 @@
 ﻿using Autorentool_RMT.Models;
+using Autorentool_RMT.Services.DBHandling;
+using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -10,26 +13,66 @@ namespace Autorentool_RMT.ViewModels
     {
 
         private List<MediaItem> sessionMediaItems;
+        private MediaItem currentMediaItem;
         private string sessionDuration;
-        private Session session;
+        private Session selectedSession;
+        private Resident selectedResident;
         private bool isSessionOngoing;
         private bool isPreviousButtonVisible;
         private bool isNextButtonVisible;
         private int duration;
+        private bool isNotesPanelVisible;
+        private string selectedMediaItemNotes;
 
         #region Constructor
-        public PlaySessionContentViewModel()
+        public PlaySessionContentViewModel(Session selectedSession, Resident selectedResident)
         {
-            session = new Session(1, "Test", new List<MediaItem>(), null);
+            this.selectedSession = selectedSession;
+            this.selectedResident = selectedResident;
+            isNotesPanelVisible = false;
             duration = 0;
             IsPreviousButtonVisible = false;
             isSessionOngoing = false;
             IsNextButtonVisible = true;
-            SessionMediaItems = new List<MediaItem>()
+            isNotesPanelVisible = false;
+        }
+        #endregion
+
+        #region SelectedMediaItemNotes
+        public string SelectedMediaItemNotes
+        {
+            get => selectedMediaItemNotes;
+            set
             {
-                {new MediaItem(1, "test.jpg", "jpg", "sdfkasjkfklösalöslöfd1111", "ImageOld.png", "Test", 0) },
-                {new MediaItem(2, "test2.jpg", "jpg", "sdfkasjkfklösalöslöfd53454","ImageOld.png", "Test2", 0) }
-            };
+                selectedMediaItemNotes = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsNotesPanelVisible
+        public bool IsNotesPanelVisible
+        {
+            get => isNotesPanelVisible;
+            set
+            {
+                isNotesPanelVisible = value;
+                SelectedMediaItemNotes = CurrentMediaItem.Notes;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region CurrentMediaItem
+        public MediaItem CurrentMediaItem
+        {
+            get => currentMediaItem;
+            set
+            {
+                currentMediaItem = value;
+                IsNotesPanelVisible = currentMediaItem.Notes.Length > 0;
+                OnPropertyChanged();
+            }
         }
         #endregion
 
@@ -98,8 +141,8 @@ namespace Autorentool_RMT.ViewModels
             Device.StartTimer(TimeSpan.FromSeconds(1), () =>
             {
                 duration++;
-                session.DurationInSeconds = duration;
-                SessionDuration = session.ConvertMinutes + session.ConvertSeconds;
+                selectedSession.DurationInSeconds = duration;
+                SessionDuration = selectedSession.ConvertMinutes + selectedSession.ConvertSeconds;
 
                 return isSessionOngoing;
             });
@@ -108,12 +151,20 @@ namespace Autorentool_RMT.ViewModels
 
         #region OnStartSession
         /// <summary>
-        /// Stops the Stopwatch.
+        /// Stops the Stopwatch and persists the duration.
         /// </summary>
-        public void StopSession()
+        public async void StopSession()
         {
-            isSessionOngoing = false;
-            duration = 0;
+            try
+            {
+                isSessionOngoing = false;
+                duration = 0;
+                await SessionDBHandler.UpdateDurationInSeconds(selectedSession.Id, selectedSession.DurationInSeconds);
+            }
+            catch (Exception exc)
+            {
+
+            }
         }
         #endregion
 
@@ -124,12 +175,14 @@ namespace Autorentool_RMT.ViewModels
         /// <returns></returns>
         public async Task OnLoadAllMediaItems()
         {
-            //MediaItems = await MediaItemDBHandler.GetAllMediaItems();
-            SessionMediaItems = new List<MediaItem>()
+            try
             {
-                {new MediaItem(1, "test.jpg", "jpg", "sdfkasjkfklösalöslöfd000","ImageOld.png", "Test", 0) },
-                {new MediaItem(2, "test2.jpg", "jpg", "sdfkasjkfklösalöslöfd0010", "ImageOld.png", "Test2", 0) }
-            };
+                SessionMediaItems = await SessionMediaItemsDBHandler.GetMediaItemsOfSession(selectedSession.Id);
+            }
+            catch (Exception)
+            {
+
+            }
         }
         #endregion
     }

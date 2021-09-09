@@ -7,19 +7,53 @@
         <Grid>
             <!--MediaPlayer section-->
             <CarouselView ItemsSource="{Binding SessionMediaItems}"
+                          CurrentItem="{Binding CurrentMediaItem, Mode=TwoWay}"
                           IndicatorView="indicatorView"
                           Grid.Row="0"
                           Grid.Column="0"
                           Grid.RowSpan="10">
                 <CarouselView.ItemTemplate>
                     <DataTemplate>
-                        <StackLayout>
-                            <Image  IsVisible="{Binding IsImage}"
-                                    Source="{Binding GetFullPath}"
-                                    Aspect="AspectFit"  
-                                    BackgroundColor="White"/>
+                        <Grid>
+                            <!--Image-MediaItems-->
+                            <Image IsVisible="{Binding IsImage}" 
+                                   Source="{Binding GetFullPath}" 
+                                   VerticalOptions="CenterAndExpand" 
+                                   HorizontalOptions="CenterAndExpand" 
+                                   BackgroundColor="White"
+                                   Aspect="AspectFit"
+                                   Grid.Row="0"
+                                   Grid.Column="0"
+                                   Grid.ColumnSpan="10"
+                                   Grid.RowSpan="10"/>
+                            <!--Document-MediaItems-->
+                            <ScrollView IsVisible="{Binding IsTxt}"
+                                        Orientation="Vertical"
+                                        VerticalOptions="CenterAndExpand"
+                                        HorizontalOptions="CenterAndExpand"
+                                        Grid.Row="0" 
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="10"
+                                        Grid.RowSpan="10"
+                                        Padding="10"
+                                        BackgroundColor="White">
+                                <Label Text="{Binding GetTextContent}" 
+                                       FontSize="Small"  
+                                       VerticalOptions="CenterAndExpand" 
+                                       HorizontalOptions="CenterAndExpand"/>
+                            </ScrollView>
 
-                        </StackLayout>
+                            <!--MediaElement for playing audio and video-->
+                            <xct:MediaElement IsVisible="{Binding IsAudioOrVideo}" 
+                                  AutoPlay="false" 
+                                  ShowsPlaybackControls="True" 
+                                  Source="{Binding GetAudioOrVideoSource}"
+                                  BackgroundColor="Black" 
+                                  Grid.Row="0" 
+                                  Grid.ColumnSpan="10"
+                                  Grid.RowSpan="10"/>
+                            
+                        </Grid>
                     </DataTemplate>
                 </CarouselView.ItemTemplate>
             </CarouselView>
@@ -40,7 +74,26 @@
                         FontAttributes="Bold" 
                         FontSize="Subtitle" 
                         BackgroundColor="LightGray" 
-                        HorizontalOptions="StartAndExpand"/>
+                        HorizontalOptions="StartAndExpand"
+                        HeightRequest="50"
+                        WidthRequest="50"/>
+                <StackLayout Orientation="Horizontal" 
+                             IsVisible="{Binding IsNotesPanelVisible}">
+                    <Button Text="ℹ️"
+                            FontSize="Subtitle"
+                            Clicked="OnNotesButtonClicked" 
+                            BackgroundColor="LightGray"
+                            HeightRequest="50"
+                            WidthRequest="50"/>
+                    <StackLayout HorizontalOptions="CenterAndExpand"
+                                 VerticalOptions="CenterAndExpand"
+                                 Orientation="Vertical">
+                        <Label Text="Notizen:" 
+                               FontSize="Subtitle" 
+                               FontAttributes="Bold"/>
+                        <Label Text="{Binding SelectedMediaItemNotes}"/>
+                    </StackLayout>
+                </StackLayout>
                 <Button Text="&#9198;"
                         IsVisible="{Binding IsPreviousButtonVisible}"
                         FontAttributes="Bold" 

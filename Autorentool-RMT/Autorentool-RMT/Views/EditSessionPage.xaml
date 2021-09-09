@@ -26,7 +26,7 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <StackLayout Orientation="Horizontal" Spacing="0" BackgroundColor="White">
-                                <Image Source="{Binding GetFullPath}"
+                                <Image Source="{Binding GetPreviewPath}"
                                        Aspect="AspectFit"
                                        HeightRequest="60"
                                        WidthRequest="60"
@@ -39,6 +39,8 @@
                                     <DropGestureRecognizer
                                         AllowDrop="True"
                                         Drop="OnDrop"/>
+                                    <TapGestureRecognizer
+                                        Tapped="OnTap"/>
                                 </StackLayout.GestureRecognizers>
                             </StackLayout>
                         </DataTemplate>
@@ -50,33 +52,32 @@
                 <Image Source="{Binding ImagePath}" 
                        BackgroundColor="White"
                        Aspect="AspectFit" 
-                       HeightRequest="375" 
-                       WidthRequest="450" 
+                       Grid.RowSpan="8" 
                        HorizontalOptions="CenterAndExpand" 
                        VerticalOptions="CenterAndExpand" 
                        IsVisible="{Binding IsImageVisible}"/>
                 <ScrollView IsVisible="{Binding IsMediaItemTextVisible}"
                             Orientation="Vertical"
-                            Grid.Row="1" 
-                            Grid.Column="0"
-                            Grid.ColumnSpan="3" 
-                            Grid.RowSpan="5"
+                            VerticalOptions="CenterAndExpand"
+                            HorizontalOptions="CenterAndExpand"
+                            Grid.RowSpan="8" 
                             BackgroundColor="White">
                     <Label Text="{Binding MediaItemText}" 
                             FontSize="Small"  
                             VerticalOptions="CenterAndExpand" 
                             HorizontalOptions="CenterAndExpand"/>
                 </ScrollView>
-            </StackLayout>
 
-            <!--MediaElement for playing Audio and Video-->
-            <xct:MediaElement
-                IsVisible="{Binding IsMediaElementVisible}"
-                Source="{Binding MediaElementSource}"
-                ShowsPlaybackControls="True"
-                AutoPlay="False"
-                Grid.Row="0" Grid.Column="1"  Grid.RowSpan="8"
-                Aspect="AspectFit"/>
+
+                <!--MediaElement for playing Audio and Video-->
+                <xct:MediaElement
+                    IsVisible="{Binding IsMediaElementVisible}"
+                    Source="{Binding MediaElementSource}"
+                    ShowsPlaybackControls="True"
+                    AutoPlay="False"
+                    Grid.RowSpan="8" 
+                    Aspect="AspectFit"/>
+            </StackLayout>
 
             <Button Text="&#43; BAUSTEIN HINZUFÜGEN" 
                     BackgroundColor="Green" 

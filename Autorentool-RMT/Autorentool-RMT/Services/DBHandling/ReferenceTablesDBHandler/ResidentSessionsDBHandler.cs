@@ -13,7 +13,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         /// Creates and inserts a new ResidentSessions-model to database asynchronously by given parameters.
         /// Returns the ID of the newly created ResidentSessions-model if there aren't any entries with the same ResidentId and SessionId combination.
         /// If no ID was found an exception will be thrown
-        /// If this combination isn't uníque, an exception will be thrown.
+        /// If this combination isn't uníque, -1 will be returned.
         /// </summary>
         /// <param name="residentId"></param>
         /// <param name="sessionId"></param>
@@ -30,18 +30,25 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
 
             try
             {
-                ResidentSessions residentSession1 = await sQLiteAsyncConnection.Table<ResidentSessions>()
+                ResidentSessions residentSession = await sQLiteAsyncConnection.Table<ResidentSessions>()
                     .FirstOrDefaultAsync(
                         queriedResidentSession =>
                             queriedResidentSession.ResidentId == residentId
                             && queriedResidentSession.SessionId == sessionId
                             );
+                if (residentSession == null)
+                {
+                    await sQLiteAsyncConnection.InsertAsync(residentSessions);
 
-                await sQLiteAsyncConnection.InsertAsync(residentSessions);
-                return await GetID(residentId, sessionId);
-            } catch(Exception exc)
+                    return await GetID(residentId, sessionId);
+                } else
+                {
+                    throw new Exception();
+                }
+
+            } catch(Exception)
             {
-                throw exc;
+                return -1;
             }
         }
         #endregion

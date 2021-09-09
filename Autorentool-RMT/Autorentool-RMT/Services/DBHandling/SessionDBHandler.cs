@@ -100,6 +100,21 @@ namespace Autorentool_RMT.Services.DBHandling
         }
         #endregion
 
+        #region UpdateDurationInSeconds
+        /// <summary>
+        /// Updates duration_in_seconds-field by given duration.
+        /// </summary>
+        /// <param name="sessionID"></param>
+        /// <param name="durationInSeconds"></param>
+        /// <returns></returns>
+        public static async Task UpdateDurationInSeconds(int sessionID, int durationInSeconds)
+        {
+            SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
+
+            await sQLiteAsyncConnection.QueryAsync<Session>("UPDATE Sessions SET duration_in_seconds = ? WHERE id = ?", durationInSeconds, sessionID);
+        }
+        #endregion
+
         #region GetAllSessions
         /// <summary>
         /// Returns all Sessions as a List asynchronously.

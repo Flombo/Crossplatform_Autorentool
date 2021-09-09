@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+           xmlns:local="clr-namespace:Autorentool_RMT.Views.Popups"
+           xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+           x:Class="Autorentool_RMT.Views.Popups.SessionRatingPopup"
+           Size="500, 250"
+           x:TypeArguments="local:SessionRatingPopup+Result"
+           BackgroundColor="White">
+
+    <StackLayout BackgroundColor="White" 
+          WidthRequest="500"
+          HeightRequest="250"
+          VerticalOptions="CenterAndExpand" 
+          HorizontalOptions="CenterAndExpand">
+        <Label Text="Sitzung bewerten" 
+               FontSize="Subtitle" 
+               FontAttributes="Bold" 
+               HorizontalOptions="CenterAndExpand" 
+               VerticalOptions="StartAndExpand"/>
+        <CollectionView ItemsSource="{Binding RatingStars}"
+                        ItemsLayout="HorizontalList"
+                        SelectionMode="Single"
+                        VerticalOptions="CenterAndExpand"
+                        HorizontalOptions="CenterAndExpand"
+                        SelectionChanged="OnRatingChanged">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+
+                    <StackLayout Orientation="Horizontal" 
+                                 Spacing="0"
+                                 HorizontalOptions="CenterAndExpand" 
+                                 VerticalOptions="CenterAndExpand">
+                        <Label Text="{Binding Icon}" 
+                               FontSize="50"
+                               HorizontalOptions="CenterAndExpand"
+                               VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <StackLayout Orientation="Horizontal">
+            <Button Text="Ok" 
+                    Clicked="OnAcceptButtonClicked"
+                    BackgroundColor="LightGray"
+                    HorizontalOptions="EndAndExpand" 
+                    WidthRequest="150"/>
+        </StackLayout>
+    </StackLayout>
+
+</xct:Popup>

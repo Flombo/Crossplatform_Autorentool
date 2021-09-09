@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:local="clr-namespace:Autorentool_RMT.Views.Popups"
+             x:Class="Autorentool_RMT.Views.Popups.SessionResidentSelectionPopup"
+             Size="600, 500" 
+             x:TypeArguments="local:SessionResidentSelectionPopup+Result">
+
+    <Grid BackgroundColor="White">
+        <Label Text="Bewohner zuordnen" 
+               HorizontalOptions="CenterAndExpand"
+               Grid.Column="0"
+               Grid.Row="0"
+               FontSize="Medium"/>
+        <Frame HasShadow="True" 
+               BorderColor="Black"                             
+               Grid.Row="1"
+               Grid.Column="0"
+               Grid.RowSpan="5">
+            <CollectionView ItemsSource="{Binding Residents}" 
+                            ItemsLayout="VerticalGrid, 3" 
+                            SelectionMode="Single"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Grid.RowSpan="5"
+                            VerticalOptions="FillAndExpand"
+                            SelectionChanged="OnSelectionChanged">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+
+                        <Grid 
+                            BackgroundColor="White" 
+                            Padding="2"
+                            HeightRequest="120">
+                            <Image
+                                Source="{Binding GetFullProfilePicPath}"
+                                Aspect="AspectFit"
+                                HeightRequest="120"
+                                WidthRequest="60"
+                                Grid.Row="0"
+                                Grid.RowSpan="2"
+                                BackgroundColor="White"/>
+                            <StackLayout
+                                BackgroundColor="#252525"
+                                Opacity="0.75"
+                                WidthRequest="60"
+                                Grid.Row="1"
+                                HeightRequest="60">
+                                <Label 
+                                    Text="{Binding ResidentOneLineSummary}"
+                                    TextColor="White"
+                                    FontAttributes="Bold"
+                                    LineBreakMode="WordWrap"/>
+                            </StackLayout>
+                        </Grid>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Frame>
+        <StackLayout Orientation="Horizontal" 
+                     Grid.Row="6" 
+                     Grid.Column="0">
+            <Button Text="{Binding AcceptButtonText}" 
+                    BackgroundColor="#0091EA" 
+                    Clicked="OnAcceptButtonClicked" 
+                    TextColor="White"
+                    HorizontalOptions="StartAndExpand"/>
+            <Button Text="Abbrechen"
+                    Clicked="OnAbortButtonClicked"
+                    BackgroundColor="LightGray"/>
+        </StackLayout>
+    </Grid>
+</xct:Popup>

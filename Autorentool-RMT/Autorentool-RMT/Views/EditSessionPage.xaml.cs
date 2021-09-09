@@ -119,5 +119,19 @@ namespace Autorentool_RMT.Views
             await editSessionViewModel.ChangePosition(targetMediaItem);
         }
         #endregion
+
+        #region OnTap
+        /// <summary>
+        /// Sets the SelectedMediaItem property of the EditSessionViewModel for further actions.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnTap(object sender, EventArgs e)
+        {
+            StackLayout stackLayout = sender as StackLayout;
+            MediaItem selectedMediaItem = stackLayout.BindingContext as MediaItem;
+            editSessionViewModel.SelectedMediaItem = selectedMediaItem;
+        }
+        #endregion
     }
 }

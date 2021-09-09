@@ -10,6 +10,7 @@ namespace Autorentool_RMT.ViewModels
     public class SessionViewModel : ViewModel
     {
 
+        #region Attributes
         private List<Session> sessions;
         private List<MediaItem> selectedSessionMediaItems;
         private Session selectedSession;
@@ -24,6 +25,7 @@ namespace Autorentool_RMT.ViewModels
         private string enabledButtonBackgroundColour = "#0091EA";
         private string selectedSessionText;
         private bool isSelectedSessionTextVisible;
+        #endregion
 
         #region Constructor
         public SessionViewModel()
@@ -180,6 +182,7 @@ namespace Autorentool_RMT.ViewModels
                 selectedSession = value;
                 LoadSelectedSessionMediaItems();
                 EnableOrDisableButtons();
+                IsStartSessionButtonEnabled = selectedSession != null;
                 OnPropertyChanged();
             }
         }
@@ -231,6 +234,7 @@ namespace Autorentool_RMT.ViewModels
                 else
                 {
                     SelectedSessionMediaItems = new List<MediaItem>();
+                    IsStartSessionButtonEnabled = false;
                 }
 
                 SetSelectedSessionText();

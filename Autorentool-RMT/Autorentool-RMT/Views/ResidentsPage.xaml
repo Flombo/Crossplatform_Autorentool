@@ -25,20 +25,25 @@
         <CollectionView ItemsSource="{Binding Residents}" ItemsLayout="VerticalGrid, 4" SelectionMode="Single" SelectionChanged="OnSelectionChanged">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    
-                    <StackLayout 
+
+                    <Grid 
                         BackgroundColor="White" 
                         Padding="2"
                         HeightRequest="120">
                         <Image
                             Source="{Binding GetFullProfilePicPath}"
                             Aspect="AspectFit"
-                            HeightRequest="60"
+                            HeightRequest="120"
                             WidthRequest="60"
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
                             BackgroundColor="White"/>
                         <StackLayout
-                            BackgroundColor="#252525"
-                            Opacity="0.75">
+                                BackgroundColor="#252525"
+                                Opacity="0.75"
+                                WidthRequest="60"
+                                Grid.Row="1"
+                                HeightRequest="60">
                             <Label 
                                 Text="{Binding ResidentOneLineSummary}"
                                 TextColor="White"
@@ -51,7 +56,7 @@
                                 FontAttributes="Italic"
                                 VerticalOptions="End" />
                         </StackLayout>
-                    </StackLayout>
+                    </Grid>
 
                 </DataTemplate>
             </CollectionView.ItemTemplate>

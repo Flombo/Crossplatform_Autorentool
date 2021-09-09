@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+           xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+           x:Class="Autorentool_RMT.Views.Popups.NotesPopup"
+           Size="500, 500"
+           IsLightDismissEnabled="True"
+           BackgroundColor="White">
+
+    <StackLayout BackgroundColor="White" 
+          WidthRequest="500"
+          HeightRequest="500"
+          VerticalOptions="CenterAndExpand" 
+          HorizontalOptions="CenterAndExpand">
+        <ScrollView HeightRequest="400" 
+                    WidthRequest="400"
+                    VerticalOptions="CenterAndExpand" 
+                    HorizontalOptions="CenterAndExpand">
+            <StackLayout
+                VerticalOptions="CenterAndExpand" 
+                HorizontalOptions="CenterAndExpand">
+                <Label Text="Notizen" 
+                       FontSize="Subtitle" 
+                       FontAttributes="Bold" 
+                       VerticalOptions="StartAndExpand" 
+                       HorizontalOptions="CenterAndExpand"/>
+                <Label Text="{Binding Notes}" 
+                       FontSize="Subtitle" 
+                       VerticalOptions="CenterAndExpand" 
+                       HorizontalOptions="CenterAndExpand"/>
+            </StackLayout>
+        </ScrollView>
+        <Button Text="Schließen" 
+                Clicked="OnCloseButtonClicked" 
+                HorizontalOptions="EndAndExpand" 
+                VerticalOptions="EndAndExpand"/>
+    </StackLayout>
+
+</xct:Popup>

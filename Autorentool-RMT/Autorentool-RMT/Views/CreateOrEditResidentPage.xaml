@@ -50,7 +50,11 @@
                     <CollectionView ItemsSource="{Binding ResidentSessions}" ItemsLayout="VerticalGrid, 2" HeightRequest="300">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Label Text="Name"/>
+                                <Label Text="{Binding Name}" 
+                                       VerticalOptions="CenterAndExpand" 
+                                       HorizontalOptions="CenterAndExpand"
+                                       VerticalTextAlignment="Center"
+                                       HorizontalTextAlignment="Center"/>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>

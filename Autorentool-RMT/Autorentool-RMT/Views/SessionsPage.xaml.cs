@@ -1,4 +1,5 @@
 ﻿using Autorentool_RMT.Models;
+using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
 using Autorentool_RMT.ViewModels;
 using Autorentool_RMT.Views.Popups;
 using System;
@@ -98,7 +99,17 @@ namespace Autorentool_RMT.Views
         #region OnStartSessionButtonClicked
         private async void OnStartSessionButtonClicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new PlaySessionContentPage());
+            SessionResidentSelectionPopup.Result result = await Navigation.ShowPopupAsync(new SessionResidentSelectionPopup());
+
+            if (result != null)
+            {
+                if (result.SelectedResident != null)
+                {
+                    await ResidentSessionsDBHandler.BindResidentSession(result.SelectedResident.Id, selectedSession.Id);
+                }
+
+                await Navigation.PushAsync(new PlaySessionContentPage(selectedSession, result.SelectedResident));
+            }
         }
         #endregion
 

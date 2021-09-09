@@ -45,7 +45,7 @@
                                     Padding="2"
                                     HeightRequest="120">
                                 <Image
-                                        Source="{Binding GetFullPath}"
+                                        Source="{Binding GetPreviewPath}"
                                         Aspect="AspectFit"
                                         HeightRequest="60"
                                         WidthRequest="60"

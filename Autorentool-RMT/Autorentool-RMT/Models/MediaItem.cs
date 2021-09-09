@@ -1,5 +1,7 @@
 ﻿using SQLite;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Autorentool_RMT.Models
 {
@@ -71,6 +73,10 @@ namespace Autorentool_RMT.Models
         public bool IsAudio => FileType.Equals("mp3");
         #endregion
 
+        #region IsAudioOrVideo
+        public bool IsAudioOrVideo => IsAudio || IsVideo;
+        #endregion
+
         #region IsTxt
         public bool IsTxt => FileType.Equals("txt");
         #endregion
@@ -79,18 +85,29 @@ namespace Autorentool_RMT.Models
         public bool IsHTML => FileType.Equals("html");
         #endregion
 
+        #region GetTextContent
+        /// <summary>
+        /// Returns the text content if the medium is a txt file.
+        /// Else an empty string will be returned.
+        /// </summary>
+        /// <returns></returns>
+        public string GetTextContent => IsTxt ? File.ReadAllText(GetFullPath) : "";
+        #endregion
+
+        #region GetAudioOrVideoSource
+        /// <summary>
+        /// Returns the source for the MediaElement if the medium is an audio or video file.
+        /// Else null will be returned.
+        /// </summary>
+        /// <returns></returns>
+        public string GetAudioOrVideoSource => IsAudioOrVideo ? new Uri(GetFullPath).LocalPath : null;
+        #endregion
+
         #region GetFullPath
         /// <summary>
         /// Returns the Path property if a file exists under this path.
         /// </summary>
-        public string GetFullPath
-        {
-            get
-            {
-                return Path;
-            }
-
-        }
+        public string GetFullPath => Path;
         #endregion
 
         #region GetPreviewPath
