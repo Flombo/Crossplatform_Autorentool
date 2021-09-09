@@ -40,14 +40,45 @@
                     </CollectionView>
                 </StackLayout>
 
-                <StackLayout Grid.Row="4" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2">
-                    <StackLayout BackgroundColor="Beige" Orientation="Horizontal">
-                        <Label FontAttributes="Bold" TextColor="Gray" FontSize="Small" Text="Sitzungen" VerticalTextAlignment="Center" HorizontalOptions="StartAndExpand"/>
-                        <Button Text="{StaticResource PlayIcon}" BackgroundColor="LightGray" WidthRequest="45" HeightRequest="50" FontSize="Small"/>
-                        <Button Text="{StaticResource DeleteIcon}" BackgroundColor="LightGray" WidthRequest="45" HeightRequest="50" FontSize="Small"/>
-                        <Button Text="{StaticResource EditIcon}" BackgroundColor="LightGray" WidthRequest="45" HeightRequest="50" FontSize="Small"/>
+                <StackLayout Grid.Row="4" 
+                             Grid.Column="0" 
+                             Grid.RowSpan="2" 
+                             Grid.ColumnSpan="2">
+                    <StackLayout BackgroundColor="Beige" 
+                                 Orientation="Horizontal">
+                        <Label FontAttributes="Bold" 
+                               TextColor="Gray" 
+                               FontSize="Small"
+                               Text="Sitzungen"
+                               VerticalTextAlignment="Center"
+                               HorizontalOptions="StartAndExpand"/>
+                        <Button Text="{StaticResource PlayIcon}"
+                                BackgroundColor="{Binding StartSessionButtonBackgroundColour}"
+                                IsEnabled="{Binding IsStartSessionButtonEnabled}"
+                                Clicked="OnStartSessionButtonClicked"
+                                WidthRequest="45"
+                                HeightRequest="50"
+                                FontSize="Small"/>
+                        <Button Text="{StaticResource DeleteIcon}"
+                                BackgroundColor="{Binding DeleteSessionButtonBackgroundColour}"
+                                IsEnabled="{Binding IsDeleteSessionButtonEnabled}"
+                                Clicked="OnDeleteSessionButtonClicked"
+                                WidthRequest="45"
+                                HeightRequest="50"
+                                FontSize="Small"/>
+                        <Button Text="{StaticResource EditIcon}"
+                                BackgroundColor="{Binding EditSessionButtonBackgroundColour}"
+                                IsEnabled="{Binding IsEditSessionButtonEnabled}"
+                                WidthRequest="45" 
+                                HeightRequest="50"
+                                Clicked="OnEditSessionButtonClicked"
+                                FontSize="Small"/>
                     </StackLayout>
-                    <CollectionView ItemsSource="{Binding ResidentSessions}" ItemsLayout="VerticalGrid, 2" HeightRequest="300">
+                    <CollectionView ItemsSource="{Binding ResidentSessions}" 
+                                    ItemsLayout="VerticalGrid, 2" 
+                                    HeightRequest="300"
+                                    SelectionMode="Single"
+                                    SelectionChanged="OnSessionSelectionChanged">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <StackLayout Orientation="Vertical">

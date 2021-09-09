@@ -15,6 +15,7 @@ namespace Autorentool_RMT.Views
 
         private CreateOrEditResidentViewModel createOrEditResidentViewModel;
         private Resident selectedResident;
+        private Session selectedSession;
 
         #region Constructor for creating a resident
         public CreateOrEditResidentPage()
@@ -40,6 +41,18 @@ namespace Autorentool_RMT.Views
             createOrEditResidentViewModel.LoadResidentLifethemes(selectedResident.Id);
             createOrEditResidentViewModel.LoadResidentSessions(selectedResident.Id);
             BindingContext = createOrEditResidentViewModel;
+        }
+        #endregion
+
+        #region OnAppearing
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            if (selectedResident != null)
+            {
+                createOrEditResidentViewModel.LoadResidentSessions(selectedResident.Id);
+            }
         }
         #endregion
 
@@ -160,6 +173,80 @@ namespace Autorentool_RMT.Views
                 {
                     await DisplayAlert("Fehler beim Löschen eines Lebensthemas", "Ein Fehler trat auf beim Löschen eines Lebensthemas", "Ok");
                 }
+            }
+        }
+        #endregion
+
+        #region OnSessionSelectionChanged
+        /// <summary>
+        /// Set the SelectedSession-property of the viewmodel.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnSessionSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            selectedSession = e.CurrentSelection[0] as Session;
+            createOrEditResidentViewModel.SelectedSession = selectedSession;
+        }
+        #endregion
+
+        #region OnStartSessionButtonClicked
+        /// <summary>
+        /// Starts selected session with the selected resident.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void OnStartSessionButtonClicked(object sender, EventArgs e)
+        {
+            createOrEditResidentViewModel.SelectedSession = null;
+            await Navigation.PushAsync(new PlaySessionContentPage(selectedSession, selectedResident));
+        }
+        #endregion
+
+        #region OnEditSessionButtonClicked
+        /// <summary>
+        /// Displays the EditSessionPage with the selected session.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void OnEditSessionButtonClicked(object sender, EventArgs e)
+        {
+            createOrEditResidentViewModel.SelectedSession = null;
+            await Navigation.PushAsync(new EditSessionPage(selectedSession));
+        }
+        #endregion
+
+        #region OnDeleteSessionButtonClicked
+        /// <summary>
+        /// Unbinds the selected session and the selected resident.
+        /// Shows an error prompt if the process failed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void OnDeleteSessionButtonClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                bool shouldUnbind = await DisplayAlert(
+                    "Sitzungsverknüpfung löschen?",
+                    $"Wollen Sie die Verknüpfung der Sitzung '{selectedSession.Name}' mit diesem Bewohner wirklich löschen? Die Sitzung selbst wird dabei nicht gelöscht.",
+                    "Ja",
+                    "Nein"
+                    );
+
+                if (shouldUnbind)
+                {
+                    await createOrEditResidentViewModel.UnbindResidentAndSession();
+                    createOrEditResidentViewModel.LoadResidentSessions(selectedResident.Id);
+                }
+            }
+            catch (Exception)
+            {
+                await DisplayAlert(
+                    "Fehler beim Löschen der Verknüpfung",
+                    $"Beim Löschen der Verknüpfung zwischen der Sitzung '{selectedSession.Name}' und dem Bewohner/der Bewohnerin '{selectedResident.ResidentOneLineSummary}'",
+                    "Schließen"
+                    );
             }
         }
         #endregion

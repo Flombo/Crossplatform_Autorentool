@@ -35,6 +35,13 @@ namespace Autorentool_RMT.ViewModels
         private string completeButtonColour = "LightGray";
         private string deleteProfilePicButtonColour = "LightGray";
         private string title;
+        private Session selectedSession;
+        private bool isStartSessionButtonEnabled;
+        private string startSessionButtonBackgroundColour = "LightGray";
+        private bool isDeleteSessionButtonEnabled;
+        private string deleteSessionButtonBackgroundColour = "LightGray";
+        private bool isEditSessionButtonEnabled;
+        private string editSessionButtonBackgroundColour = "LightGray";
         public ICommand ShowFilePicker { get; }
         public ICommand DeleteSelectedImage { get; }
 
@@ -70,8 +77,98 @@ namespace Autorentool_RMT.ViewModels
                 Gender = residentForEditing.Gender;
                 SelectedImage = residentForEditing.GetFullProfilePicPath;
                 selectedImagePath = residentForEditing.GetFullProfilePicPath;
-                Title = "BEWOHNER BEARBEITEN";
+                Title = residentForEditing.ResidentOneLineSummary;
                 SetIsDeleteProfilePicEnabled();
+            }
+        }
+        #endregion
+
+        #region IsStartSessionButtonEnabled
+        public bool IsStartSessionButtonEnabled
+        {
+            get => isStartSessionButtonEnabled;
+            set
+            {
+                isStartSessionButtonEnabled = value;
+                StartSessionButtonBackgroundColour = GetBackgroundColour(isStartSessionButtonEnabled, "Orange");
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region StartSessionButtonBackgroundColour
+        public string StartSessionButtonBackgroundColour
+        {
+            get => startSessionButtonBackgroundColour;
+            set
+            {
+                startSessionButtonBackgroundColour = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region DeleteSessionButtonBackgroundColour
+        public string DeleteSessionButtonBackgroundColour
+        {
+            get => deleteSessionButtonBackgroundColour;
+            set
+            {
+                deleteSessionButtonBackgroundColour = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsDeleteSessionButtonEnabled
+        public bool IsDeleteSessionButtonEnabled
+        {
+            get => isDeleteSessionButtonEnabled;
+            set
+            {
+                isDeleteSessionButtonEnabled = value;
+                DeleteSessionButtonBackgroundColour = GetBackgroundColour(isDeleteSessionButtonEnabled, "Orange");
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region EditSessionButtonBackgroundColour
+        public string EditSessionButtonBackgroundColour
+        {
+            get => editSessionButtonBackgroundColour;
+            set
+            {
+                editSessionButtonBackgroundColour = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsEditSessionButtonEnabled
+        public bool IsEditSessionButtonEnabled
+        {
+            get => isEditSessionButtonEnabled;
+            set
+            {
+                isEditSessionButtonEnabled = value;
+                EditSessionButtonBackgroundColour = GetBackgroundColour(isEditSessionButtonEnabled, "Orange");
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region SelectedSession
+        public Session SelectedSession
+        {
+            get => selectedSession;
+            set
+            {
+                selectedSession = value;
+                IsStartSessionButtonEnabled = selectedSession != null;
+                IsEditSessionButtonEnabled = selectedSession != null;
+                IsDeleteSessionButtonEnabled = selectedSession != null;
+                OnPropertyChanged();
             }
         }
         #endregion
@@ -569,6 +666,24 @@ namespace Autorentool_RMT.ViewModels
             }
 
             ResidentSessions = sessions;
+            SelectedSession = null;
+        }
+        #endregion
+
+        #region UnbindResidentAndSession
+        public async Task UnbindResidentAndSession()
+        {
+            try
+            {
+                int residentSessionID = await ResidentSessionsDBHandler.GetID(selectedSession.Id, residentForEditing.Id);
+
+                await ResidentSessionsDBHandler.UnbindCertainResidentSession(residentSessionID);
+
+                SelectedSession = null;
+            } catch(Exception exc)
+            {
+                throw exc;
+            }
         }
         #endregion
 
