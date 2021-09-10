@@ -8,6 +8,8 @@
             <!--MediaPlayer section-->
             <CarouselView ItemsSource="{Binding SessionMediaItems}"
                           CurrentItem="{Binding CurrentMediaItem, Mode=TwoWay}"
+                          Loop="False"
+                          IsSwipeEnabled="True"
                           IndicatorView="indicatorView"
                           Grid.Row="0"
                           Grid.Column="0"
@@ -61,6 +63,7 @@
             <IndicatorView x:Name="indicatorView"
                    IndicatorColor="LightGray"
                    SelectedIndicatorColor="#0091EA"
+                   
                    HorizontalOptions="Center" />
 
             <StackLayout 
@@ -94,9 +97,10 @@
                     </StackLayout>
                 </StackLayout>
                 <Button Text="&#9198;"
-                        IsVisible="{Binding IsPreviousButtonVisible}"
+                        IsVisible="{Binding IsPreviousItemButtonVisible}"
                         FontAttributes="Bold" 
-                        FontSize="Subtitle" 
+                        FontSize="Subtitle"
+                        Command="{Binding PreviousItemButtonClicked}"
                         BackgroundColor="LightGray" 
                         HorizontalOptions="StartAndExpand"/>
                 <Button Text="&#10060;" 
@@ -108,7 +112,8 @@
                 <Button Text="&#9197;" 
                         FontAttributes="Bold" 
                         FontSize="Subtitle" 
-                        IsVisible="{Binding IsNextButtonVisible}"
+                        IsVisible="{Binding IsNextItemButtonVisible}"
+                        Command="{Binding NextItemButtonClicked}"
                         BackgroundColor="LightGray" 
                         HorizontalOptions="StartAndExpand"/>
                 <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand" VerticalOptions="CenterAndExpand">

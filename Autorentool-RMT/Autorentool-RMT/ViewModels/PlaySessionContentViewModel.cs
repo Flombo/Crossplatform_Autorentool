@@ -4,6 +4,7 @@ using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace Autorentool_RMT.ViewModels
@@ -16,22 +17,50 @@ namespace Autorentool_RMT.ViewModels
         private string sessionDuration;
         private Session selectedSession;
         private bool isSessionOngoing;
-        private bool isPreviousButtonVisible;
-        private bool isNextButtonVisible;
         private int duration;
         private bool isNotesPanelVisible;
         private string selectedMediaItemNotes;
+        private bool isPreviousItemButtonVisible;
+        private bool isNextItemButtonVisible;
+        public ICommand PreviousItemButtonClicked { get; }
+        public ICommand NextItemButtonClicked { get; }
 
         #region Constructor
         public PlaySessionContentViewModel(Session selectedSession)
         {
             this.selectedSession = selectedSession;
+            PreviousItemButtonClicked = new Command(SetPreviousItemAsCurrentMediaItem);
+            NextItemButtonClicked = new Command(SetNextItemAsCurrentMediaItem);
             isNotesPanelVisible = false;
             duration = 0;
-            IsPreviousButtonVisible = false;
             isSessionOngoing = false;
-            IsNextButtonVisible = true;
             isNotesPanelVisible = false;
+            isPreviousItemButtonVisible = false;
+            isNextItemButtonVisible = true;
+        }
+        #endregion
+
+        #region IsPreviousItemButtonVisible
+        public bool IsPreviousItemButtonVisible
+        {
+            get => isPreviousItemButtonVisible;
+            set
+            {
+                isPreviousItemButtonVisible = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsNextItemButtonVisible
+        public bool IsNextItemButtonVisible
+        {
+            get => isNextItemButtonVisible;
+            set
+            {
+                isNextItemButtonVisible = value;
+                OnPropertyChanged();
+            }
         }
         #endregion
 
@@ -68,6 +97,7 @@ namespace Autorentool_RMT.ViewModels
             {
                 currentMediaItem = value;
                 IsNotesPanelVisible = currentMediaItem.Notes.Length > 0;
+                SetControlButtonsVisibility();
                 OnPropertyChanged();
             }
         }
@@ -85,30 +115,6 @@ namespace Autorentool_RMT.ViewModels
             set
             {
                 sessionMediaItems = value;
-                OnPropertyChanged();
-            }
-        }
-        #endregion
-
-        #region IsNextButtonVisible
-        public bool IsNextButtonVisible
-        {
-            get => isNextButtonVisible;
-            set
-            {
-                isNextButtonVisible = value;
-                OnPropertyChanged();
-            }
-        }
-        #endregion
-
-        #region IsPreviousButtonVisible
-        public bool IsPreviousButtonVisible
-        {
-            get => isPreviousButtonVisible;
-            set
-            {
-                isPreviousButtonVisible = value;
                 OnPropertyChanged();
             }
         }
@@ -179,6 +185,68 @@ namespace Autorentool_RMT.ViewModels
             catch (Exception)
             {
 
+            }
+        }
+        #endregion
+
+        #region SetControlButtonsVisibility
+        /// <summary>
+        /// Sets the properties IsPreviousItemButtonVisible and IsNextItemButtonVisible depending on the position of the current displayed MediaItem.
+        /// If the currentMediaItem is null due to intializiation, the previous button must be invisible, because the first item is displayed.
+        /// </summary>
+        public void SetControlButtonsVisibility()
+        {
+            if(currentMediaItem != null)
+            {
+                int indexOfCurrentMediaItem = sessionMediaItems.IndexOf(currentMediaItem);
+
+                IsPreviousItemButtonVisible = indexOfCurrentMediaItem != 0;
+                IsNextItemButtonVisible = indexOfCurrentMediaItem != sessionMediaItems.Count - 1;
+            }
+            else
+            {
+                IsPreviousItemButtonVisible = false;
+                IsNextItemButtonVisible = true;
+            }
+        }
+        #endregion
+
+        #region SetPreviousItemAsCurrentMediaItem
+        /// <summary>
+        /// Changes the currentMediaItem to the previous MediaItem.
+        /// If the currentMediaItem isn't part of the list due to initialization, the first MediaItem will be choosed.
+        /// </summary>
+        private void SetPreviousItemAsCurrentMediaItem()
+        {
+            int currentMediaItemIndex = SessionMediaItems.IndexOf(CurrentMediaItem);
+
+            if (currentMediaItemIndex != -1)
+            {
+                MediaItem previousMediaItem = SessionMediaItems[currentMediaItemIndex - 1];
+                CurrentMediaItem = previousMediaItem;
+            } else
+            {
+                CurrentMediaItem = SessionMediaItems[0];
+            }
+        }
+        #endregion
+
+        #region SetNextItemAsCurrentMediaItem
+        /// <summary>
+        /// Changes the currentMediaItem to the next MediaItem.
+        /// If the currentMediaItem isn't part of the list due to initialization, the first MediaItem will be choosed.
+        /// </summary>
+        private void SetNextItemAsCurrentMediaItem()
+        {
+            int currentMediaItemIndex = SessionMediaItems.IndexOf(CurrentMediaItem);
+
+            if (currentMediaItemIndex != -1)
+            {
+                MediaItem nextMediaItem = SessionMediaItems[currentMediaItemIndex + 1];
+                CurrentMediaItem = nextMediaItem;
+            } else
+            {
+                CurrentMediaItem = SessionMediaItems[0];
             }
         }
         #endregion
