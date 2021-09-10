@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:local="clr-namespace:Autorentool_RMT.Views.Popups"
+             x:Class="Autorentool_RMT.Views.Popups.FolderImportPopup"
+             Size="{Binding Size}" 
+             IsLightDismissEnabled="True"
+             x:TypeArguments="local:FolderImportPopup+Result">
+
+    <Grid BackgroundColor="White"           
+          WidthRequest="{Binding ContentWidth}"
+          HeightRequest="{Binding ContentHeight}">
+        <Label Text="Ordner auswählen für den Import von Medieninhalten" 
+               HorizontalOptions="CenterAndExpand"
+               VerticalOptions="CenterAndExpand"
+               FontSize="Medium" 
+               Grid.Row="0"
+               Grid.Column="0"/>
+            <StackLayout Grid.Row="1" 
+                         Grid.Column="0"
+                         Grid.ColumnSpan="2"
+                         Orientation="Horizontal">
+                <SearchBar Placeholder="Ordner nach Ordnernamen suchen" 
+                           Text="{Binding SearchText}" 
+                           SearchButtonPressed="OnSearchButtonClicked" 
+                           Grid.Row="1" 
+                           Grid.Column="0"/>
+                <Picker FontSize="Small"
+                        SelectedIndex="0"
+                        SelectedIndexChanged="OnFoldernameFilterChanged">
+                    <Picker.Items>
+                        <x:String>Ordnername absteigen sortieren</x:String>
+                        <x:String>Ordnername aufsteigend sortieren</x:String>
+                    </Picker.Items>
+                </Picker>
+                <Picker FontSize="Small"
+                        SelectedIndex="0"
+                        SelectedIndexChanged="OnFolderDateTimeFilterChanged">
+                    <Picker.Items>
+                        <x:String>Ordnername absteigen sortieren</x:String>
+                        <x:String>Ordnername aufsteigend sortieren</x:String>
+                    </Picker.Items>
+                </Picker>
+            </StackLayout>
+
+            <Frame HasShadow="True" 
+                   BorderColor="Black"
+                   HeightRequest="{Binding CollectionViewHeight}"
+                   Grid.Row="2" 
+                   Grid.Column="0"
+                   Grid.ColumnSpan="2"
+                   Grid.RowSpan="3">
+                <CollectionView ItemsSource="{Binding Folders}" 
+                                ItemsLayout="VerticalGrid, 1" 
+                                SelectionMode="Single"
+                                SelectedItem="{Binding SelectedFolder}"
+                                HeightRequest="{Binding CollectionViewHeight}"
+                                Grid.ColumnSpan="2" 
+                                Grid.RowSpan="3" 
+                                VerticalOptions="FillAndExpand">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+
+                            <StackLayout Orientation="Horizontal" Padding="2">
+                                <Image Source="directory.png" Aspect="AspectFit" HeightRequest="40" WidthRequest="40"/>
+                                <Label Text="{Binding Name}"/>
+                                <Label Text="{Binding CreationDateTime}"/>
+                            </StackLayout>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+        </Frame>
+        <StackLayout Orientation="Horizontal" Grid.Row="5" Grid.ColumnSpan="2">
+            <Button Text="{Binding FolderImportButtonText}"
+                    BackgroundColor="{Binding FolderImportButtonBackgroundColour}"
+                    IsEnabled="{Binding IsFolderImportButtonEnabled}"
+                    TextColor="White"
+                    Clicked="OnAcceptButtonClicked"
+                    HorizontalOptions="Start"
+                    Grid.Row="6" 
+                    Grid.Column="1"/>
+            <Button Text="Abbrechen"
+                    Clicked="OnAbortButtonClicked"
+                    HorizontalOptions="EndAndExpand"
+                    BackgroundColor="LightGray"/>
+        </StackLayout>
+    </Grid>
+
+</xct:Popup>

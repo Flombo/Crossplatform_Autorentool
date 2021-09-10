@@ -2,6 +2,7 @@
 using Autorentool_RMT.ViewModels;
 using Autorentool_RMT.Views.Popups;
 using System;
+using System.IO;
 using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -198,15 +199,31 @@ namespace Autorentool_RMT.Views
         {
             try
             {
-                ContentManagementViewModel contentViewModel = viewModel as ContentManagementViewModel;
+                ContentManagementViewModel contentManagementViewModel = viewModel as ContentManagementViewModel;
 
-                await contentViewModel.ShowFilePicker();
+                string action = await DisplayActionSheet("Import von Medieninhalten: Art des Imports auswählen", "Abbrechen", null, "Ordnerauswahl", "Einzelne Dateien");
+
+                if (action.Equals("Einzelne Dateien"))
+                {
+                    await contentManagementViewModel.ShowFilePicker();
+                } else
+                {
+                    FolderImportPopup.Result result = await Navigation.ShowPopupAsync(new FolderImportPopup(Height, Width));
+
+                    if (result != null)
+                    {
+                        await contentManagementViewModel.SaveFilesOfSelectedFolder(result.selectedFolder.FolderPath);
+                    }
+                }
 
             } catch (Exception exc)
             {
                 if (exc.Message.Contains("Duplicate"))
                 {
                     await DisplayAlert("Fehler beim Hinzufügen neuer Inhalte", "Es dürfen keine bereits existierenden Dateien hinzugefügt werden", "Schließen");
+                } else if (exc.Message.Contains("Folder")) 
+                {
+                    await DisplayAlert("Fehler beim Hinzufügen der Ordnerinhalte", "Es kam zu einem Fehler beim Hinzufügen der Dateien aus dem ausgewählten Ordner", "Schließen");
                 } else
                 {
                     await DisplayAlert("Fehler beim Hinzufügen neuer Inhalte", "Ein Fehler trat auf beim Hinzufügen neuer Inhalte", "Schließen");

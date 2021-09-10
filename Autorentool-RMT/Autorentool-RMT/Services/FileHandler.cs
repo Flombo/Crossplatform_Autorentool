@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 
@@ -111,6 +112,64 @@ namespace Autorentool_RMT.Services
             int length = path.Length - filetypeIndex;
             string filetype = path.Substring(filetypeIndex + 1, length - 1);
             return filetype;
+        }
+        #endregion
+
+        #region GetFolderFilePaths
+        /// <summary>
+        /// Returns the filepaths of the given folderPath, that are part of the supported filetypes (jpg, jpeg, mp3, mp4, html, txt)
+        /// An exception will be thrown if the folder doesn't exist or if the process failed.
+        /// </summary>
+        /// <param name="folderPath"></param>
+        /// <returns></returns>
+        public static List<string> GetFolderFilePaths(string folderPath)
+        {
+            try
+            {
+                List<string> filePaths = new List<string>();
+
+                if (Directory.Exists(folderPath))
+                {
+                    string[] folderFilePaths = Directory.GetFiles(folderPath);
+
+                    for(int i = 0; i < folderFilePaths.Length; i++)
+                    {
+                        string fileType = ExtractFiletypeFromPath(folderFilePaths[i]);
+
+                        if (IsFiletypeValid(fileType))
+                        {
+                            filePaths.Add(folderFilePaths[i]);
+                        }
+                    }
+
+                    return filePaths;
+
+                } else
+                {
+                    throw new Exception();
+                }
+            } catch(Exception exc)
+            {
+                throw exc;
+            }
+        }
+        #endregion
+
+        #region IsFiletypeValid
+        /// <summary>
+        /// Checks if filetype is valid (jpg, jpeg, mp3, mp4, html, txt)
+        /// </summary>
+        /// <param name="fileType"></param>
+        /// <returns></returns>
+        private static bool IsFiletypeValid(string fileType)
+        {
+            return fileType.Contains("jpg") || 
+                fileType.Contains("jpeg") || 
+                fileType.Contains("png") || 
+                fileType.Contains("mp3") || 
+                fileType.Contains("mp4") || 
+                fileType.Contains("html") || 
+                fileType.Contains("txt");
         }
         #endregion
 

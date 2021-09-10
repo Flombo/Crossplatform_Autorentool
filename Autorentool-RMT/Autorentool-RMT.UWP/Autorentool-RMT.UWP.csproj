@@ -104,6 +104,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="directory.png" />
     <Content Include="FilmIcon.png" />
     <Content Include="ImageChecklist.png" />
     <Content Include="ImageLogoBrainDark.png" />

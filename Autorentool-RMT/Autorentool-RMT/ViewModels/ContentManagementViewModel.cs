@@ -138,6 +138,81 @@ namespace Autorentool_RMT.ViewModels
         }
         #endregion
 
+        #region SaveFilesOfSelectedFolder
+        /// <summary>
+        /// Saves valid files of the selected folder by the given folder path.
+        /// If the proces failed an exception will be thrown.
+        /// </summary>
+        /// <param name="selectedFolderPath"></param>
+        /// <returns></returns>
+        public async Task SaveFilesOfSelectedFolder(string selectedFolderPath)
+        {
+            try
+            {
+                List<string> folderFilePaths = FileHandler.GetFolderFilePaths(selectedFolderPath);
+
+                IsProgressBarVisible = true;
+                IsActivityIndicatorRunning = true;
+                float maxProgress = folderFilePaths.Count;
+                float currentProgress = 0;
+                Progress = currentProgress;
+                IsDeleteAllMediaItemsButtonEnabled = false;
+                IsDeleteSelectedMediaItemButtonEnabled = false;
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+
+                foreach (string folderFilePath in folderFilePaths)
+                {
+                    currentProgress++;
+                    SetProgressElements(currentProgress, maxProgress, stopwatch);
+
+                    using (FileStream fileStream = File.OpenRead(folderFilePath))
+                    {
+                        string filenameFromFileStream = Path.GetFileName(folderFilePath);
+                        string hash = FileHandler.GetFileHashAsString(fileStream);
+
+                        int duplicate = await MediaItemDBHandler.SearchMediaItemWithGivenHash(hash);
+
+                        if (duplicate == 0)
+                        {
+
+                            string directoryPath = FileHandler.CreateDirectory("MediaItems");
+
+                            string filename = FileHandler.GetUniqueFilename(filenameFromFileStream, directoryPath);
+                            string filetype = FileHandler.ExtractFiletypeFromPath(filename);
+
+                            string filepath = Path.Combine(directoryPath, filename);
+
+                            using (Stream fileSaveStream = File.OpenRead(folderFilePath))
+                            {
+                                FileHandler.SaveFile(fileSaveStream, filepath);
+                            }
+
+                            await MediaItemDBHandler.AddMediaItem(filename, filepath, filetype, hash, "", 0);
+                        }
+                        else
+                        {
+                            stopwatch.Stop();
+
+                            MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
+                            ResetDeleteButtonsAndProgressIndicators();
+
+                            throw new Exception("Duplicate");
+                        }
+                    }
+                }
+
+                stopwatch.Stop();
+
+                MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
+                ResetDeleteButtonsAndProgressIndicators();
+            }
+            catch (Exception){
+                throw new Exception("Folder");
+            }
+        }
+        #endregion
+
         #region ShowFilePicker
         /// <summary>
         /// Shows file picker for valid filetypes(jpg/jpeg, png, html, mp3, txt, mp4), saves them and builds MediaItems as representation.
