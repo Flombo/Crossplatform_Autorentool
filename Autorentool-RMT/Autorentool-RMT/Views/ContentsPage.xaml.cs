@@ -204,7 +204,13 @@ namespace Autorentool_RMT.Views
 
             } catch (Exception exc)
             {
-                await DisplayAlert("Fehler beim Hinzufügen neuer Inhalte", exc.Message, "Schließen");
+                if (exc.Message.Contains("Duplicate"))
+                {
+                    await DisplayAlert("Fehler beim Hinzufügen neuer Inhalte", "Es dürfen keine bereits existierenden Dateien hinzugefügt werden", "Schließen");
+                } else
+                {
+                    await DisplayAlert("Fehler beim Hinzufügen neuer Inhalte", "Ein Fehler trat auf beim Hinzufügen neuer Inhalte", "Schließen");
+                }
             }
         }
         #endregion

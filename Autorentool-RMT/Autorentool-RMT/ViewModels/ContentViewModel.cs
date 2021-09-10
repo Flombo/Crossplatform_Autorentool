@@ -495,6 +495,7 @@ namespace Autorentool_RMT.ViewModels
             SelectedMediumImagePath = selectedMediaItem.GetFullPath;
             SelectedMediumMediaElementPath = selectedMediaItem.GetAudioOrVideoSource;
             SelectedMediumTextContent = selectedMediaItem.GetTextContent;
+            IsFullscreenButtonVisible = selectedMediaItem.IsImage;
         }
         #endregion
 

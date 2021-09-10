@@ -211,7 +211,7 @@ namespace Autorentool_RMT.ViewModels
                                 MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
                                 ResetDeleteButtonsAndProgressIndicators();
 
-                                throw new Exception("Es dürfen keine bereits existierenden Dateien hinzugefügt werden");
+                                throw new Exception("Duplicate");
                             }
                         }
                     }
