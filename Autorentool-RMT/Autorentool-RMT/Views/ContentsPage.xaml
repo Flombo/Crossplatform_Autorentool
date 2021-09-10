@@ -121,19 +121,30 @@
                                             VerticalOptions="CenterAndExpand"/>
                                     </StackLayout>
                                     <CheckBox IsChecked="False" 
-                                              BindingContext="{x:Reference AddMediaItemButton}" 
-                                              IsVisible="{Binding IsVisible}"
-                                              CheckedChanged="OnMediaItemCheckboxChanged"
-                                              HorizontalOptions="End"
-                                              VerticalOptions="Start"
-                                              Grid.Column="0" 
-                                              Grid.Row="0"/>
+                                            BindingContext="{x:Reference AddMediaItemButton}" 
+                                            IsVisible="{Binding IsVisible}"
+                                            CheckedChanged="OnMediaItemCheckboxChanged"
+                                            HorizontalOptions="End"
+                                            VerticalOptions="Start"
+                                            Grid.Column="0" 
+                                            Grid.Row="0"/>
                                 </Grid>
 
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
                 </StackLayout>
+
+                <ActivityIndicator Grid.Row="2"
+                                   HorizontalOptions="CenterAndExpand"
+                                   VerticalOptions="CenterAndExpand"
+                                   Grid.RowSpan="10"
+                                   Color="#0091EA"
+                                   ScaleX="2"
+                                   ScaleY="2"
+                                   Grid.Column="0"
+                                   IsRunning="{Binding IsActivityIndicatorRunning}"
+                                   IsVisible="{Binding IsActivityIndicatorRunning}"/>
 
                 <!--Preview if MediaItem is an image, or text file or no MediaItem was selected-->
                 <Grid BackgroundColor="Black" Grid.Row="1" Grid.Column="1" Grid.RowSpan="7">

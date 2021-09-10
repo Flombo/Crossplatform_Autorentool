@@ -47,6 +47,7 @@ namespace Autorentool_RMT.ViewModels
         protected string addMediaItemButtonBackgroundColour;
         protected bool isContentPage;
         protected string title;
+        protected bool isActivityIndicatorRunning;
         #endregion
 
         #region Constructor
@@ -82,7 +83,20 @@ namespace Autorentool_RMT.ViewModels
             progressText = "";
             isAddMediaItemButtonVisible = false;
             isAddMediaItemButtonEnabled = false;
+            isActivityIndicatorRunning = false;
             currentMediaItemLifethemes = new List<Lifetheme>();
+        }
+        #endregion
+
+        #region IsActivityIndicatorRunning
+        public bool IsActivityIndicatorRunning
+        {
+            get => isActivityIndicatorRunning;
+            set
+            {
+                isActivityIndicatorRunning = value;
+                OnPropertyChanged();
+            }
         }
         #endregion
 

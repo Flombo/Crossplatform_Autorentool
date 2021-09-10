@@ -167,6 +167,7 @@ namespace Autorentool_RMT.ViewModels
                 if (results != null && results.Count > 0)
                 {
                     IsProgressBarVisible = true;
+                    IsActivityIndicatorRunning = true;
                     float maxProgress = results.Count;
                     float currentProgress = 0;
                     Progress = currentProgress;
@@ -208,9 +209,7 @@ namespace Autorentool_RMT.ViewModels
                                 stopwatch.Stop();
 
                                 MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
-                                IsProgressBarVisible = false;
-                                IsDeleteAllMediaItemsButtonEnabled = true;
-                                IsDeleteSelectedMediaItemButtonEnabled = true;
+                                ResetDeleteButtonsAndProgressIndicators();
 
                                 throw new Exception("Es dürfen keine bereits existierenden Dateien hinzugefügt werden");
                             }
@@ -220,9 +219,7 @@ namespace Autorentool_RMT.ViewModels
                     stopwatch.Stop();
 
                     MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
-                    IsProgressBarVisible = false;
-                    IsDeleteAllMediaItemsButtonEnabled = true;
-                    IsDeleteSelectedMediaItemButtonEnabled = true;
+                    ResetDeleteButtonsAndProgressIndicators();
                 }
 
             }
@@ -272,20 +269,20 @@ namespace Autorentool_RMT.ViewModels
                     IsDeleteSelectedMediaItemButtonEnabled = false;
                     Stopwatch stopwatch = new Stopwatch();
                     stopwatch.Start();
+                    IsActivityIndicatorRunning = true;
 
                     await DeleteMediaItem(selectedMediaItem, currentProgress, maxProgress, stopwatch);
 
                     stopwatch.Stop();
 
-                    SelectedMediaItem = null;
                     MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
 
-                    IsProgressBarVisible = false;
-                    IsDeleteAllMediaItemsButtonEnabled = true;
-                    IsDeleteSelectedMediaItemButtonEnabled = true;
+                    ResetDeleteButtonsAndProgressIndicators();
                 }
                 catch (Exception exc)
                 {
+                    ResetDeleteButtonsAndProgressIndicators();
+
                     throw exc;
                 }
             }
@@ -343,6 +340,7 @@ namespace Autorentool_RMT.ViewModels
                 Progress = currentProgress;
                 IsDeleteAllMediaItemsButtonEnabled = false;
                 IsDeleteSelectedMediaItemButtonEnabled = false;
+                IsActivityIndicatorRunning = true;
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
 
@@ -353,17 +351,30 @@ namespace Autorentool_RMT.ViewModels
 
                 stopwatch.Stop();
 
-                IsProgressBarVisible = false;
-                IsDeleteAllMediaItemsButtonEnabled = true;
-                IsDeleteSelectedMediaItemButtonEnabled = true;
+                ResetDeleteButtonsAndProgressIndicators();
 
-                SelectedMediaItem = null;
                 MediaItems = new List<MediaItem>();
 
             } catch(Exception exc)
             {
+                ResetDeleteButtonsAndProgressIndicators();
+
                 throw exc;
             }
+        }
+        #endregion
+
+        #region ResetDeleteButtonsAndProgressIndicators
+        /// <summary>
+        /// Resets delete buttons and progress indicator to their default state.
+        /// </summary>
+        private void ResetDeleteButtonsAndProgressIndicators()
+        {
+            SelectedMediaItem = null;
+            IsProgressBarVisible = false;
+            IsDeleteAllMediaItemsButtonEnabled = true;
+            IsDeleteSelectedMediaItemButtonEnabled = true;
+            IsActivityIndicatorRunning = false;
         }
         #endregion
 
