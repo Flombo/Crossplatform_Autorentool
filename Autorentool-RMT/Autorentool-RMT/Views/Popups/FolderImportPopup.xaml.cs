@@ -91,6 +91,21 @@ namespace Autorentool_RMT.Views.Popups
         }
         #endregion
 
+        #region OnExpandFolderButtonClicked
+        /// <summary>
+        /// Loads subfolders into UI of the expanded folder.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnExpandFolderButtonClicked(object sender, EventArgs e)
+        {
+            Button imageButton = sender as Button;
+            DirectoryStructure expandedFolder = imageButton.BindingContext as DirectoryStructure;
+
+            folderImportPopupViewModel.LoadSubFolders(expandedFolder);
+        }
+        #endregion
+
         #region Result-container-class
         /// <summary>
         /// Container class which will be returned to the ContentPage-code-behind when the accept button was clicked.
@@ -98,7 +113,7 @@ namespace Autorentool_RMT.Views.Popups
         /// </summary>
         public class Result
         {
-            public Folder selectedFolder;
+            public DirectoryStructure selectedFolder;
         }
         #endregion
     }

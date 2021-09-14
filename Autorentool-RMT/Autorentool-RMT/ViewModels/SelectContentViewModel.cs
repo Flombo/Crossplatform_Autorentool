@@ -233,7 +233,7 @@ namespace Autorentool_RMT.ViewModels
         /// Filters MediaItems depending on, which filter is disabled/enabled.
         /// Removes all mediaItems that are already bound to the selected session.
         /// </summary>
-        public async new void OnFilter()
+        public async void OnFilter()
         {
             SelectedMediaItem = null;
             CurrentMediaItemLifethemes = new List<Lifetheme>();

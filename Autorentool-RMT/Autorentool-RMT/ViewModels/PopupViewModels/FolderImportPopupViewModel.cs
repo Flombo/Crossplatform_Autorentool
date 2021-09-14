@@ -3,37 +3,46 @@ using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
 using System.Linq;
+using System.IO;
+using System.Windows.Input;
 
 namespace Autorentool_RMT.ViewModels.PopupViewModels
 {
     public class FolderImportPopupViewModel : ViewModel
     {
 
-        private List<Folder> folders;
-        private Folder selectedFolder;
+        #region Attributes
+        private List<DirectoryStructure> rootFolders;
+        private List<DirectoryStructure> subFolders;
+        private DirectoryStructure selectedFolder;
         private string folderImportButtonText;
         private string folderImportButtonBackgroundColour;
         private bool isFolderImportButtonEnabled;
+        private bool isExpanded;
         private string searchText;
         private double height;
         private double width;
+        private bool isOneStepOutButtonVisible;
+        string rootPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+        public ICommand OneStepOut { get; }
+        #endregion
 
         public FolderImportPopupViewModel(double height, double width)
         {
             this.height = height;
             this.width = width;
-            folders = new List<Folder>() 
-            {
-                {new Folder("Test", "12334", DateTime.Today) },
-                {new Folder("Test2", "12334", DateTime.Today) }
-            };
+            OneStepOut = new Command(OnOneStepOut);
+            isOneStepOutButtonVisible = false;
+            rootFolders = new List<DirectoryStructure>();
+            subFolders = new List<DirectoryStructure>();
+            LoadAllRootFolders(rootPath);
             selectedFolder = null;
             folderImportButtonText = "Kein Ordner ausgewählt";
+            isExpanded = false;
             searchText = "";
             folderImportButtonBackgroundColour = "LightGray";
             isFolderImportButtonEnabled = false;
         }
-
 
         #region PopupHeight
         public double PopupHeight => height * 0.85;
@@ -58,6 +67,30 @@ namespace Autorentool_RMT.ViewModels.PopupViewModels
 
         #region CollectionViewHeight
         public double CollectionViewHeight => PopupHeight * 0.8;
+        #endregion
+
+        #region IsOneStepOutButtonVisible
+        public bool IsOneStepOutButtonVisible
+        {
+            get => isOneStepOutButtonVisible;
+            set
+            {
+                isOneStepOutButtonVisible = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsExpanded
+        public bool IsExpanded
+        {
+            get => isExpanded;
+            set
+            {
+                isExpanded = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion
 
         #region IsFolderImportButtonEnabled
@@ -110,7 +143,7 @@ namespace Autorentool_RMT.ViewModels.PopupViewModels
         #endregion
 
         #region SelectedFolder
-        public Folder SelectedFolder
+        public DirectoryStructure SelectedFolder
         {
             get => selectedFolder;
             set
@@ -125,13 +158,25 @@ namespace Autorentool_RMT.ViewModels.PopupViewModels
         }
         #endregion
 
-        #region Folders
-        public List<Folder> Folders
+        #region RootFolders
+        public List<DirectoryStructure> RootFolders
         {
-            get => folders;
+            get => rootFolders;
             set
             {
-                folders = value;
+                rootFolders = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region SubFolders
+        public List<DirectoryStructure> SubFolders
+        {
+            get => subFolders;
+            set
+            {
+                subFolders = value;
                 OnPropertyChanged();
             }
         }
@@ -146,9 +191,9 @@ namespace Autorentool_RMT.ViewModels.PopupViewModels
         {
             if(searchText.Length > 0)
             {
-                List<Folder> foundFolders = new List<Folder>();
+                List<DirectoryStructure> foundFolders = new List<DirectoryStructure>();
 
-                foreach(Folder folder in folders)
+                foreach(DirectoryStructure folder in rootFolders)
                 {
                     if (folder.Name.Contains(searchText))
                     {
@@ -156,14 +201,14 @@ namespace Autorentool_RMT.ViewModels.PopupViewModels
                     }
                 }
 
-                Folders = foundFolders;
+                RootFolders = foundFolders;
 
             } else
             {
-                Folders = new List<Folder>()
+                RootFolders = new List<DirectoryStructure>()
                 {
-                    {new Folder("Test", "12334", DateTime.Today) },
-                    {new Folder("Test2", "12334", DateTime.Today) }
+                    {new DirectoryStructure("Test", "12334", DateTime.Today, DirectoryStructure.DirectoryStructureTypes.FOLDER) },
+                    {new DirectoryStructure("Test2", "12334", DateTime.Today, DirectoryStructure.DirectoryStructureTypes.FOLDER) }
                 };
             }
         }
@@ -177,17 +222,17 @@ namespace Autorentool_RMT.ViewModels.PopupViewModels
         /// <param name="selectedIndex"></param>
         public void FilterFoldersByName(int selectedIndex)
         {
-            List<Folder> filteredFolders;
+            List<DirectoryStructure> filteredFolders;
 
             if(selectedIndex == 1)
             {
-                filteredFolders = folders.OrderBy(Folder => Folder.Name).ToList();
+                filteredFolders = rootFolders.OrderBy(Folder => Folder.Name).ToList();
             } else
             {
-                filteredFolders = folders.OrderByDescending(Folder => Folder.Name).ToList();
+                filteredFolders = rootFolders.OrderByDescending(Folder => Folder.Name).ToList();
             }
 
-            Folders = filteredFolders;
+            RootFolders = filteredFolders;
         }
         #endregion
 
@@ -198,18 +243,85 @@ namespace Autorentool_RMT.ViewModels.PopupViewModels
         /// <param name="selectedIndex"></param>
         public void FilterFoldersByDateTime(int selectedIndex)
         {
-            List<Folder> filteredFolders;
+            List<DirectoryStructure> filteredFolders;
 
             if (selectedIndex == 1)
             {
-                filteredFolders = folders.OrderBy(Folder => Folder.CreationDateTime).ToList();
+                filteredFolders = rootFolders.OrderBy(Folder => Folder.CreationDateTime).ToList();
             }
             else
             {
-                filteredFolders = folders.OrderByDescending(Folder => Folder.CreationDateTime).ToList();
+                filteredFolders = rootFolders.OrderByDescending(Folder => Folder.CreationDateTime).ToList();
             }
 
-            Folders = filteredFolders;
+            RootFolders = filteredFolders;
+        }
+        #endregion
+
+        #region LoadAllRootFolders
+        public void LoadAllRootFolders(string rootPath)
+        {
+            string[] disks = Directory.GetDirectories(rootPath);
+
+            List<DirectoryStructure> rootFolders = new List<DirectoryStructure>();
+
+            foreach (string disk in disks)
+            {
+                string[] subfolders = Directory.GetDirectories(disk);
+
+                DirectoryStructure directoryStructure = new DirectoryStructure(Path.GetDirectoryName(disk), disk, Directory.GetCreationTime(disk), DirectoryStructure.DirectoryStructureTypes.DISK)
+                {
+                    HasChildren = subfolders.Length > 0
+                };
+
+                rootFolders.Add(directoryStructure);
+
+                List<DirectoryStructure> childFolders = new List<DirectoryStructure>();
+
+
+                foreach (string subfolder in subfolders)
+                {
+                    string subfolderName = Path.GetFileName(subfolder);
+                    DirectoryStructure folder = new DirectoryStructure(subfolderName, subfolder, Directory.GetCreationTime(subfolder), DirectoryStructure.DirectoryStructureTypes.FOLDER);
+
+                    string[] subfoldersOfSubfolder = Directory.GetDirectories(subfolder);
+                    folder.HasChildren = subfoldersOfSubfolder.Length > 0;
+
+                    childFolders.Add(folder);
+                }
+
+                SubFolders = childFolders;
+
+            }
+            RootFolders = rootFolders;
+        }
+        #endregion
+
+        #region LoadSubFolders
+        public void LoadSubFolders(DirectoryStructure expandedFolder)
+        {
+            if (!IsExpanded)
+            {
+                IsExpanded = true;
+                expandedFolder.IsExpanded = true;
+                LoadAllRootFolders(expandedFolder.FolderPath);
+                IsOneStepOutButtonVisible = true;
+                
+            } else
+            {
+                IsExpanded = false;
+                expandedFolder.IsExpanded = false;
+                IsOneStepOutButtonVisible = false;
+                LoadAllRootFolders(rootPath);
+            }
+        }
+        #endregion
+
+        #region OnOneStepOut
+        public void OnOneStepOut()
+        {
+            LoadAllRootFolders(rootPath);
+            IsExpanded = false;
         }
         #endregion
 

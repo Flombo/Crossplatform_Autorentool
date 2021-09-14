@@ -23,9 +23,7 @@
                          Orientation="Horizontal">
                 <SearchBar Placeholder="Ordner nach Ordnernamen suchen" 
                            Text="{Binding SearchText}" 
-                           SearchButtonPressed="OnSearchButtonClicked" 
-                           Grid.Row="1" 
-                           Grid.Column="0"/>
+                           SearchButtonPressed="OnSearchButtonClicked"/>
                 <Picker FontSize="Small"
                         SelectedIndex="0"
                         SelectedIndexChanged="OnFoldernameFilterChanged">
@@ -35,13 +33,20 @@
                     </Picker.Items>
                 </Picker>
                 <Picker FontSize="Small"
-                        SelectedIndex="0"
+                        SelectedItem="0"
                         SelectedIndexChanged="OnFolderDateTimeFilterChanged">
                     <Picker.Items>
                         <x:String>Ordnername absteigen sortieren</x:String>
                         <x:String>Ordnername aufsteigend sortieren</x:String>
                     </Picker.Items>
                 </Picker>
+                <Button Text="⤴️"
+                        FontAttributes="40"
+                        WidthRequest="60" 
+                        HeightRequest="60" 
+                        HorizontalOptions="EndAndExpand"
+                        IsVisible="{Binding IsOneStepOutButtonVisible}"
+                        Command="{Binding OneStepOut}"/>
             </StackLayout>
 
             <Frame HasShadow="True" 
@@ -50,37 +55,72 @@
                    Grid.Row="2" 
                    Grid.Column="0"
                    Grid.ColumnSpan="2"
-                   Grid.RowSpan="3">
-                <CollectionView ItemsSource="{Binding Folders}" 
+                   Grid.RowSpan="4">
+                <StackLayout>
+                <CollectionView ItemsSource="{Binding RootFolders}" 
                                 ItemsLayout="VerticalGrid, 1" 
                                 SelectionMode="Single"
                                 SelectedItem="{Binding SelectedFolder}"
                                 HeightRequest="{Binding CollectionViewHeight}"
                                 Grid.ColumnSpan="2" 
-                                Grid.RowSpan="3" 
+                                Grid.RowSpan="2" 
                                 VerticalOptions="FillAndExpand">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
 
-                            <StackLayout Orientation="Horizontal" Padding="2">
-                                <Image Source="directory.png" Aspect="AspectFit" HeightRequest="40" WidthRequest="40"/>
-                                <Label Text="{Binding Name}"/>
-                                <Label Text="{Binding CreationDateTime}"/>
-                            </StackLayout>
+                        <StackLayout Orientation="Horizontal" Padding="2">
+                            <Label Text="{Binding GetIcon}" HorizontalOptions="StartAndExpand" FontSize="40"/>
+                            <Label Text="{Binding Name}"
+                                   HorizontalOptions="CenterAndExpand"/>
+                            <Label Text="{Binding CreationDateTime}" 
+                                   HorizontalOptions="CenterAndExpand"/>
+                            <Button Text="🔻"
+                                    IsVisible="{Binding HasChildren}"
+                                    WidthRequest="40" 
+                                    HeightRequest="40"
+                                    HorizontalOptions="EndAndExpand"
+                                    Clicked="OnExpandFolderButtonClicked"/>
+                        </StackLayout>
 
-                        </DataTemplate>
+                    </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
+                <Label Text="Subverzeichnisse" IsVisible="{Binding IsExpanded}" FontAttributes="Bold" FontSize="Subtitle"/>
+                <CollectionView IsVisible="{Binding IsExpanded}" 
+                                ItemsSource="{Binding SubFolders}"                                 
+                                ItemsLayout="VerticalGrid, 1" 
+                                SelectionMode="Single"
+                                SelectedItem="{Binding SelectedFolder}"
+                                HeightRequest="{Binding CollectionViewHeight}"
+                                Grid.ColumnSpan="2" 
+                                Grid.RowSpan="2" 
+                                VerticalOptions="FillAndExpand">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <StackLayout Orientation="Horizontal" Padding="2">
+                                <Label Text="{Binding GetIcon}" HorizontalOptions="StartAndExpand" FontSize="40"/>
+                                <Label Text="{Binding Name}"
+                                        HorizontalOptions="CenterAndExpand"/>
+                                <Label Text="{Binding CreationDateTime}" 
+                                        HorizontalOptions="CenterAndExpand"/>
+                                <Button Text="🔻"
+                                        IsVisible="{Binding HasChildren}"
+                                        FontSize="40" 
+                                        HorizontalOptions="EndAndExpand"
+                                        Clicked="OnExpandFolderButtonClicked"/>
+                            </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            </StackLayout>
         </Frame>
-        <StackLayout Orientation="Horizontal" Grid.Row="5" Grid.ColumnSpan="2">
+        <StackLayout Orientation="Horizontal" Grid.Row="6" Grid.ColumnSpan="2">
             <Button Text="{Binding FolderImportButtonText}"
                     BackgroundColor="{Binding FolderImportButtonBackgroundColour}"
                     IsEnabled="{Binding IsFolderImportButtonEnabled}"
                     TextColor="White"
                     Clicked="OnAcceptButtonClicked"
-                    HorizontalOptions="Start"
-                    Grid.Row="6" 
-                    Grid.Column="1"/>
+                    HorizontalOptions="Start"/>
             <Button Text="Abbrechen"
                     Clicked="OnAbortButtonClicked"
                     HorizontalOptions="EndAndExpand"

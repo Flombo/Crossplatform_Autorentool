@@ -206,8 +206,9 @@ namespace Autorentool_RMT.ViewModels
 
                 MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
                 ResetDeleteButtonsAndProgressIndicators();
+                SelectedMediaItem = null;
             }
-            catch (Exception){
+            catch (Exception exc){
                 throw new Exception("Folder");
             }
         }
@@ -295,6 +296,7 @@ namespace Autorentool_RMT.ViewModels
 
                     MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
                     ResetDeleteButtonsAndProgressIndicators();
+                    SelectedMediaItem = null;
                 }
 
             }
@@ -351,7 +353,7 @@ namespace Autorentool_RMT.ViewModels
                     stopwatch.Stop();
 
                     MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
-
+                    SelectedMediaItem = null;
                     ResetDeleteButtonsAndProgressIndicators();
                 }
                 catch (Exception exc)
@@ -427,6 +429,7 @@ namespace Autorentool_RMT.ViewModels
                 stopwatch.Stop();
 
                 ResetDeleteButtonsAndProgressIndicators();
+                SelectedMediaItem = null;
 
                 MediaItems = new List<MediaItem>();
 
@@ -445,7 +448,6 @@ namespace Autorentool_RMT.ViewModels
         /// </summary>
         private void ResetDeleteButtonsAndProgressIndicators()
         {
-            SelectedMediaItem = null;
             IsProgressBarVisible = false;
             IsDeleteAllMediaItemsButtonEnabled = true;
             IsDeleteSelectedMediaItemButtonEnabled = true;

@@ -3,10 +3,7 @@ using Autorentool_RMT.Services.DBHandling;
 using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using Xamarin.Forms;
 
 namespace Autorentool_RMT.ViewModels
 {
