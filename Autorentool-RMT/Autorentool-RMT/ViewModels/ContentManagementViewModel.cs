@@ -210,9 +210,12 @@ namespace Autorentool_RMT.ViewModels
 
                                 MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
                                 ResetDeleteButtonsAndProgressIndicators();
+                                SelectedMediaItem = null;
 
                                 throw new Exception("Duplicate");
                             }
+                            stream.Flush();
+                            stream.Dispose();
                         }
                     }
 
@@ -220,6 +223,7 @@ namespace Autorentool_RMT.ViewModels
 
                     MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
                     ResetDeleteButtonsAndProgressIndicators();
+                    SelectedMediaItem = null;
                 }
 
             }
@@ -278,6 +282,7 @@ namespace Autorentool_RMT.ViewModels
                     MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
 
                     ResetDeleteButtonsAndProgressIndicators();
+                    SelectedMediaItem = null;
                 }
                 catch (Exception exc)
                 {
@@ -352,6 +357,7 @@ namespace Autorentool_RMT.ViewModels
                 stopwatch.Stop();
 
                 ResetDeleteButtonsAndProgressIndicators();
+                SelectedMediaItem = null;
 
                 MediaItems = new List<MediaItem>();
 
@@ -370,7 +376,6 @@ namespace Autorentool_RMT.ViewModels
         /// </summary>
         private void ResetDeleteButtonsAndProgressIndicators()
         {
-            SelectedMediaItem = null;
             IsProgressBarVisible = false;
             IsDeleteAllMediaItemsButtonEnabled = true;
             IsDeleteSelectedMediaItemButtonEnabled = true;

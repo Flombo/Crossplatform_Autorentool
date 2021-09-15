@@ -11,7 +11,7 @@ namespace Autorentool_RMT.Views.Popups
     {
         public MediaItemFullscreenPopup(MediaItem selectedMediaItem, double height, double width)
         {
-            BindingContext = new MediaItemFullscreenPopupViewModel(selectedMediaItem.GetFullPath, height, width);
+            BindingContext = new MediaItemFullscreenPopupViewModel(selectedMediaItem.Source, height, width);
             InitializeComponent();
         }
 

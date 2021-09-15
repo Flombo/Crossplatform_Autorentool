@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Xamarin.Forms;
 
 namespace Autorentool_RMT.Models
 {
@@ -15,6 +16,20 @@ namespace Autorentool_RMT.Models
         [NotNull, Unique]
         public string Name { get; set; }
         public string Path { get; set; }
+        [Ignore]
+        public ImageSource Source 
+        {
+            get; set;
+        }
+
+        public void SetSource()
+        {
+            if (Source == null)
+            {
+                Source = GetImageSource(Path);
+            }
+        }
+
         public string FileType { get; set; }
         [Unique, NotNull]
         public string Hash { get; set; }
@@ -31,7 +46,6 @@ namespace Autorentool_RMT.Models
         #region Empty Constructor
         public MediaItem()
         {
-
         }
         #endregion
 
@@ -111,7 +125,7 @@ namespace Autorentool_RMT.Models
         #endregion
 
         #region GetPreviewPath
-        public string GetPreviewPath
+        public ImageSource GetPreviewPath
         {
             get
             {
@@ -124,7 +138,7 @@ namespace Autorentool_RMT.Models
                     case "txt":
                         return "TextIcon.png";
                     default:
-                        return Path;
+                        return Source;
                 }
             }
         }

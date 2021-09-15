@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Autorentool-RMT/Autorentool-RMT/Models/Tooltip.cs
+/Autorentool-RMT/Autorentool-RMT/ViewModels/PopupViewModels/TooltipPopupViewModel.cs
+/Autorentool-RMT/Autorentool-RMT/Views/Popups/TooltipPopup.xaml
+/Autorentool-RMT/Autorentool-RMT/Views/Popups/TooltipPopup.xaml.cs
+/Autorentool-RMT/Autorentool-RMT/Views/ViewInterface.cs

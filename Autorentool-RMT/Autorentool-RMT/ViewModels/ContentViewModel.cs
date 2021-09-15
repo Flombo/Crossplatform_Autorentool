@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Xamarin.CommunityToolkit.Core;
 using Xamarin.Forms;
 
 namespace Autorentool_RMT.ViewModels
@@ -17,8 +18,8 @@ namespace Autorentool_RMT.ViewModels
         protected List<MediaItem> mediaItems;
         protected List<Lifetheme> currentMediaItemLifethemes;
         protected MediaItem selectedMediaItem;
-        protected string selectedMediumImagePath;
-        protected string selectedMediumMediaElementPath;
+        protected ImageSource selectedMediumImageSource;
+        protected MediaSource selectedMediumMediaElementSource;
         protected string notes;
         protected bool isMediaItemImageVisible;
         protected bool isMediaItemMediaElementVisible;
@@ -57,8 +58,8 @@ namespace Autorentool_RMT.ViewModels
             notes = "";
             searchText = "";
             title = "";
-            selectedMediumImagePath = "preview.png";
-            selectedMediumMediaElementPath = null;
+            LoadPreviewImageSource();
+            selectedMediumMediaElementSource = null;
             isMediaItemImageVisible = true;
             isMediaItemMediaElementVisible = false;
             isFullscreenButtonVisible = false;
@@ -85,6 +86,13 @@ namespace Autorentool_RMT.ViewModels
             isAddMediaItemButtonEnabled = false;
             isActivityIndicatorRunning = false;
             currentMediaItemLifethemes = new List<Lifetheme>();
+        }
+        #endregion
+
+        #region LoadPreviewImageSource
+        protected void LoadPreviewImageSource()
+        {
+            SelectedMediumImageSource = "preview.png";
         }
         #endregion
 
@@ -415,25 +423,25 @@ namespace Autorentool_RMT.ViewModels
         }
         #endregion
 
-        #region SelectedMediumImagePath
-        public string SelectedMediumImagePath
+        #region SelectedMediumImageSource
+        public ImageSource SelectedMediumImageSource
         {
-            get => selectedMediumImagePath;
+            get => selectedMediumImageSource;
             set
             {
-                selectedMediumImagePath = value;
+                selectedMediumImageSource = value;
                 OnPropertyChanged();
             }
         }
         #endregion
 
-        #region SelectedMediumMediaElementPath
-        public string SelectedMediumMediaElementPath
+        #region SelectedMediumMediaElementSource
+        public MediaSource SelectedMediumMediaElementSource
         {
-            get => selectedMediumMediaElementPath;
+            get => selectedMediumMediaElementSource;
             set
             {
-                selectedMediumMediaElementPath = value;
+                selectedMediumMediaElementSource = value;
                 OnPropertyChanged();
             }
         }
@@ -492,8 +500,8 @@ namespace Autorentool_RMT.ViewModels
             IsMediaItemImageVisible = selectedMediaItem.IsImage;
             IsMediaItemMediaElementVisible = selectedMediaItem.IsAudioOrVideo;
             IsMediaItemTextVisible = selectedMediaItem.IsTxt;
-            SelectedMediumImagePath = selectedMediaItem.GetFullPath;
-            SelectedMediumMediaElementPath = selectedMediaItem.GetAudioOrVideoSource;
+            SelectedMediumImageSource = selectedMediaItem.Source;
+            SelectedMediumMediaElementSource = selectedMediaItem.IsAudioOrVideo ? MediaSource.FromFile(selectedMediaItem.Path) : null;
             SelectedMediumTextContent = selectedMediaItem.GetTextContent;
             IsFullscreenButtonVisible = selectedMediaItem.IsImage;
         }
@@ -559,8 +567,8 @@ namespace Autorentool_RMT.ViewModels
         #region ResetMediaPreviewProperties
         protected void ResetMediaPreviewProperties()
         {
-            SelectedMediumImagePath = "preview.png";
-            SelectedMediumMediaElementPath = null;
+            LoadPreviewImageSource();
+            SelectedMediumMediaElementSource = null;
             IsFullscreenButtonVisible = false;
             IsMediaItemImageVisible = true;
             IsMediaItemMediaElementVisible = false;

@@ -257,6 +257,8 @@ namespace Autorentool_RMT.Services.DBHandling
                 filteredMediaItems = filteredMediaItems.OrderBy(mediaItem => mediaItem.Position).ToList();
             }
 
+            filteredMediaItems.ForEach(mediaItem => mediaItem.SetSource());
+
             return filteredMediaItems;
         }
         #endregion
