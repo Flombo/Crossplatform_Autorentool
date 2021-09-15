@@ -31,7 +31,7 @@
                         Padding="2"
                         HeightRequest="120">
                         <Image
-                            Source="{Binding GetFullProfilePicPath}"
+                            Source="{Binding ProfilePicImageSource}"
                             Aspect="AspectFit"
                             HeightRequest="120"
                             WidthRequest="60"

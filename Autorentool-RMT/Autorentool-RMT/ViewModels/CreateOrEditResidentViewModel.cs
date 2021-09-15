@@ -75,7 +75,7 @@ namespace Autorentool_RMT.ViewModels
                 Lastname = residentForEditing.Lastname;
                 Age = residentForEditing.Age;
                 Gender = residentForEditing.Gender;
-                SelectedImage = residentForEditing.GetFullProfilePicPath;
+                SelectedImage = residentForEditing.ProfilePicImageSource;
                 selectedImagePath = residentForEditing.GetFullProfilePicPath;
                 Title = residentForEditing.ResidentOneLineSummary;
                 SetIsDeleteProfilePicEnabled();
@@ -428,7 +428,14 @@ namespace Autorentool_RMT.ViewModels
                         fileResult.FileName.EndsWith("png", StringComparison.OrdinalIgnoreCase))
                     {
                         selectedImagePath = fileResult.FullPath;
-                        SelectedImage = ImageSource.FromFile(selectedImagePath);
+
+                        using (Stream stream = await fileResult.OpenReadAsync())
+                        {
+                            byte[] imageBytes = new byte[stream.Length];
+                            stream.Read(imageBytes, 0, (int)stream.Length);
+
+                            SelectedImage = ImageSource.FromStream(() => new MemoryStream(imageBytes));
+                        }
                     }
                 }
 
@@ -466,7 +473,7 @@ namespace Autorentool_RMT.ViewModels
 
                     FileHandler.SaveFile(stream, selectedImagePath);
 
-                    SelectedImage = ImageSource.FromFile(selectedImagePath);
+                    SelectedImage = FileHandler.GetImageSource(selectedImagePath);
                 }
             }
             catch (Exception exc)
@@ -481,23 +488,26 @@ namespace Autorentool_RMT.ViewModels
         /// Deletes the old profile pic if it exists.
         /// Throws an exception if an error occured during deletion.
         /// </summary>
-        public void DeleteOldProfilPic()
+        private void DeleteOldProfilPic()
         {
             try
             {
-                if (residentForEditing != null)
+                if (!selectedImagePath.Contains("ImageOld.png"))
                 {
-                    if (residentForEditing.GetFullProfilePicPath.Length > 0 && File.Exists(residentForEditing.GetFullProfilePicPath))
+                    if (residentForEditing != null)
                     {
-                        File.Delete(residentForEditing.GetFullProfilePicPath);
+                        if (residentForEditing.GetFullProfilePicPath.Length > 0 && File.Exists(residentForEditing.GetFullProfilePicPath))
+                        {
+                            File.Delete(residentForEditing.GetFullProfilePicPath);
+                        }
                     }
-                }
-                else
-                {
-                    if (selectedImagePath.Length > 0 && File.Exists(selectedImagePath))
+                    else
                     {
-                        File.Delete(selectedImagePath);
-                        ResetSelectedImageProperties();
+                        if (selectedImagePath.Length > 0 && File.Exists(selectedImagePath))
+                        {
+                            File.Delete(selectedImagePath);
+                            ResetSelectedImageProperties();
+                        }
                     }
                 }
 

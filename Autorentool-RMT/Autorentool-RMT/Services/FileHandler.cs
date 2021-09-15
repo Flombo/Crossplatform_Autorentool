@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
+using Xamarin.Forms;
 
 namespace Autorentool_RMT.Services
 {
@@ -111,6 +112,21 @@ namespace Autorentool_RMT.Services
             int length = path.Length - filetypeIndex;
             string filetype = path.Substring(filetypeIndex + 1, length - 1);
             return filetype;
+        }
+        #endregion
+
+        #region GetImageSource
+        public static ImageSource GetImageSource(string path)
+        {
+            using (FileStream stream = File.OpenRead(path))
+            {
+                byte[] bArray = new byte[stream.Length];
+                stream.Read(bArray, 0, (int)stream.Length);
+                int length = bArray.Length;
+
+
+                return ImageSource.FromStream(() => new MemoryStream(bArray));
+            }
         }
         #endregion
 

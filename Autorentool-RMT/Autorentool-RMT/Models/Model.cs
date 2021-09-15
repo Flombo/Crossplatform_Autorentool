@@ -27,20 +27,5 @@ namespace Autorentool_RMT.Models
         }
         #endregion
 
-        #region GetImageSource
-        protected ImageSource GetImageSource(string path)
-        {
-            using (FileStream stream = File.OpenRead(path))
-            {
-                byte[] bArray = new byte[stream.Length];
-                stream.Read(bArray, 0, (int)stream.Length);
-                int length = bArray.Length;
-
-
-                return ImageSource.FromStream(() => new MemoryStream(bArray));
-            }
-        }
-        #endregion
-
     }
 }

@@ -87,12 +87,17 @@ namespace Autorentool_RMT.Services.DBHandling
         #region GetAllResidents
         /// <summary>
         /// Returns all Residents asynchronously as a List.
+        /// Calls on every Resident the SetProfilePicImageSource-method.
         /// </summary>
         /// <returns></returns>
         public static async Task<List<Resident>> GetAllResidents()
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
-            return await sQLiteAsyncConnection.Table<Resident>().ToListAsync();
+            List<Resident> residents = await sQLiteAsyncConnection.Table<Resident>().ToListAsync();
+
+            residents.ForEach(resident => resident.SetProfilePicImageSource());
+
+            return residents;
         }
         #endregion
 

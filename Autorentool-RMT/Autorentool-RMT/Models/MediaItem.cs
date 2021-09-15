@@ -1,4 +1,5 @@
-﻿using SQLite;
+﻿using Autorentool_RMT.Services;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,13 +23,18 @@ namespace Autorentool_RMT.Models
             get; set;
         }
 
+        #region SetSource
+        /// <summary>
+        /// Sets the Source-property if it is null.
+        /// </summary>
         public void SetSource()
         {
             if (Source == null)
             {
-                Source = GetImageSource(Path);
+                Source = FileHandler.GetImageSource(Path);
             }
         }
+        #endregion
 
         public string FileType { get; set; }
         [Unique, NotNull]

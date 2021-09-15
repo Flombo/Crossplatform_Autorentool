@@ -1,4 +1,5 @@
-﻿using SQLite;
+﻿using Autorentool_RMT.Services;
+using SQLite;
 using System.Collections.Generic;
 using System.IO;
 using Xamarin.Forms;
@@ -106,6 +107,19 @@ namespace Autorentool_RMT.Models
                     return "ImageOld.png";
                 }
                
+            }
+        }
+        #endregion
+
+        #region SetProfilePicImageSource
+        /// <summary>
+        /// Sets the profilepic image source for displaying.
+        /// </summary>
+        public void SetProfilePicImageSource()
+        {
+            if(ProfilePicImageSource == null && GetFullProfilePicPath.Length > 0)
+            {
+                ProfilePicImageSource = FileHandler.GetImageSource(GetFullProfilePicPath);
             }
         }
         #endregion
