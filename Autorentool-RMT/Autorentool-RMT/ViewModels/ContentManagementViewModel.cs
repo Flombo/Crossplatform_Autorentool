@@ -146,6 +146,8 @@ namespace Autorentool_RMT.ViewModels
         /// </summary>
         public async Task ShowFilePicker()
         {
+            Stopwatch stopwatch = new Stopwatch();
+
             try
             {
                 FilePickerFileType filePickerFileType = new FilePickerFileType(
@@ -173,7 +175,6 @@ namespace Autorentool_RMT.ViewModels
                     Progress = currentProgress;
                     IsDeleteAllMediaItemsButtonEnabled = false;
                     IsDeleteSelectedMediaItemButtonEnabled = false;
-                    Stopwatch stopwatch = new Stopwatch();
                     stopwatch.Start();
 
                     foreach (FileResult fileResult in results)
@@ -189,20 +190,7 @@ namespace Autorentool_RMT.ViewModels
 
                             if (duplicate == 0)
                             {
-
-                                string directoryPath = FileHandler.CreateDirectory("MediaItems");
-
-                                string filename = FileHandler.GetUniqueFilename(fileResult.FileName, directoryPath);
-                                string filetype = FileHandler.ExtractFiletypeFromPath(filename);
-
-                                string filepath = Path.Combine(directoryPath, filename);
-
-                                using (Stream fileSaveStream = await fileResult.OpenReadAsync())
-                                {
-                                    FileHandler.SaveFile(fileSaveStream, filepath);
-                                }
-
-                                await MediaItemDBHandler.AddMediaItem(filename, filepath, filetype, hash, "", 0);
+                                await AddMediaItem(fileResult, hash);
                             }
                             else
                             {
@@ -214,8 +202,6 @@ namespace Autorentool_RMT.ViewModels
 
                                 throw new Exception("Duplicate");
                             }
-                            stream.Flush();
-                            stream.Dispose();
                         }
                     }
 
@@ -229,9 +215,53 @@ namespace Autorentool_RMT.ViewModels
             }
             catch (Exception exc)
             {
+                stopwatch.Stop();
+
+                MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
+                ResetDeleteButtonsAndProgressIndicators();
+                SelectedMediaItem = null;
+
                 throw exc;
             }
         }
+        #endregion
+
+        #region AddMediaItems
+        /// <summary>
+        /// Saves the picked file, creates a thumbnail if the are picked file is an image and saves the resulting MediaItem.
+        /// If any of these processes are failing, an exception will be thrown.
+        /// </summary>
+        /// <param name="fileResult"></param>
+        /// <param name="hash"></param>
+        private async Task AddMediaItem(FileResult fileResult, string hash)
+        {
+            try
+            {
+                string directoryPath = FileHandler.CreateDirectory("MediaItems");
+
+                string filename = FileHandler.GetUniqueFilename(fileResult.FileName, directoryPath);
+                string filetype = FileHandler.ExtractFiletypeFromPath(filename);
+
+                string filepath = Path.Combine(directoryPath, filename);
+                string thumbnailPath = "";
+
+                using (Stream fileStream = await fileResult.OpenReadAsync())
+                {
+                    FileHandler.SaveFile(fileStream, filepath);
+                }
+
+                if (filetype.Contains("jpg") || filetype.Contains("jpeg") || filetype.Contains("png"))
+                {
+                    thumbnailPath = FileHandler.CreateThumbnailAndReturnThumbnailPath(filename, filepath);
+                }
+
+                await MediaItemDBHandler.AddMediaItem(filename, filepath, thumbnailPath, filetype, hash, "", 0);
+
+            } catch(Exception exc)
+            {
+                throw exc;
+            }
+        } 
         #endregion
 
         #region SetProgressElements
@@ -319,6 +349,12 @@ namespace Autorentool_RMT.ViewModels
                 {
                     File.Delete(mediaItem.GetFullPath);
                 }
+
+                if(File.Exists(mediaItem.ThumbnailPath))
+                {
+                    File.Delete(mediaItem.ThumbnailPath);
+                }
+
                 await SessionMediaItemsDBHandler.UnbindSessionMediaItemsByMediaItemId(mediaItem.Id);
                 await MediaItemLifethemesDBHandler.UnbindMediaItemLifethemesByMediaItemId(mediaItem.Id);
                 await MediaItemDBHandler.DeleteMediaItem(mediaItem.Id);

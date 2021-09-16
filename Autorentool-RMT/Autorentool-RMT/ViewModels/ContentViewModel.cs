@@ -572,6 +572,7 @@ namespace Autorentool_RMT.ViewModels
             IsFullscreenButtonVisible = false;
             IsMediaItemImageVisible = true;
             IsMediaItemMediaElementVisible = false;
+            IsMediaItemTextVisible = false;
         }
         #endregion
 

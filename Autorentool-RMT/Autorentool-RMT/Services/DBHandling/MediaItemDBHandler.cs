@@ -27,7 +27,7 @@ namespace Autorentool_RMT.Services.DBHandling
         /// <param name="notes"></param>
         /// <param name="backendMediaItemID"></param>
         /// <returns></returns>
-        public static async Task<int> AddMediaItem(string name, string path, string filetype, string hash, string notes, int backendMediaItemID)
+        public static async Task<int> AddMediaItem(string name, string path, string thumbnailPath, string filetype, string hash, string notes, int backendMediaItemID)
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
@@ -37,6 +37,7 @@ namespace Autorentool_RMT.Services.DBHandling
             {
                 Name = name,
                 Path = path,
+                ThumbnailPath = thumbnailPath,
                 FileType = filetype,
                 Notes = notes,
                 BackendMediaItemId = backendMediaItemID,
@@ -257,7 +258,7 @@ namespace Autorentool_RMT.Services.DBHandling
                 filteredMediaItems = filteredMediaItems.OrderBy(mediaItem => mediaItem.Position).ToList();
             }
 
-            filteredMediaItems.ForEach(mediaItem => mediaItem.SetSource());
+            filteredMediaItems.ForEach(mediaItem => mediaItem.SetSources());
 
             return filteredMediaItems;
         }

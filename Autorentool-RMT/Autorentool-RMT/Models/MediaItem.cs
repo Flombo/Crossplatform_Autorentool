@@ -17,8 +17,15 @@ namespace Autorentool_RMT.Models
         [NotNull, Unique]
         public string Name { get; set; }
         public string Path { get; set; }
+        public string ThumbnailPath { get; set; }
         [Ignore]
         public ImageSource Source 
+        {
+            get; set;
+        }
+
+        [Ignore]
+        public ImageSource ThumbnailSource
         {
             get; set;
         }
@@ -27,11 +34,12 @@ namespace Autorentool_RMT.Models
         /// <summary>
         /// Sets the Source-property if it is null.
         /// </summary>
-        public void SetSource()
+        public void SetSources()
         {
-            if (Source == null)
+            if (Source == null && IsImage)
             {
                 Source = FileHandler.GetImageSource(Path);
+                ThumbnailSource = FileHandler.GetImageSource(ThumbnailPath);
             }
         }
         #endregion
@@ -144,7 +152,7 @@ namespace Autorentool_RMT.Models
                     case "txt":
                         return "TextIcon.png";
                     default:
-                        return Source;
+                        return ThumbnailSource;
                 }
             }
         }
