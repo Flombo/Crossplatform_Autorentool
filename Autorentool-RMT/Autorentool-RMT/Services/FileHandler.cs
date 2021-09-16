@@ -118,15 +118,11 @@ namespace Autorentool_RMT.Services
         #region GetImageSource
         public static ImageSource GetImageSource(string path)
         {
-            using (FileStream stream = File.OpenRead(path))
-            {
-                byte[] bArray = new byte[stream.Length];
-                stream.Read(bArray, 0, (int)stream.Length);
-                int length = bArray.Length;
-
-
-                return ImageSource.FromStream(() => new MemoryStream(bArray));
-            }
+           return ImageSource.FromStream(() => 
+           {
+               Stream stream = File.OpenRead(path);
+               return stream;
+           });
         }
         #endregion
 

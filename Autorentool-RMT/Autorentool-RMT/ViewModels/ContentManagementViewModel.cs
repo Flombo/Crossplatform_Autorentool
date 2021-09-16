@@ -279,7 +279,10 @@ namespace Autorentool_RMT.ViewModels
 
                     stopwatch.Stop();
 
-                    MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
+                    MediaItems.Remove(selectedMediaItem);
+                    List<MediaItem> currentMediaItems = new List<MediaItem>();
+                    currentMediaItems.AddRange(MediaItems);
+                    MediaItems = currentMediaItems;
 
                     ResetDeleteButtonsAndProgressIndicators();
                     SelectedMediaItem = null;

@@ -429,13 +429,7 @@ namespace Autorentool_RMT.ViewModels
                     {
                         selectedImagePath = fileResult.FullPath;
 
-                        using (Stream stream = await fileResult.OpenReadAsync())
-                        {
-                            byte[] imageBytes = new byte[stream.Length];
-                            stream.Read(imageBytes, 0, (int)stream.Length);
-
-                            SelectedImage = ImageSource.FromStream(() => new MemoryStream(imageBytes));
-                        }
+                        SelectedImage = FileHandler.GetImageSource(selectedImagePath);
                     }
                 }
 
