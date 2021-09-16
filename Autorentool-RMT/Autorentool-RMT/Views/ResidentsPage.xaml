@@ -31,12 +31,13 @@
                         Padding="2"
                         HeightRequest="120">
                         <Image
-                            Source="{Binding ProfilePicImageSource}"
+                            Source="{Binding ThumbnailImageSource}"
                             Aspect="AspectFit"
                             HeightRequest="120"
                             WidthRequest="60"
                             Grid.Row="0"
                             Grid.RowSpan="2"
+                            IsOpaque="True"
                             BackgroundColor="White"/>
                         <StackLayout
                                 BackgroundColor="#252525"

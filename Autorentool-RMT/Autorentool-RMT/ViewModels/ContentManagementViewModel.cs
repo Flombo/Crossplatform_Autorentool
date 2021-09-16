@@ -252,7 +252,7 @@ namespace Autorentool_RMT.ViewModels
 
                 if (filetype.Contains("jpg") || filetype.Contains("jpeg") || filetype.Contains("png"))
                 {
-                    thumbnailPath = FileHandler.CreateThumbnailAndReturnThumbnailPath(filename, filepath);
+                    thumbnailPath = FileHandler.CreateThumbnailAndReturnThumbnailPath(filename, filepath, 10);
                 }
 
                 await MediaItemDBHandler.AddMediaItem(filename, filepath, thumbnailPath, filetype, hash, "", 0);

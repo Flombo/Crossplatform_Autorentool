@@ -69,7 +69,7 @@ namespace Autorentool_RMT.ViewModels
         /// <returns></returns>
         public async void OnLoadAllResidents()
         {
-            Residents = await ResidentDBHandler.GetAllResidents();
+            Residents = await ResidentDBHandler.GetAllResidents(true);
         }
         #endregion
     }

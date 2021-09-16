@@ -467,6 +467,7 @@ namespace Autorentool_RMT.ViewModels
                 {
                     Notes = selectedMediaItem.Notes;
                     IsDeleteSelectedMediaItemButtonEnabled = true;
+                    selectedMediaItem.SetSource();
                     SetMediaPreviewProperties();
                     LoadLifethemesOfSelectedMediaItem();
                     IsLifethemesButtonEnabled = true;

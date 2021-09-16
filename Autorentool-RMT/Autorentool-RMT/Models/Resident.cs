@@ -10,9 +10,9 @@ namespace Autorentool_RMT.Models
     public class Resident : Model
     {
         #region Resident attributes
-        [PrimaryKey, AutoIncrement,Column("id")]
+        [PrimaryKey, AutoIncrement, Column("id")]
         public int Id { get; set; }
-        
+
         [NotNull, MaxLength(256)]
         public string Firstname { get; set; }
 
@@ -24,8 +24,11 @@ namespace Autorentool_RMT.Models
         [NotNull]
         public Gender Gender { get; set; }
         public string ProfilePicPath { get; set; }
+        public string ThumbnailPath { get; set; }
         [Ignore]
         public ImageSource ProfilePicImageSource { get; set; }
+        [Ignore]
+        public ImageSource ThumbnailImageSource { get; set; }
         
         [Ignore]
         public List<Lifetheme> Lifethemes { get; set; }
@@ -95,31 +98,55 @@ namespace Autorentool_RMT.Models
         /// Returns the ProfilePicPath property if a file exists under this path.
         /// Else the path for the default image will be returned.
         /// </summary>
-        public string GetFullProfilePicPath
-        {
-            get
-            {
-                if (File.Exists(ProfilePicPath))
-                {
-                    return ProfilePicPath;
-                } else
-                {
-                    return "ImageOld.png";
-                }
-               
-            }
-        }
+        public string GetFullProfilePicPath => File.Exists(ProfilePicPath) ? ProfilePicPath : "ImageOld.png";
+        #endregion
+
+        #region GetThumbnailPath
+        /// <summary>
+        /// Returns the ThumbnailPath property if a file exists under this path.
+        /// Else the path for the default image will be returned.
+        /// </summary>
+        public string GetThumbnailPath => ThumbnailPath.Length > 0 ? ThumbnailPath : "ImageOld.png";
         #endregion
 
         #region SetProfilePicImageSource
         /// <summary>
-        /// Sets the profilepic image source for displaying.
+        /// Sets the profilepic imagesource if it wasn't already set.
+        /// If the Path-property contains the default image, it should be loaded from file.
         /// </summary>
         public void SetProfilePicImageSource()
         {
-            if(ProfilePicImageSource == null && GetFullProfilePicPath.Length > 0)
+            if (ProfilePicImageSource == null)
             {
-                ProfilePicImageSource = FileHandler.GetImageSource(GetFullProfilePicPath);
+                if (GetFullProfilePicPath.Contains("ImageOld.png"))
+                {
+                    ProfilePicImageSource = ImageSource.FromFile("ImageOld.png");
+                }
+                else
+                {
+                    ProfilePicImageSource = FileHandler.GetImageSource(GetFullProfilePicPath);
+                }
+            }
+        }
+        #endregion
+
+        #region SetThumbnailImageSource
+        /// <summary>
+        /// Sets the thumbnail imagesource if it wasn't already set.
+        /// If the ThumbnailPath contains 'ImageOld', the default image should be loaded.
+        /// </summary>
+        public void SetThumbnailImageSource()
+        {
+            if (ThumbnailImageSource == null)
+            {
+                if (GetThumbnailPath.Contains("ImageOld.png"))
+                {
+                    ThumbnailImageSource = ImageSource.FromFile("ImageOld.png");
+                }
+                else
+                {
+                    ThumbnailImageSource = FileHandler.GetImageSource(GetThumbnailPath);
+                }
             }
         }
         #endregion

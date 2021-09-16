@@ -26,7 +26,15 @@ namespace Autorentool_RMT.Services.DBHandling
         /// <param name="profilePicPath"></param>
         /// <param name="notes"></param>
         /// <returns></returns>
-        public static async Task<int> AddResident(string firstname, string lastname, Gender gender, int age, string profilePicPath, string notes)
+        public static async Task<int> AddResident(
+            string firstname,
+            string lastname,
+            Gender gender,
+            int age,
+            string profilePicPath,
+            string thumbnailPath,
+            string notes
+            )
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
@@ -37,6 +45,7 @@ namespace Autorentool_RMT.Services.DBHandling
                 Gender = gender,
                 Age = age,
                 ProfilePicPath = profilePicPath,
+                ThumbnailPath = thumbnailPath,
                 Notes = notes.Length > 0 ? notes : ""
             };
 
@@ -87,15 +96,19 @@ namespace Autorentool_RMT.Services.DBHandling
         #region GetAllResidents
         /// <summary>
         /// Returns all Residents asynchronously as a List.
-        /// Calls on every Resident the SetProfilePicImageSource-method.
+        /// Calls on every Resident the SetThumbnailImageSource-method if the shouldLoadThumbnails-parameter is true.
         /// </summary>
+        /// <param name="shouldLoadThumbnails"></param>
         /// <returns></returns>
-        public static async Task<List<Resident>> GetAllResidents()
+        public static async Task<List<Resident>> GetAllResidents(bool shouldLoadThumbnails)
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
             List<Resident> residents = await sQLiteAsyncConnection.Table<Resident>().ToListAsync();
 
-            residents.ForEach(resident => resident.SetProfilePicImageSource());
+            if (shouldLoadThumbnails)
+            {
+                residents.ForEach(resident => resident.SetThumbnailImageSource());
+            }
 
             return residents;
         }
@@ -124,9 +137,19 @@ namespace Autorentool_RMT.Services.DBHandling
         /// <param name="age"></param>
         /// <param name="gender"></param>
         /// <param name="profilePicPath"></param>
+        /// <param name="thumbnailPath"></param>
         /// <param name="notes"></param>
         /// <returns></returns>
-        public static async Task UpdateResident(int residentID, string firstname, string lastname, int age, Gender gender, string profilePicPath, string notes)
+        public static async Task UpdateResident(
+            int residentID,
+            string firstname,
+            string lastname,
+            int age,
+            Gender gender,
+            string profilePicPath,
+            string thumbnailPath,
+            string notes
+            )
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
@@ -135,6 +158,7 @@ namespace Autorentool_RMT.Services.DBHandling
                 Id = residentID,
                 Gender = gender,
                 ProfilePicPath = profilePicPath,
+                ThumbnailPath = thumbnailPath,
                 Notes = notes
             };
 

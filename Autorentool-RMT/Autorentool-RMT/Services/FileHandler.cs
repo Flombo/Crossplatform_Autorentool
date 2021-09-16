@@ -1,10 +1,7 @@
 ﻿using SkiaSharp;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace Autorentool_RMT.Services
@@ -36,7 +33,7 @@ namespace Autorentool_RMT.Services
 
         #region GetUniqueFilename
         /// <summary>
-        /// Returns unqiue filename.
+        /// Returns unique filename.
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
@@ -134,13 +131,18 @@ namespace Autorentool_RMT.Services
         {
             return ImageSource.FromStream(() =>
             {
-                Stream stream = File.OpenRead(path);
-                return stream;
+                using (Stream stream = File.OpenRead(path))
+                {
+                    byte[] bytes = new byte[stream.Length];
+                    stream.Read(bytes, 0, bytes.Length);
+
+                    return new MemoryStream(bytes);
+                }
             });
         }
         #endregion
 
-        #region 
+        #region CreateThumbnailAndReturnThumbnailPath
         /// <summary>
         /// Creates the Thumbnails-folder if it doesn't already exist.
         /// After that a downscaled thumbnail will be created and it's path will be returned.
@@ -148,15 +150,16 @@ namespace Autorentool_RMT.Services
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="filePath"></param>
+        /// <param name="quality"></param>
         /// <returns></returns>
-        public static string CreateThumbnailAndReturnThumbnailPath(string filename, string filePath)
+        public static string CreateThumbnailAndReturnThumbnailPath(string filename, string filePath, int quality)
         {
             try
             {
                 string thumbnailDirectoryPath = CreateDirectory("Thumbnails");
                 string thumbnailPath = Path.Combine(thumbnailDirectoryPath, filename);
 
-                SaveThumbnail(filePath, thumbnailPath);
+                SaveThumbnail(filePath, thumbnailPath, quality);
 
                 return thumbnailPath;
 
@@ -167,16 +170,17 @@ namespace Autorentool_RMT.Services
         }
         #endregion
 
-        #region CreateThumbnail
+        #region SaveThumbnail
         /// <summary>
         /// Creates thumbnail by using the filepath of the created file to create a bitmap.
-        /// This bitmap will be encoded to a jpeg with 10% quality compared to the original.
+        /// This bitmap will be encoded to a jpeg with the given quality compared to the original.
         /// In the end, it will be saved under the thumbnails-folder.
         /// If the process fails, an exception will be thrown and the already saved original file will be deleted.
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="thumbnailPath"></param>
-        public static void SaveThumbnail(string filePath, string thumbnailPath)
+        /// <param name="quality"></param>
+        private static void SaveThumbnail(string filePath, string thumbnailPath, int quality)
         {
             try
             {
@@ -187,7 +191,7 @@ namespace Autorentool_RMT.Services
 
                     SKBitmap resourceBitmap = SKBitmap.Decode(bytes);
 
-                    Stream thumbnailStream = resourceBitmap.Encode(SKEncodedImageFormat.Jpeg, 10).AsStream();
+                    Stream thumbnailStream = resourceBitmap.Encode(SKEncodedImageFormat.Jpeg, quality).AsStream();
 
                     SaveFile(thumbnailStream, thumbnailPath);
                 }

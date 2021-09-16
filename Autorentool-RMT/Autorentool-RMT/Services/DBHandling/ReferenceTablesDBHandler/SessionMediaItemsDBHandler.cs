@@ -195,6 +195,8 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
 
             mediaItemsOfSession = mediaItemsOfSession.OrderBy(mediaItem => mediaItem.Position).ToList();
 
+            mediaItemsOfSession.ForEach(mediaItem => mediaItem.SetThumbnailSource());
+
             return mediaItemsOfSession;
         }
         #endregion

@@ -34,11 +34,23 @@ namespace Autorentool_RMT.Models
         /// <summary>
         /// Sets the Source-property if it is null and if the MediaItem is an image.
         /// </summary>
-        public void SetSources()
+        public void SetSource()
         {
             if (Source == null && IsImage)
             {
                 Source = FileHandler.GetImageSource(Path);
+            }
+        }
+        #endregion
+
+        #region SetThumbnailSource
+        /// <summary>
+        /// Sets the ThumbnailSource-property if it is null and if the MediaItem is an image.
+        /// </summary>
+        public void SetThumbnailSource()
+        {
+            if(ThumbnailSource == null && IsImage)
+            {
                 ThumbnailSource = FileHandler.GetImageSource(ThumbnailPath);
             }
         }

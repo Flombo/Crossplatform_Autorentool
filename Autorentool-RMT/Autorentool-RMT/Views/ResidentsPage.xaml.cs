@@ -57,6 +57,12 @@ namespace Autorentool_RMT.Views
             await residentViewModel.OnLoadAllResidents();
         }
 
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            residentViewModel.OnFreeResources();
+        }
+
         private async void OnBackButtonClicked(object sender, EventArgs e)
         {
             await Navigation.PopAsync();

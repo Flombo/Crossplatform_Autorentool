@@ -70,6 +70,7 @@ namespace Autorentool_RMT.ViewModels
             if (residentForEditing != null)
             {
                 this.residentForEditing = residentForEditing;
+                this.residentForEditing.SetProfilePicImageSource();
                 Notes = residentForEditing.Notes;
                 Firstname = residentForEditing.Firstname;
                 Lastname = residentForEditing.Lastname;
@@ -192,7 +193,7 @@ namespace Autorentool_RMT.ViewModels
         /// </summary>
         public void SetIsDeleteProfilePicEnabled()
         {
-            IsDeleteProfilePicButtonEnabled = selectedImagePath.Length > 0 ? true : false;
+            IsDeleteProfilePicButtonEnabled = selectedImagePath.Length > 0 && !selectedImagePath.Contains("ImageOld.png") ? true : false;
         }
         #endregion
 
@@ -466,27 +467,49 @@ namespace Autorentool_RMT.ViewModels
         /// if an error occured an exception will thrown.
         /// </summary>
         /// <returns></returns>
-        private async Task SaveProfilePic()
+        private async Task<string> SaveProfilePic()
         {
             try
             {
-                if (fileResult.FileName.EndsWith("jpg", StringComparison.OrdinalIgnoreCase)
-                    || fileResult.FileName.EndsWith("png", StringComparison.OrdinalIgnoreCase))
-                {
-                    Stream stream = await fileResult.OpenReadAsync();
+                Stream stream = await fileResult.OpenReadAsync();
 
-                    string directoryPath = FileHandler.CreateDirectory("ResidentProfilePics");
+                string directoryPath = FileHandler.CreateDirectory("ResidentProfilePics");
 
-                    string filename = FileHandler.GetUniqueFilename(fileResult.FileName, directoryPath);
+                string filename = FileHandler.GetUniqueFilename(fileResult.FileName, directoryPath);
 
-                    selectedImagePath = Path.Combine(directoryPath, filename);
+                selectedImagePath = Path.Combine(directoryPath, filename);
 
-                    FileHandler.SaveFile(stream, selectedImagePath);
+                FileHandler.SaveFile(stream, selectedImagePath);
+                string thumbnailPath = FileHandler.CreateThumbnailAndReturnThumbnailPath(filename, selectedImagePath, 10);
 
-                    SelectedImage = FileHandler.GetImageSource(selectedImagePath);
-                }
+                SelectedImage = FileHandler.GetImageSource(selectedImagePath);
+
+                return thumbnailPath;
             }
             catch (Exception exc)
+            {
+                throw exc;
+            }
+        }
+        #endregion
+
+        #region DeleteOldThumbnail
+        /// <summary>
+        /// Deletes the old thumbnail if it exists.
+        /// Throws an exception if an error occured during deletion.
+        /// </summary>
+        private void DeleteOldThumbnail()
+        {
+            try
+            {
+                if (selectedImagePath.Length > 0)
+                {
+                    if (!residentForEditing.GetThumbnailPath.Contains("ImageOld.png") && residentForEditing.GetThumbnailPath.Length > 0)
+                    {
+                        File.Delete(residentForEditing.GetThumbnailPath);
+                    }
+                }
+            } catch(Exception exc)
             {
                 throw exc;
             }
@@ -502,22 +525,11 @@ namespace Autorentool_RMT.ViewModels
         {
             try
             {
-                if (!selectedImagePath.Contains("ImageOld.png"))
+                if (!selectedImagePath.Contains("ImageOld.png") && !residentForEditing.GetFullProfilePicPath.Contains("ImageOld.png"))
                 {
-                    if (residentForEditing != null)
+                    if (residentForEditing.GetFullProfilePicPath.Length > 0 && File.Exists(residentForEditing.GetFullProfilePicPath))
                     {
-                        if (residentForEditing.GetFullProfilePicPath.Length > 0 && File.Exists(residentForEditing.GetFullProfilePicPath))
-                        {
-                            File.Delete(residentForEditing.GetFullProfilePicPath);
-                        }
-                    }
-                    else
-                    {
-                        if (selectedImagePath.Length > 0 && File.Exists(selectedImagePath))
-                        {
-                            File.Delete(selectedImagePath);
-                            ResetSelectedImageProperties();
-                        }
+                        File.Delete(residentForEditing.GetFullProfilePicPath);
                     }
                 }
 
@@ -536,6 +548,7 @@ namespace Autorentool_RMT.ViewModels
         private void ResetSelectedImageProperties()
         {
             selectedImagePath = "";
+            fileResult = null;
             SelectedImage = ImageSource.FromFile("ImageOld.png");
         }
         #endregion
@@ -551,13 +564,14 @@ namespace Autorentool_RMT.ViewModels
             try
             {
                 notes = notes ?? "";
+                string thumbnailPath = "";
 
                 if (fileResult != null)
                 {
-                    await SaveProfilePic();
+                    thumbnailPath = await SaveProfilePic();
                 }
 
-                int residentId = await ResidentDBHandler.AddResident(firstname, lastname, gender, age, selectedImagePath, notes);
+                int residentId = await ResidentDBHandler.AddResident(firstname, lastname, gender, age, selectedImagePath, thumbnailPath, notes);
 
                 await BindCheckedLifethemesToResident(residentId);
 
@@ -581,14 +595,16 @@ namespace Autorentool_RMT.ViewModels
             try
             {
                 notes = notes ?? "";
+                string thumbnailPath = "";
 
                 if (selectedImagePath.Length > 0 && !residentForEditing.GetFullProfilePicPath.Equals(selectedImagePath))
                 {
                     DeleteOldProfilPic();
-                    await SaveProfilePic();
+                    DeleteOldThumbnail();
+                    thumbnailPath = await SaveProfilePic();
                 }
 
-                await ResidentDBHandler.UpdateResident(residentForEditing.Id, firstname, lastname, age, gender, selectedImagePath, notes);
+                await ResidentDBHandler.UpdateResident(residentForEditing.Id, firstname, lastname, age, gender, selectedImagePath, thumbnailPath ,notes);
 
                 await ResidentLifethemesDBHandler.UnbindAllResidentLifethemesByResidentId(residentForEditing.Id);
 
@@ -617,6 +633,7 @@ namespace Autorentool_RMT.ViewModels
                     await ResidentLifethemesDBHandler.UnbindAllResidentLifethemesByResidentId(residentForEditing.Id);
                     await ResidentSessionsDBHandler.UnbindAllResidentSessionsByResidentId(residentForEditing.Id);
                     DeleteOldProfilPic();
+                    DeleteOldThumbnail();
                     await ResidentDBHandler.DeleteResident(residentForEditing.Id);
                     residentForEditing = null;
                 }

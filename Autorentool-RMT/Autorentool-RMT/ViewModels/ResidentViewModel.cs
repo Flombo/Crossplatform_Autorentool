@@ -1,5 +1,6 @@
 ﻿using Autorentool_RMT.Models;
 using Autorentool_RMT.Services.DBHandling;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -49,7 +50,14 @@ namespace Autorentool_RMT.ViewModels
         /// <returns></returns>
         public async Task OnLoadAllResidents()
         {
-            Residents = await ResidentDBHandler.GetAllResidents();
+            Residents = await ResidentDBHandler.GetAllResidents(true);
+        }
+        #endregion
+
+        #region OnFreeResources
+        public void OnFreeResources()
+        {
+            Residents = new List<Resident>();
         }
         #endregion
 

@@ -135,8 +135,8 @@
                            Aspect="AspectFit" 
                            BackgroundColor="White"  
                            Source="{Binding SelectedImage}" 
-                           HeightRequest="150" 
-                           WidthRequest="100"/>
+                           HeightRequest="200" 
+                           WidthRequest="150"/>
                 </StackLayout>
 
                 <Editor Placeholder="Notizen.." Grid.Row="3" Grid.RowSpan="2" Grid.Column="2" Grid.ColumnSpan="2"  Text="{Binding Notes}" IsTextPredictionEnabled="True" IsSpellCheckEnabled="True" FontSize="Small"/>
