@@ -419,17 +419,33 @@ namespace Autorentool_RMT.ViewModels
         {
             try
             {
-                fileResult = await FilePicker.PickAsync();
+
+                FilePickerFileType filePickerFileType = new FilePickerFileType(
+                    new Dictionary<DevicePlatform, IEnumerable<string>> {
+                        { DevicePlatform.iOS, new [] { "jpeg", "png" } },
+                        { DevicePlatform.Android, new [] { "image/jpeg", "image/png" } },
+                        { DevicePlatform.UWP, new []{ "*.jpg", "*.jpeg", "*.png" } }
+                    });
+
+                PickOptions pickOptions = new PickOptions
+                {
+                    PickerTitle = "Wählen Sie eine Bilddatei aus, welche als Bewohnerprofilbild dienen soll",
+                    FileTypes = filePickerFileType,
+                };
+
+                fileResult = await FilePicker.PickAsync(pickOptions);
 
                 if (fileResult != null)
                 {
 
-                    if (fileResult.FileName.EndsWith("jpg", StringComparison.OrdinalIgnoreCase) ||
-                        fileResult.FileName.EndsWith("png", StringComparison.OrdinalIgnoreCase))
-                    {
-                        selectedImagePath = fileResult.FullPath;
+                    selectedImagePath = fileResult.FullPath;
 
-                        SelectedImage = FileHandler.GetImageSource(selectedImagePath);
+                    using (Stream stream = await fileResult.OpenReadAsync())
+                    {
+                        byte[] imageBytes = new byte[stream.Length];
+                        stream.Read(imageBytes, 0, (int)stream.Length);
+
+                        SelectedImage = ImageSource.FromStream(() => new MemoryStream(imageBytes));
                     }
                 }
 

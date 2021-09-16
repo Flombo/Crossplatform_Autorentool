@@ -32,7 +32,7 @@ namespace Autorentool_RMT.Models
 
         #region SetSource
         /// <summary>
-        /// Sets the Source-property if it is null.
+        /// Sets the Source-property if it is null and if the MediaItem is an image.
         /// </summary>
         public void SetSources()
         {
