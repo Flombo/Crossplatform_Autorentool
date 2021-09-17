@@ -1,7 +1,9 @@
-﻿using SQLite;
+﻿using Autorentool_RMT.Services;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Xamarin.Forms;
 
 namespace Autorentool_RMT.Models
 {
@@ -15,6 +17,45 @@ namespace Autorentool_RMT.Models
         [NotNull, Unique]
         public string Name { get; set; }
         public string Path { get; set; }
+        public string ThumbnailPath { get; set; }
+        [Ignore]
+        public ImageSource Source 
+        {
+            get; set;
+        }
+
+        [Ignore]
+        public ImageSource ThumbnailSource
+        {
+            get; set;
+        }
+
+        #region SetSource
+        /// <summary>
+        /// Sets the Source-property if it is null and if the MediaItem is an image.
+        /// </summary>
+        public void SetSource()
+        {
+            if (Source == null && IsImage)
+            {
+                Source = FileHandler.GetImageSource(Path);
+            }
+        }
+        #endregion
+
+        #region SetThumbnailSource
+        /// <summary>
+        /// Sets the ThumbnailSource-property if it is null and if the MediaItem is an image.
+        /// </summary>
+        public void SetThumbnailSource()
+        {
+            if(ThumbnailSource == null && IsImage)
+            {
+                ThumbnailSource = FileHandler.GetImageSource(ThumbnailPath);
+            }
+        }
+        #endregion
+
         public string FileType { get; set; }
         [Unique, NotNull]
         public string Hash { get; set; }
@@ -31,7 +72,6 @@ namespace Autorentool_RMT.Models
         #region Empty Constructor
         public MediaItem()
         {
-
         }
         #endregion
 
@@ -111,7 +151,7 @@ namespace Autorentool_RMT.Models
         #endregion
 
         #region GetPreviewPath
-        public string GetPreviewPath
+        public ImageSource GetPreviewPath
         {
             get
             {
@@ -124,7 +164,7 @@ namespace Autorentool_RMT.Models
                     case "txt":
                         return "TextIcon.png";
                     default:
-                        return Path;
+                        return ThumbnailSource;
                 }
             }
         }

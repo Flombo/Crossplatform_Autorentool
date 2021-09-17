@@ -12,7 +12,7 @@
           HeightRequest="{Binding PopupHeight}"
           VerticalOptions="CenterAndExpand" 
           HorizontalOptions="CenterAndExpand">
-        <Image Source="{Binding SelectedMediaItemPath}"  
+        <Image Source="{Binding ImageSource}"  
                HorizontalOptions="CenterAndExpand" 
                VerticalOptions="CenterAndExpand" 
                Aspect="AspectFit"

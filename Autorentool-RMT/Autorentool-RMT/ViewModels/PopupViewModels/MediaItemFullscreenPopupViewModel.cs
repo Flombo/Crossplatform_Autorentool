@@ -1,23 +1,25 @@
-﻿using Xamarin.Forms;
+﻿using Autorentool_RMT.Models;
+using Xamarin.Essentials;
+using Xamarin.Forms;
 
 namespace Autorentool_RMT.ViewModels
 {
     public class MediaItemFullscreenPopupViewModel : ViewModel
     {
 
-        private string selectedMediaItemPath;
+        private ImageSource imageSource;
         private double height;
         private double width;
 
-        public MediaItemFullscreenPopupViewModel(string selectedMediaItemPath, double height, double width)
+        public MediaItemFullscreenPopupViewModel(ImageSource selectedMediaItemSource, double height, double width)
         {
             this.height = height;
             this.width = width;
-            this.selectedMediaItemPath = selectedMediaItemPath;
+            imageSource = selectedMediaItemSource;
         }
 
-        #region SelectedMediaItemPath
-        public string SelectedMediaItemPath => selectedMediaItemPath;
+        #region ImageSource
+        public ImageSource ImageSource => imageSource;
         #endregion
 
         #region PopupHeight

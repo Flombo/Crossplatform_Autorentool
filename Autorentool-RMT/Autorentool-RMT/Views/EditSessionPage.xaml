@@ -25,13 +25,19 @@
                                 Grid.RowSpan="7">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <StackLayout Orientation="Horizontal" Spacing="0" BackgroundColor="White">
+                            <StackLayout Orientation="Horizontal" 
+                                         Spacing="0" 
+                                         BackgroundColor="White">
                                 <Image Source="{Binding GetPreviewPath}"
                                        Aspect="AspectFit"
                                        HeightRequest="60"
                                        WidthRequest="60"
                                        BackgroundColor="White"/>
-                                <Label Text="{Binding Name}" FontSize="Subtitle" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" FontAttributes="Bold"/>
+                                <Label Text="{Binding Name}" 
+                                       FontSize="Subtitle" 
+                                       VerticalOptions="CenterAndExpand"
+                                       HorizontalOptions="CenterAndExpand" 
+                                       FontAttributes="Bold"/>
                                 <StackLayout.GestureRecognizers>
                                     <DragGestureRecognizer
                                         CanDrag="True"
@@ -48,7 +54,10 @@
                 </CollectionView>
             </StackLayout>
 
-            <StackLayout BackgroundColor="Black" Grid.Row="0" Grid.Column="1" Grid.RowSpan="8">
+            <StackLayout BackgroundColor="Black" 
+                         Grid.Row="0" 
+                         Grid.Column="1" 
+                         Grid.RowSpan="8">
                 <Image Source="{Binding ImagePath}" 
                        BackgroundColor="White"
                        Aspect="AspectFit" 

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Text;
+using Xamarin.Forms;
 
 namespace Autorentool_RMT.Models
 {

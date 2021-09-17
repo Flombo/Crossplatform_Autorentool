@@ -1,7 +1,9 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
+using Xamarin.Forms;
 
 namespace Autorentool_RMT.Services
 {
@@ -15,20 +17,24 @@ namespace Autorentool_RMT.Services
         /// <returns></returns>
         public static string CreateDirectory(string directoryName)
         {
-            DirectoryInfo directoryInfo = Directory.CreateDirectory(
-                Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    directoryName
-                    )
-                );
+            string directoryPath = Path.Combine(
+                Environment.GetFolderPath(
+                    Environment.SpecialFolder.LocalApplicationData
+                    ), 
+                directoryName);
 
-            return directoryInfo.FullName;
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            return directoryPath;
         }
         #endregion
 
         #region GetUniqueFilename
         /// <summary>
-        /// Returns unqiue filename.
+        /// Returns unique filename.
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
@@ -63,6 +69,7 @@ namespace Autorentool_RMT.Services
             {
 
                 byte[] bArray = new byte[stream.Length];
+                byte[] thumbnailImageBytes = new byte[stream.Length];
 
                 using (FileStream fs = new FileStream(filePath, FileMode.OpenOrCreate))
                 {
@@ -112,6 +119,88 @@ namespace Autorentool_RMT.Services
             int length = path.Length - filetypeIndex;
             string filetype = path.Substring(filetypeIndex + 1, length - 1);
             return filetype;
+        }
+        #endregion
+
+        #region GetImageSource
+        /// <summary>
+        /// Returns the ImageSource by the given path.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static ImageSource GetImageSource(string path)
+        {
+            return ImageSource.FromStream(() =>
+            {
+                using (Stream stream = File.OpenRead(path))
+                {
+                    byte[] bytes = new byte[stream.Length];
+                    stream.Read(bytes, 0, bytes.Length);
+
+                    return new MemoryStream(bytes);
+                }
+            });
+        }
+        #endregion
+
+        #region CreateThumbnailAndReturnThumbnailPath
+        /// <summary>
+        /// Creates the Thumbnails-folder if it doesn't already exist.
+        /// After that a downscaled thumbnail will be created and it's path will be returned.
+        /// If these processes fail, an exception will be thrown.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="filePath"></param>
+        /// <param name="quality"></param>
+        /// <returns></returns>
+        public static string CreateThumbnailAndReturnThumbnailPath(string filename, string filePath, int quality)
+        {
+            try
+            {
+                string thumbnailDirectoryPath = CreateDirectory("Thumbnails");
+                string thumbnailPath = Path.Combine(thumbnailDirectoryPath, filename);
+
+                SaveThumbnail(filePath, thumbnailPath, quality);
+
+                return thumbnailPath;
+
+            } catch(Exception exc)
+            {
+                throw exc;
+            }
+        }
+        #endregion
+
+        #region SaveThumbnail
+        /// <summary>
+        /// Creates thumbnail by using the filepath of the created file to create a bitmap.
+        /// This bitmap will be encoded to a jpeg with the given quality compared to the original.
+        /// In the end, it will be saved under the thumbnails-folder.
+        /// If the process fails, an exception will be thrown and the already saved original file will be deleted.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="thumbnailPath"></param>
+        /// <param name="quality"></param>
+        private static void SaveThumbnail(string filePath, string thumbnailPath, int quality)
+        {
+            try
+            {
+                using (FileStream stream = File.OpenRead(filePath))
+                {
+                    byte[] bytes = new byte[stream.Length];
+                    stream.Read(bytes, 0, (int)stream.Length);
+
+                    SKBitmap resourceBitmap = SKBitmap.Decode(bytes);
+
+                    Stream thumbnailStream = resourceBitmap.Encode(SKEncodedImageFormat.Jpeg, quality).AsStream();
+
+                    SaveFile(thumbnailStream, thumbnailPath);
+                }
+            } catch(Exception exc)
+            {
+                File.Delete(filePath);
+                throw exc;
+            }
         }
         #endregion
 

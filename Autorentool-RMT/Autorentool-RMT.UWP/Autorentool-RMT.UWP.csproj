@@ -105,7 +105,9 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bmbf_Logo.jpg" />
     <Content Include="FilmIcon.png" />
+    <Content Include="HFU_Logo.png" />
     <Content Include="ImageChecklist.png" />
     <Content Include="ImageLogoBrainDark.png" />
     <Content Include="ImageLogoBrainLight.png" />

@@ -131,10 +131,9 @@ namespace Autorentool_RMT.Views
                     await Navigation.PopAsync();
 
                 }
-                catch (Exception exc)
+                catch (Exception)
                 {
-                    //await DisplayAlert("Fehler beim Löschen des Bewohners", "Ein Fehler trat auf beim Löschen des Bewohners " + selectedResident.ResidentOneLineSummary, "OK");
-                    await DisplayAlert("Fehler", exc.Message, "Ok");
+                    await DisplayAlert("Fehler beim Löschen des Bewohners", "Ein Fehler trat auf beim Löschen des Bewohners " + selectedResident.ResidentOneLineSummary, "OK");
                 }
             }
         }

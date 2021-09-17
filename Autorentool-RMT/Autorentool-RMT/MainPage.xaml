@@ -115,7 +115,7 @@
                 <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand">
 
                     <Button Text=" 📧 KONTAKT / FEEDBACK " BackgroundColor="White" TextColor="Gray" BorderRadius="0" BorderWidth="2" BorderColor="White" Clicked="OnContactButtonClicked"/>
-                    <Button Text=" 🙋 ÜBER UNS " BackgroundColor="White" TextColor="Gray" BorderRadius="0" BorderWidth="2" BorderColor="White" />
+                    <Button Text=" 🙋 ÜBER UNS " BackgroundColor="White" TextColor="Gray" BorderRadius="0" BorderWidth="2" BorderColor="White" Clicked="OnAboutUsButtonClicked"/>
 
                 </StackLayout>
 

@@ -163,7 +163,7 @@
                                VerticalOptions="CenterAndExpand"/>
                     </StackLayout>
                     <Image IsVisible="{Binding IsMediaItemImageVisible}" 
-                           Source="{Binding SelectedMediumImagePath}" 
+                           Source="{Binding SelectedMediumImageSource}" 
                            VerticalOptions="CenterAndExpand" 
                            HorizontalOptions="CenterAndExpand" 
                            BackgroundColor="White"
@@ -199,7 +199,7 @@
                 <xct:MediaElement IsVisible="{Binding IsMediaItemMediaElementVisible}" 
                                   AutoPlay="false" 
                                   ShowsPlaybackControls="True" 
-                                  Source="{Binding SelectedMediumMediaElementPath}"
+                                  Source="{Binding SelectedMediumMediaElementSource}"
                                   BackgroundColor="Black" 
                                   Grid.Row="1" 
                                   Grid.Column="1" 

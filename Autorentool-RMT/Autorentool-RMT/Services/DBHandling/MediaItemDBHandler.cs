@@ -22,12 +22,13 @@ namespace Autorentool_RMT.Services.DBHandling
         /// </summary>
         /// <param name="name"></param>
         /// <param name="path"></param>
+        /// <param name="thumbnailPath"></param>
         /// <param name="filetype"></param>
         /// <param name="hash"></param>
         /// <param name="notes"></param>
         /// <param name="backendMediaItemID"></param>
         /// <returns></returns>
-        public static async Task<int> AddMediaItem(string name, string path, string filetype, string hash, string notes, int backendMediaItemID)
+        public static async Task<int> AddMediaItem(string name, string path, string thumbnailPath, string filetype, string hash, string notes, int backendMediaItemID)
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
@@ -37,6 +38,7 @@ namespace Autorentool_RMT.Services.DBHandling
             {
                 Name = name,
                 Path = path,
+                ThumbnailPath = thumbnailPath,
                 FileType = filetype,
                 Notes = notes,
                 BackendMediaItemId = backendMediaItemID,
@@ -128,13 +130,19 @@ namespace Autorentool_RMT.Services.DBHandling
         #region GetAllMediaItems
         /// <summary>
         /// Returns all MediaItems as a List asynchronously.
+        /// Orders the MediaItems by their Position-attribute.
+        /// In the end foreach MediaItem, the thumbnail source will be loaded.
         /// </summary>
         /// <returns></returns>
         public static async Task<List<MediaItem>> GetAllMediaItems()
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
-            return await sQLiteAsyncConnection.Table<MediaItem>().OrderBy(MediaItem => MediaItem.Position).ToListAsync();
+            List<MediaItem> mediaItems = await sQLiteAsyncConnection.Table<MediaItem>().OrderBy(mediaItem => mediaItem.Position).ToListAsync();
+
+            mediaItems.ForEach(mediaItem => mediaItem.SetThumbnailSource());
+
+            return mediaItems;
         }
         #endregion
 
@@ -205,6 +213,7 @@ namespace Autorentool_RMT.Services.DBHandling
         /// <summary>
         /// Filters MediaItems depending on the given filters.
         /// Orders the MediaItems by there position.
+        /// In the end foreach MediaItem the thumbnail source will be loaded.
         /// </summary>
         /// <param name="photoFilter"></param>
         /// <param name="musicFilter"></param>
@@ -256,6 +265,8 @@ namespace Autorentool_RMT.Services.DBHandling
 
                 filteredMediaItems = filteredMediaItems.OrderBy(mediaItem => mediaItem.Position).ToList();
             }
+
+            filteredMediaItems.ForEach(mediaItem => mediaItem.SetThumbnailSource());
 
             return filteredMediaItems;
         }
