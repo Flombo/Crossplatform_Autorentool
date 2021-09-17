@@ -190,7 +190,8 @@ namespace Autorentool_RMT.Views
 
         #region OnImportButtonClicked
         /// <summary>
-        /// Shows file picker, saves selected files and displays them.
+        /// Shows file picker (if the user selected this option), saves the selected files and displays them.
+        /// Shows the directory picker (if the user selected this option), saves the files in the selected folder and displays them.
         /// If an error occured an error prompt will be displayed.
         /// </summary>
         /// <param name="sender"></param>
@@ -208,12 +209,14 @@ namespace Autorentool_RMT.Views
                     await contentManagementViewModel.ShowFilePicker();
                 } else
                 {
-                    FolderImportPopup.Result result = await Navigation.ShowPopupAsync(new FolderImportPopup(Height, Width));
+                    //Get the implementation of the IDirectoryPicker interface by dependency injection depending on the platform (UWP = UWPDirectoryPicker, Android = ToDo, iOS = ToDo)
+                    IDirectoryPicker directortyPickerImplementation = DependencyService.Get<IDirectoryPicker>();
 
-                    if (result != null)
-                    {
-                        await contentManagementViewModel.SaveFilesOfSelectedFolder(result.selectedFolder.FolderPath);
-                    }
+                    /**Shows the folder-picker and saves the contained files.
+                     * The ContentManagementViewModel is needed for setting / resetting the progress-ui-elements.
+                    **/
+                    await directortyPickerImplementation.ShowFolderPicker(contentManagementViewModel);
+                    await contentManagementViewModel.OnLoadAllMediaItems();
                 }
 
             } catch (Exception exc)
