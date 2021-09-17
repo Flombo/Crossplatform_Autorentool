@@ -172,7 +172,6 @@ namespace Autorentool_RMT.ViewModels
                     float maxProgress = results.Count;
                     float currentProgress = 0;
                     Progress = currentProgress;
-                    Stopwatch stopwatch = new Stopwatch();
                     stopwatch.Start();
 
                     foreach (FileResult fileResult in results)

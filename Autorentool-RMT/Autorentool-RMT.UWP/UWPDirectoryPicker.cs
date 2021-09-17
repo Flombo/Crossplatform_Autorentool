@@ -93,6 +93,7 @@ namespace Autorentool_RMT.UWP
         #region SaveDirectoryFiles
         /// <summary>
         /// Saves the StorageFiles of the picked directory if their filetype is valid.
+        /// Creates and saves a thumbnail if the current file is an image.
         /// Sets the progressbar and progresstext.
         /// Throws an error if the process fails.
         /// </summary>
@@ -163,13 +164,19 @@ namespace Autorentool_RMT.UWP
                         string filetype = FileHandler.ExtractFiletypeFromPath(filename);
 
                         string filepath = Path.Combine(directoryPath, uniqueFilename);
+                        string thumbnailPath = "";
 
                         using (Stream fileSaveStream = await directoryFile.OpenStreamForReadAsync())
                         {
                             FileHandler.SaveFile(fileSaveStream, filepath);
                         }
 
-                        await MediaItemDBHandler.AddMediaItem(filename, filepath, filetype, hash, "", 0);
+                        if (filetype.Contains("jpg") || filetype.Contains("jpeg") || filetype.Contains("png"))
+                        {
+                            thumbnailPath = FileHandler.CreateThumbnailAndReturnThumbnailPath(filename, filepath, 10);
+                        }
+
+                        await MediaItemDBHandler.AddMediaItem(filename, filepath, thumbnailPath, filetype, hash, "", 0);
                     }
                 }
             } catch(Exception exc)
