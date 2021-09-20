@@ -149,6 +149,7 @@ namespace Autorentool_RMT.Services.DBHandling
         #region GetSingleMediaItem
         /// <summary>
         /// Returns a single MediaItem by given ID async.
+        /// If no MediaItem was found, null will be returned.
         /// </summary>
         /// <param name="mediaItemID"></param>
         /// <returns></returns>
@@ -156,7 +157,7 @@ namespace Autorentool_RMT.Services.DBHandling
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
-            return await sQLiteAsyncConnection.GetAsync<MediaItem>(mediaItemID);
+            return await sQLiteAsyncConnection.Table<MediaItem>().FirstOrDefaultAsync(mediaItem => mediaItem.Id == mediaItemID);
         }
         #endregion
 

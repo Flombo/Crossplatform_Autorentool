@@ -1,4 +1,5 @@
 ﻿using Autorentool_RMT.Models;
+using Autorentool_RMT.Services.DBHandling;
 using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
 using Autorentool_RMT.ViewModels;
 using Autorentool_RMT.Views.Popups;
@@ -162,17 +163,19 @@ namespace Autorentool_RMT.Views
         {
             try
             {
-
                 sessionViewModel.DisableSessionButtons();
 
                 ISessionExporter sessionExporter = DependencyService.Get<ISessionExporter>();
-                await sessionExporter.ExportSession(sessionViewModel, selectedSession);
+                bool folderPicked = await sessionExporter.ExportSession(sessionViewModel, selectedSession);
 
-                await DisplayAlert(
-                    "Sitzung exportiert",
-                    $"Die Sitzung wurde mit {sessionViewModel.SelectedSessionMediaItems.Count} Baustein(en) erfolgreich exportiert!",
-                    "Alles klar!"
-                    );
+                if (folderPicked)
+                {
+                    await DisplayAlert(
+                        "Sitzung exportiert",
+                        $"Die Sitzung wurde mit {sessionViewModel.SelectedSessionMediaItems.Count} Baustein(en) erfolgreich exportiert!",
+                        "Alles klar!"
+                        );
+                }
 
                 sessionViewModel.EnableSessionButtons();
 
@@ -181,6 +184,53 @@ namespace Autorentool_RMT.Views
                 DisplayExportSessionErrorPrompt(exc.Message);
 
                 sessionViewModel.EnableSessionButtons();
+            }
+        }
+        #endregion
+
+        private async void OnImportSessionButtonClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                sessionViewModel.DisableSessionButtons();
+
+                ISessionImporter sessionImporter = DependencyService.Get<ISessionImporter>();
+                bool folderPicked = await sessionImporter.ImportSession(sessionViewModel);
+                
+                await sessionViewModel.OnLoadAllSessions();
+
+                if (folderPicked)
+                {
+                    await DisplayAlert(
+                        "Sitzung importiert",
+                        $"Die Sitzung wurde erfolgreich importiert!",
+                        "Alles klar!"
+                        );
+                }
+
+                sessionViewModel.EnableSessionButtons();
+
+            } catch(Exception exc)
+            {
+                DisplayImportSessionErrorPrompt(exc.Message);
+                sessionViewModel.EnableSessionButtons();
+            }
+        }
+
+        #region DisplayImportSessionErrorPrompt
+        private async void DisplayImportSessionErrorPrompt(string errorMessage)
+        {
+            switch (errorMessage)
+            {
+                case "Folder empty":
+                    await DisplayAlert("Fehler beim Importieren der Sitzung", "Der ausgewählte Ordner ist leer", "Schließen");
+                    break;
+                case "Session already existing":
+                    await DisplayAlert("Fehler beim Importieren der Sitzung", "Die Sitzung ist bereits vorhanden", "Schließen");
+                    break;
+                default:
+                    await DisplayAlert("Fehler beim Importieren der Sitzung", "Ein Fehler trat auf beim Importieren der ausgewählten Sitzung", "Schließen");
+                    break;
             }
         }
         #endregion

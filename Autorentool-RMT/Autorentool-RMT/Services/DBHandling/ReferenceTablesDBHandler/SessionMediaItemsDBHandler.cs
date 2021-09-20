@@ -181,13 +181,13 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
-            List<SessionMediaItems> queriedMediaItemLifethemes = await sQLiteAsyncConnection.Table<SessionMediaItems>()
+            List<SessionMediaItems> queriedSessionMediaItems = await sQLiteAsyncConnection.Table<SessionMediaItems>()
                 .Where(sessionMediaItems => sessionMediaItems.SessionId == sessionId)
                 .ToListAsync();
 
             List<MediaItem> mediaItemsOfSession = new List<MediaItem>();
 
-            foreach (SessionMediaItems queriedSessionMediaItem in queriedMediaItemLifethemes)
+            foreach (SessionMediaItems queriedSessionMediaItem in queriedSessionMediaItems)
             {
                 MediaItem mediaItem = await MediaItemDBHandler.GetSingleMediaItem(queriedSessionMediaItem.MediaItemId);
                 mediaItemsOfSession.Add(mediaItem);
@@ -221,6 +221,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         #region GetCertainSessionMediaItem
         /// <summary>
         /// Returns an SessionMediaItems entry by given sessionMediaItemId.
+        /// Returns null if no SessionMediaItems entry was found.
         /// </summary>
         /// <param name="sessionMediaItemId"></param>
         /// <returns></returns>
@@ -228,7 +229,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
-            return await sQLiteAsyncConnection.GetAsync<SessionMediaItems>(sessionMediaItemId);
+            return await sQLiteAsyncConnection.Table<SessionMediaItems>().FirstOrDefaultAsync(sessionMediaItem => sessionMediaItem.Id == sessionMediaItemId);
         }
         #endregion
 

@@ -34,7 +34,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
             {
                 await sQLiteAsyncConnection.InsertAsync(rating);
                 return await GetID(sessionId, residentId);
-            } catch(Exception exc)
+            } catch(Exception)
             {
                 return -1;
             }
@@ -222,6 +222,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         #region GetCertainRating
         /// <summary>
         /// Returns certain Rating by given ratingId.
+        /// If no Rating was found, null will be returned.
         /// </summary>
         /// <param name="ratingId"></param>
         /// <returns></returns>
@@ -229,7 +230,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
-            return await sQLiteAsyncConnection.GetAsync<Rating>(ratingId);
+            return await sQLiteAsyncConnection.Table<Rating>().FirstOrDefaultAsync(rating => rating.Id == ratingId);
         }
         # endregion
 

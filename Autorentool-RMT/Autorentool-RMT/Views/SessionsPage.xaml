@@ -63,6 +63,7 @@
                         <Button Text="{StaticResource ImportIcon}" 
                                 TextColor="White" 
                                 BackgroundColor="Green"
+                                Clicked="OnImportSessionButtonClicked"
                                 HeightRequest="50"
                                 WidthRequest="45"
                                 FontSize="Subtitle"

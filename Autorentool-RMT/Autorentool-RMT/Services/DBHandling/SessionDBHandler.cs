@@ -131,6 +131,7 @@ namespace Autorentool_RMT.Services.DBHandling
         #region GetSingleSession
         /// <summary>
         /// Returns a single Session by given ID async.
+        /// If no Session was found, null will be returned.
         /// </summary>
         /// <param name="sessionID"></param>
         /// <returns></returns>
@@ -138,7 +139,7 @@ namespace Autorentool_RMT.Services.DBHandling
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
-            return await sQLiteAsyncConnection.GetAsync<Session>(sessionID);
+            return await sQLiteAsyncConnection.Table<Session>().FirstOrDefaultAsync();
         }
         #endregion
 

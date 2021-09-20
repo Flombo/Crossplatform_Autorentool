@@ -184,13 +184,14 @@ namespace Autorentool_RMT.Services.DBHandling
         #region GetSingleResident
         /// <summary>
         /// Returns a single Resident by given ID.
+        /// If no Resident was found, null will be returned.
         /// </summary>
         /// <param name="residentID"></param>
         /// <returns></returns>
         public static async Task<Resident> GetSingleResident(int residentID)
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
-            return await sQLiteAsyncConnection.GetAsync<Resident>(residentID);
+            return await sQLiteAsyncConnection.Table<Resident>().FirstOrDefaultAsync(resident => resident.Id == residentID);
         }
         #endregion
 

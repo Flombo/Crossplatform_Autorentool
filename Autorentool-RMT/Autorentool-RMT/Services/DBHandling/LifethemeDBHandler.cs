@@ -41,7 +41,7 @@ namespace Autorentool_RMT.Services.DBHandling
         #region GetLifethemeIDByName
         /// <summary>
         /// Returns the ID of the Lifetheme by name.
-        /// If there isn't any Lifetheme under that name, an exception will be thrown.
+        /// If there isn't any Lifetheme under that name, -1 will be returned.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -55,9 +55,9 @@ namespace Autorentool_RMT.Services.DBHandling
                     .FirstOrDefaultAsync(lifetheme => lifetheme.Name == name);
 
                 return queriedLifetheme.Id;
-            } catch(Exception exc)
+            } catch(Exception)
             {
-                throw exc;
+                return -1;
             }
         }
         #endregion
@@ -113,6 +113,7 @@ namespace Autorentool_RMT.Services.DBHandling
         #region GetSingleLifetheme
         /// <summary>
         /// Returns a single Lifetheme by given ID async.
+        /// Returns null, if no lifetheme was found.
         /// </summary>
         /// <param name="lifethemeID"></param>
         /// <returns></returns>
@@ -120,9 +121,8 @@ namespace Autorentool_RMT.Services.DBHandling
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
-            int count =  await sQLiteAsyncConnection.Table<Lifetheme>().CountAsync();
-            var lifetheme = await sQLiteAsyncConnection.Table<Lifetheme>().FirstOrDefaultAsync(lifetheme1 => lifetheme1.Id == lifethemeID);
-            return await sQLiteAsyncConnection.GetAsync<Lifetheme>(lifethemeID);
+            Lifetheme lifetheme = await sQLiteAsyncConnection.Table<Lifetheme>().FirstOrDefaultAsync(queriedLifetheme => queriedLifetheme.Id == lifethemeID);
+            return lifetheme;
         }
         #endregion
 

@@ -55,7 +55,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
 
         #region GetID
         /// <summary>
-        /// Returns the ID by given parameters or throws an exception if no entry was found.
+        /// Returns the ID by given parameters or returns -1 if an error occured..
         /// </summary>
         /// <param name="sessionId"></param>
         /// <param name="residentId"></param>
@@ -74,9 +74,9 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
 
                 return queriedResidentSessions.Id;
             }
-            catch (Exception exc)
+            catch (Exception)
             {
-                throw exc;
+                return -1;
             }
         }
         #endregion
@@ -157,7 +157,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
-            return await sQLiteAsyncConnection.GetAsync<ResidentSessions>(residentSessionId);
+            return await sQLiteAsyncConnection.Table<ResidentSessions>().FirstOrDefaultAsync(residentSession => residentSession.Id == residentSessionId);
         }
         #endregion
 

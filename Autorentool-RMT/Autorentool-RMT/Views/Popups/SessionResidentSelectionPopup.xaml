@@ -34,7 +34,7 @@
                             Padding="2"
                             HeightRequest="120">
                             <Image
-                                Source="{Binding ThumbnailSource}"
+                                Source="{Binding ThumbnailImageSource}"
                                 Aspect="AspectFit"
                                 HeightRequest="120"
                                 WidthRequest="60"

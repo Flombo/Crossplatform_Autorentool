@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Search;
-using Windows.Storage.Pickers;
 using System.Collections.Generic;
 using Xamarin.Forms;
 using Autorentool_RMT.Services;
@@ -28,7 +27,18 @@ namespace Autorentool_RMT.UWP
         {
             try
             {
-                StorageFolder pickedFolder = await SelectFolderAsync();
+                string[] fileTypeFilters = new string[]
+                {
+                    ".mp3",
+                    ".mp4",
+                    ".jpeg",
+                    ".jpg",
+                    ".png",
+                    ".txt",
+                    ".html"
+                };
+
+                StorageFolder pickedFolder = await FolderPickerHelper.SelectFolderAsync(fileTypeFilters);
 
                 if (pickedFolder == null)
                 {
@@ -48,42 +58,6 @@ namespace Autorentool_RMT.UWP
 
             }
             catch (Exception exc)
-            {
-                throw exc;
-            }
-        }
-        #endregion
-
-        #region SelectFolderAsync
-        /// <summary>
-        /// Shows the folder-picker and returns the picked StorageFolder.
-        /// The start of the picker is the desktop.
-        /// Throws an exception if the process fails.
-        /// </summary>
-        /// <returns></returns>
-        private static async Task<StorageFolder> SelectFolderAsync()
-        {
-            try
-            {
-                FolderPicker folderPicker = new FolderPicker
-                {
-                    ViewMode = PickerViewMode.Thumbnail,
-                    SuggestedStartLocation = PickerLocationId.Desktop
-                };
-
-                folderPicker.FileTypeFilter.Add(".mp3");
-                folderPicker.FileTypeFilter.Add(".mp4");
-                folderPicker.FileTypeFilter.Add(".jpeg");
-                folderPicker.FileTypeFilter.Add(".jpg");
-                folderPicker.FileTypeFilter.Add(".png");
-                folderPicker.FileTypeFilter.Add(".txt");
-                folderPicker.FileTypeFilter.Add(".html");
-
-                StorageFolder folder = await folderPicker.PickSingleFolderAsync();
-
-                return folder;
-
-            } catch(Exception exc)
             {
                 throw exc;
             }

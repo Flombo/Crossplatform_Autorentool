@@ -6,8 +6,7 @@ namespace Autorentool_RMT
 {
     public interface ISessionExporter
     {
-
-        Task ExportSession(SessionViewModel sessionViewModel, Session selectedSession);
+        Task<bool> ExportSession(SessionViewModel sessionViewModel, Session selectedSession);
 
     }
 }

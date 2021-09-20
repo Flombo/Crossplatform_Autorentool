@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.Storage.Pickers;
 using Xamarin.Forms;
 using Newtonsoft.Json;
 using System.IO;
@@ -19,20 +18,26 @@ namespace Autorentool_RMT.UWP
         /// <summary>
         /// Exports selected Session into the selected folder.
         /// The Session-data will be saved in session.json, while the MediaItems will be saved in mediaitems.json.
+        /// Returns a boolean depending if a folder was picked.
         /// Throws an exception if an error occurs.
         /// </summary>
         /// <param name="sessionViewModel"></param>
         /// <param name="selectedSession"></param>
         /// <returns></returns>
-        public async Task ExportSession(SessionViewModel sessionViewModel, Session selectedSession)
+        public async Task<bool> ExportSession(SessionViewModel sessionViewModel, Session selectedSession)
         {
             try
             {
-                StorageFolder pickedFolder = await SelectFolderAsync();
+                StorageFolder pickedFolder = await FolderPickerHelper.SelectFolderAsync(
+                    new string[1]
+                    {
+                        "*"
+                    }
+                    );
 
                 if (pickedFolder == null)
                 {
-                    return;
+                    return false;
                 }
 
                 IReadOnlyList<StorageFile> files = await pickedFolder.GetFilesAsync();
@@ -44,42 +49,14 @@ namespace Autorentool_RMT.UWP
                     await BuildSessionJSONFile(selectedSession, pickedFolder);
                     await BuildMediaItemsJSONFile(sessionMediaItems, pickedFolder);
                     await CopyMediaItemsToTargetFolder(sessionMediaItems, pickedFolder, sessionViewModel);
+
+                    return true;
                 }
                 else
                 {
                     throw new Exception("Folder not empty");
                 }
             } catch(Exception exc)
-            {
-                throw exc;
-            }
-        }
-        #endregion
-
-        #region SelectFolderAsync
-        /// <summary>
-        /// Opens the folder-picker and returns the picked folder.
-        /// Throws an exception if an error happens.
-        /// </summary>
-        /// <returns></returns>
-        private async Task<StorageFolder> SelectFolderAsync()
-        {
-            try
-            {
-                FolderPicker folderPicker = new FolderPicker
-                {
-                    ViewMode = PickerViewMode.Thumbnail,
-                    SuggestedStartLocation = PickerLocationId.Desktop
-                };
-
-                folderPicker.FileTypeFilter.Add("*");
-
-                StorageFolder folder = await folderPicker.PickSingleFolderAsync();
-
-                return folder;
-
-            }
-            catch (Exception exc)
             {
                 throw exc;
             }

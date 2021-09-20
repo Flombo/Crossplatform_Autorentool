@@ -146,7 +146,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
-            return await sQLiteAsyncConnection.GetAsync<ResidentLifethemes>(residentLifethemesId);
+            return await sQLiteAsyncConnection.Table<ResidentLifethemes>().FirstOrDefaultAsync(residentLifethemes => residentLifethemes.Id == residentLifethemesId);
         }
         #endregion
 
