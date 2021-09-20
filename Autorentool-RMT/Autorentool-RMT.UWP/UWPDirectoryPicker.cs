@@ -116,7 +116,7 @@ namespace Autorentool_RMT.UWP
                     currentProgress++;
                     contentManagementViewModel.SetProgressElements(currentProgress, maxProgress, stopwatch);
                     string filename = directoryFile.Name;
-                    var fileType = directoryFile.FileType.ToLower();
+                    string fileType = directoryFile.FileType.ToLower();
 
                     if (FileHandler.IsFiletypeValid(fileType))
                     {

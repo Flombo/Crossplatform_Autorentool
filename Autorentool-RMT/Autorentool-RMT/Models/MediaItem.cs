@@ -1,4 +1,5 @@
 ﻿using Autorentool_RMT.Services;
+using Newtonsoft.Json;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -18,46 +19,12 @@ namespace Autorentool_RMT.Models
         public string Name { get; set; }
         public string Path { get; set; }
         public string ThumbnailPath { get; set; }
-        [Ignore]
-        public ImageSource Source 
-        {
-            get; set;
-        }
-
-        [Ignore]
-        public ImageSource ThumbnailSource
-        {
-            get; set;
-        }
-
-        #region SetSource
-        /// <summary>
-        /// Sets the Source-property if it is null and if the MediaItem is an image.
-        /// </summary>
-        public void SetSource()
-        {
-            if (Source == null && IsImage)
-            {
-                Source = FileHandler.GetImageSource(Path);
-            }
-        }
-        #endregion
-
-        #region SetThumbnailSource
-        /// <summary>
-        /// Sets the ThumbnailSource-property if it is null and if the MediaItem is an image.
-        /// </summary>
-        public void SetThumbnailSource()
-        {
-            if(ThumbnailSource == null && IsImage)
-            {
-                ThumbnailSource = FileHandler.GetImageSource(ThumbnailPath);
-            }
-        }
-        #endregion
-
+        [Ignore, JsonIgnore]
+        public ImageSource Source { get; set; }
+        [Ignore, JsonIgnore]
+        public ImageSource ThumbnailSource { get; set; }
         public string FileType { get; set; }
-        [Unique, NotNull]
+        [Unique, NotNull, JsonIgnore]
         public string Hash { get; set; }
         public string Notes { get; set; }
         [Ignore]
@@ -97,31 +64,63 @@ namespace Autorentool_RMT.Models
         }
         #endregion
 
+        #region SetSource
+        /// <summary>
+        /// Sets the Source-property if it is null and if the MediaItem is an image.
+        /// </summary>
+        public void SetSource()
+        {
+            if (Source == null && IsImage)
+            {
+                Source = FileHandler.GetImageSource(Path);
+            }
+        }
+        #endregion
+
+        #region SetThumbnailSource
+        /// <summary>
+        /// Sets the ThumbnailSource-property if it is null and if the MediaItem is an image.
+        /// </summary>
+        public void SetThumbnailSource()
+        {
+            if (ThumbnailSource == null && IsImage)
+            {
+                ThumbnailSource = FileHandler.GetImageSource(ThumbnailPath);
+            }
+        }
+        #endregion
+
         #region IsImage
         /// <summary>
         /// Determines if the MediaItem is an image and returns the corresponding boolean.
         /// Important for filtering and the ContentsPage
         /// </summary>
+        [Ignore, JsonIgnore]
         public bool IsImage => FileType.Equals("jpeg") || FileType.Equals("png") || FileType.Equals("jpg");
         #endregion
 
         #region IsVideo
+        [Ignore, JsonIgnore]
         public bool IsVideo => FileType.Equals("mp4");
         #endregion
 
         #region IsAudio
+        [Ignore, JsonIgnore]
         public bool IsAudio => FileType.Equals("mp3");
         #endregion
 
         #region IsAudioOrVideo
+        [Ignore, JsonIgnore]
         public bool IsAudioOrVideo => IsAudio || IsVideo;
         #endregion
 
         #region IsTxt
+        [Ignore, JsonIgnore]
         public bool IsTxt => FileType.Equals("txt");
         #endregion
 
         #region IsHTML
+        [Ignore, JsonIgnore]
         public bool IsHTML => FileType.Equals("html");
         #endregion
 
@@ -131,6 +130,7 @@ namespace Autorentool_RMT.Models
         /// Else an empty string will be returned.
         /// </summary>
         /// <returns></returns>
+        [Ignore, JsonIgnore]
         public string GetTextContent => IsTxt ? File.ReadAllText(GetFullPath) : "";
         #endregion
 
@@ -140,6 +140,7 @@ namespace Autorentool_RMT.Models
         /// Else null will be returned.
         /// </summary>
         /// <returns></returns>
+        [Ignore, JsonIgnore]
         public string GetAudioOrVideoSource => IsAudioOrVideo ? new Uri(GetFullPath).LocalPath : null;
         #endregion
 
@@ -147,10 +148,12 @@ namespace Autorentool_RMT.Models
         /// <summary>
         /// Returns the Path property if a file exists under this path.
         /// </summary>
+        [Ignore, JsonIgnore]
         public string GetFullPath => Path;
         #endregion
 
         #region GetPreviewPath
+        [Ignore, JsonIgnore]
         public ImageSource GetPreviewPath
         {
             get
@@ -173,14 +176,14 @@ namespace Autorentool_RMT.Models
         #region Equals method for objects
         public override bool Equals(object obj)
         {
-            if (obj == null)
+            if (obj == null || !(obj is MediaItem))
             {
                 return false;
             }
 
-            MediaItem lifetheme = obj as MediaItem;
+            MediaItem mediaItem = obj as MediaItem;
 
-            return Id.Equals(lifetheme.Id);
+            return Id.Equals(mediaItem.Id);
         }
         #endregion
 

@@ -25,6 +25,11 @@ namespace Autorentool_RMT.ViewModels
         private string enabledButtonBackgroundColour = "#0091EA";
         private string selectedSessionText;
         private bool isSelectedSessionTextVisible;
+        private string exportSessionButtonBackgroundColour;
+        private bool isExportSessionButtonEnabled;
+        private bool isProgressBarVisible;
+        private int progress;
+        private string statusText;
         #endregion
 
         #region Constructor
@@ -41,8 +46,74 @@ namespace Autorentool_RMT.ViewModels
             deleteSessionButtonBackgroundColour = "LightGray";
             isChangeNameSessionButtonEnabled = false;
             changeNameSessionButtonBackgroundColour = "LightGray";
+            exportSessionButtonBackgroundColour = "LightGray";
             selectedSessionText = "";
             isSelectedSessionTextVisible = false;
+            isExportSessionButtonEnabled = false;
+            progress = 0;
+            statusText = "";
+            isProgressBarVisible = false;
+        }
+        #endregion
+
+        #region IsProgressBarVisible
+        public bool IsProgressBarVisible
+        {
+            get => isProgressBarVisible;
+            set
+            {
+                isProgressBarVisible = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region Progress
+        public int Progress
+        {
+            get => progress;
+            set
+            {
+                progress = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region StatusText
+        public string StatusText
+        {
+            get => statusText;
+            set
+            {
+                statusText = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsExportSessionButtonEnabled
+        public bool IsExportSessionButtonEnabled
+        {
+            get => isExportSessionButtonEnabled;
+            set
+            {
+                isExportSessionButtonEnabled = value;
+                ExportSessionButtonBackgroundColour = GetBackgroundColour(isExportSessionButtonEnabled, "Green");
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region ExportSessionButtonBackgroundColour
+        public string ExportSessionButtonBackgroundColour
+        {
+            get => exportSessionButtonBackgroundColour;
+            set
+            {
+                exportSessionButtonBackgroundColour = value;
+                OnPropertyChanged();
+            }
         }
         #endregion
 
@@ -213,6 +284,7 @@ namespace Autorentool_RMT.ViewModels
             IsChangeNameSessionButtonEnabled = shouldBeEnabled;
             IsDeleteSessionButtonEnabled = shouldBeEnabled;
             IsEditSessionButtonEnabled = shouldBeEnabled;
+            IsExportSessionButtonEnabled = selectedSession != null;
         }
         #endregion
 
@@ -326,5 +398,47 @@ namespace Autorentool_RMT.ViewModels
             }
         }
         #endregion
+
+        #region SetProgressAndStatus
+        /// <summary>
+        /// Calculates the currentProgress and sets the StatusText
+        /// </summary>
+        /// <param name="currentProgress"></param>
+        /// <param name="maxProgress"></param>
+        public void SetProgressAndStatus(int currentProgress, int maxProgress)
+        {
+            Progress = currentProgress / maxProgress;
+            StatusText = (Progress * 100) + "%";
+        }
+        #endregion
+
+        #region DisableSessionButtons
+        /// <summary>
+        /// Disables SessionButtons after exporting/importing a session.
+        /// </summary>
+        public void DisableSessionButtons()
+        {
+            IsDeleteSessionButtonEnabled = false;
+            IsChangeNameSessionButtonEnabled = false;
+            IsEditSessionButtonEnabled = false;
+            IsSelectedSessionTextVisible = false;
+            IsStartSessionButtonEnabled = false;
+        }
+        #endregion
+
+        #region EnableSessionButtons
+        /// <summary>
+        /// Enables SessionButtons after exporting/importing a session.
+        /// </summary>
+        public void EnableSessionButtons()
+        {
+            IsDeleteSessionButtonEnabled = true;
+            IsChangeNameSessionButtonEnabled = true;
+            IsEditSessionButtonEnabled = true;
+            IsSelectedSessionTextVisible = true;
+            IsStartSessionButtonEnabled = true;
+        }
+        #endregion
+
     }
 }

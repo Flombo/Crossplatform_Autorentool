@@ -150,5 +150,66 @@ namespace Autorentool_RMT.Views
             sessionViewModel.SelectedSession = selectedSession;
         }
         #endregion
+
+        #region OnExportSessionButtonClicked
+        /// <summary>
+        /// Exports the selected session.
+        /// If an exception was thrown, an error prompt will be displayed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void OnExportSessionButtonClicked(object sender, EventArgs e)
+        {
+            try
+            {
+
+                sessionViewModel.DisableSessionButtons();
+
+                ISessionExporter sessionExporter = DependencyService.Get<ISessionExporter>();
+                await sessionExporter.ExportSession(sessionViewModel, selectedSession);
+
+                await DisplayAlert(
+                    "Sitzung exportiert",
+                    $"Die Sitzung wurde mit {sessionViewModel.SelectedSessionMediaItems.Count} Baustein(en) erfolgreich exportiert!",
+                    "Alles klar!"
+                    );
+
+                sessionViewModel.EnableSessionButtons();
+
+            } catch(Exception exc)
+            {
+                DisplayExportSessionErrorPrompt(exc.Message);
+
+                sessionViewModel.EnableSessionButtons();
+            }
+        }
+        #endregion
+
+        #region DisplayExportSessionErrorPrompt
+        /// <summary>
+        /// Displays an error prompt depending on the content of the error-message.
+        /// </summary>
+        /// <param name="errorMessage"></param>
+        private async void DisplayExportSessionErrorPrompt(string errorMessage)
+        {
+            if (errorMessage.Contains("Folder not empty"))
+            {
+                await DisplayAlert(
+                    $"Fehler beim Exportieren der Sitzung '{selectedSession.Name}'",
+                    "Der Zielordner ist nicht leer. Zum Exportieren von Sitzungen muss ein leerer Ordner gewählt werden",
+                    "Schließen"
+                    );
+            }
+            else
+            {
+                await DisplayAlert(
+                    $"Fehler beim Exportieren der Sitzung '{selectedSession.Name}'",
+                    $"Es kam zu einem Fehler beim Exportieren der Sitzung '{selectedSession.Name}'",
+                    "Schließen"
+                    );
+            }
+        }
+        #endregion
+
     }
 }
