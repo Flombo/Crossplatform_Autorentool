@@ -143,9 +143,12 @@ namespace Autorentool_RMT.ViewModels
 
             Device.StartTimer(TimeSpan.FromSeconds(1), () =>
             {
-                duration++;
-                selectedSession.DurationInSeconds = duration;
-                SessionDuration = selectedSession.ConvertMinutes + selectedSession.ConvertSeconds;
+                if (isSessionOngoing)
+                {
+                    duration++;
+                    selectedSession.DurationInSeconds = duration;
+                    SessionDuration = selectedSession.ConvertMinutes + selectedSession.ConvertSeconds;
+                }
 
                 return isSessionOngoing;
             });
@@ -156,24 +159,17 @@ namespace Autorentool_RMT.ViewModels
         /// <summary>
         /// Stops the Stopwatch and persists the duration.
         /// </summary>
-        public async void StopSession()
+        public Session StopSession()
         {
-            try
-            {
-                isSessionOngoing = false;
-                duration = 0;
-                await SessionDBHandler.UpdateDurationInSeconds(selectedSession.Id, selectedSession.DurationInSeconds);
-            }
-            catch (Exception exc)
-            {
-
-            }
+            isSessionOngoing = false;
+            return selectedSession;
         }
         #endregion
 
         #region OnLoadAllMediaItems
         /// <summary>
         /// Loads all existing MediaItems into SessionMediaItems-property.
+        /// Throws an exception if an error occurs while loading.
         /// </summary>
         /// <returns></returns>
         public async Task OnLoadAllMediaItems()
@@ -182,9 +178,9 @@ namespace Autorentool_RMT.ViewModels
             {
                 SessionMediaItems = await SessionMediaItemsDBHandler.GetMediaItemsOfSession(selectedSession.Id);
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-
+                throw exc;
             }
         }
         #endregion

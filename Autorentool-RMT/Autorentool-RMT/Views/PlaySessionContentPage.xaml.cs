@@ -30,8 +30,16 @@ namespace Autorentool_RMT.Views
         /// </summary>
         protected override async void OnAppearing()
         {
-            await playSessionContentViewModel.OnLoadAllMediaItems();
-            playSessionContentViewModel.StartSession();
+            try
+            {
+                await playSessionContentViewModel.OnLoadAllMediaItems();
+                playSessionContentViewModel.StartSession();
+
+            } catch(Exception)
+            {
+                await DisplayAlert("Fehler beim Laden der Sitzung", "Es kam zu einem Fehler beim Laden der Sitzung", "Schließen");
+                await Navigation.PopAsync();
+            }
         }
         #endregion
 
@@ -49,12 +57,11 @@ namespace Autorentool_RMT.Views
             
             if (result)
             {
-                playSessionContentViewModel.StopSession();
+                selectedSession = playSessionContentViewModel.StopSession();
 
                 if (selectedResident != null)
                 {
-                    SessionRatingPopup.Result popupResult = await Navigation.ShowPopupAsync(new SessionRatingPopup(selectedSession, selectedResident));
-
+                    await Navigation.ShowPopupAsync(new SessionRatingPopup(selectedSession, selectedResident));
                     await Navigation.PopAsync();
                 }
                 else

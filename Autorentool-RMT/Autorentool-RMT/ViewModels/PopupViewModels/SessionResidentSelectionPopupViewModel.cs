@@ -1,7 +1,6 @@
 ﻿using Autorentool_RMT.Models;
 using Autorentool_RMT.Services.DBHandling;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Autorentool_RMT.ViewModels
 {
