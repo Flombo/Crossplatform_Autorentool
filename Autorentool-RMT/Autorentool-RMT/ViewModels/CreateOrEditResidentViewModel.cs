@@ -597,6 +597,7 @@ namespace Autorentool_RMT.ViewModels
                 notes = notes ?? "";
                 string thumbnailPath = "";
 
+                //New images was picked => should delete old one and save the new thumbnail and the picked image.
                 if (selectedImagePath.Length > 0 && !residentForEditing.GetFullProfilePicPath.Equals(selectedImagePath))
                 {
                     DeleteOldProfilPic();
@@ -604,6 +605,7 @@ namespace Autorentool_RMT.ViewModels
                     thumbnailPath = await SaveProfilePic();
                 } else
                 {
+                    //if no image was picked, the thumbnailPath must be set to the existing ThumbnailPath of the resident or it will be overriden.
                     if (selectedImagePath.Length > 0)
                     {
                         thumbnailPath = residentForEditing.ThumbnailPath;
