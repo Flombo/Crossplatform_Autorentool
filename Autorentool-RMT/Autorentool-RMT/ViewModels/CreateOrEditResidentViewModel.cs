@@ -602,6 +602,12 @@ namespace Autorentool_RMT.ViewModels
                     DeleteOldProfilPic();
                     DeleteOldThumbnail();
                     thumbnailPath = await SaveProfilePic();
+                } else
+                {
+                    if (selectedImagePath.Length > 0)
+                    {
+                        thumbnailPath = residentForEditing.ThumbnailPath;
+                    }
                 }
 
                 await ResidentDBHandler.UpdateResident(residentForEditing.Id, firstname, lastname, age, gender, selectedImagePath, thumbnailPath ,notes);
