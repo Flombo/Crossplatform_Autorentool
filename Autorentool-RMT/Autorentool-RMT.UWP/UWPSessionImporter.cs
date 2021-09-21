@@ -54,17 +54,100 @@ namespace Autorentool_RMT.UWP
 
                 if (sessionFiles == null || sessionFiles.Count == 0)
                 {
-                    throw new Exception("Folder empty");
+                    //Just create an empty Session, if no files are available in the folder.
+                    Session session = new Session()
+                    {
+                        Name = pickedFolder.Name,
+                        BackendSessionId = 0
+                    };
+
+                    await AddNewSession(session);
+                    return true;
                 }
                 else
                 {
-                    Session session = await CreateOrUpdateSessionFromSessionJSON(sessionFiles);
+                    Session session = await CreateOrUpdateSessionFromSessionJSON(sessionFiles, pickedFolder.Name);
                     await LoadAndDeserializeMediaItemsJSONFile(sessionFiles, session, sessionViewModel);
 
                     return true;
                 }
 
             } catch(Exception exc)
+            {
+                throw exc;
+            }
+        }
+        #endregion
+
+        #region CreateSessionFromSessionJSON
+        /// <summary>
+        /// Loads and deserializes a Session from the .session-JSON.
+        /// Creates a new Session with the given attributes of the deserialized Session or updates an existing Session with these attributes.
+        /// Re-throws an exception if these processes failed.
+        /// </summary>
+        /// <param name="sessionFiles"></param>
+        /// <returns></returns>
+        public async Task<Session> CreateOrUpdateSessionFromSessionJSON(IReadOnlyList<StorageFile> sessionFiles, string folderName)
+        {
+            try
+            {
+                StorageFile sessionJSONFile = sessionFiles.FirstOrDefault(sessionFile => sessionFile.Name.Equals(".session"));
+                Session session = null;
+
+                if (sessionJSONFile != null)
+                {
+
+                    string sessionJSONString = await GetJSONStringFromJSONFile(sessionJSONFile);
+
+                    session = JsonConvert.DeserializeObject<Session>(sessionJSONString);
+
+                    Session queriedSession = await SessionDBHandler.GetSingleSession(session.Id);
+
+                    if (queriedSession != null && queriedSession.Name.Equals(session.Name))
+                    {
+                        await SessionDBHandler.UpdateSession(session.Id, session.BackendSessionId, session.Name);
+                    }
+                    else
+                    {
+                        session = await AddNewSession(session);
+                    }
+
+                    return session;
+                }
+                else
+                {
+                    session = new Session()
+                    {
+                        Name = folderName,
+                        BackendSessionId = 0
+                    };
+
+                    return await AddNewSession(session);
+                }
+            }
+            catch (Exception exc)
+            {
+                throw exc;
+            }
+        }
+        #endregion
+
+        #region AddNewSession
+        /// <summary>
+        /// Creates and returns a new Session by the parameters of the given Session.
+        /// Throws an exception if an error occurs.
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
+        private async Task<Session> AddNewSession(Session session)
+        {
+            try
+            {
+                int sessionID = await SessionDBHandler.AddSession(session.Name, session.BackendSessionId);
+                return await SessionDBHandler.GetSingleSession(sessionID);
+
+            }
+            catch (Exception exc)
             {
                 throw exc;
             }
@@ -97,11 +180,79 @@ namespace Autorentool_RMT.UWP
                 }
                 else
                 {
-                    throw new Exception();
+                    //if the mediaItems-JSON is missing, create MediaItems from the existing media-files.
+                    await SaveMediaItemsFromFile(sessionFiles, sessionViewModel, session);
                 }
 
             } catch(Exception exc)
             {
+                sessionViewModel.IsProgressBarVisible = false;
+
+                throw exc;
+            }
+        }
+        #endregion
+
+        #region SaveMediaItemsFromFile
+        /// <summary>
+        /// Saves thumbnail and original medium if the .mediaItems-file doesn't exist.
+        /// Throws an exception if an error occurs.
+        /// </summary>
+        /// <param name="sessionFiles"></param>
+        /// <param name="sessionViewModel"></param>
+        /// <param name="session"></param>
+        /// <returns></returns>
+        private async Task SaveMediaItemsFromFile(IReadOnlyList<StorageFile> sessionFiles, SessionViewModel sessionViewModel, Session session)
+        {
+            try
+            {
+                int currentProgress = 0;
+                int maxProgress = sessionFiles.Count;
+                sessionViewModel.IsProgressBarVisible = true;
+
+                foreach (StorageFile mediaFile in sessionFiles)
+                {
+                    currentProgress++;
+                    sessionViewModel.SetProgressAndStatus(currentProgress, maxProgress);
+                    int mediaItemId = 0;
+
+                    if (FileHandler.IsFiletypeValid(mediaFile.FileType))
+                    {
+                        using (Stream stream = await mediaFile.OpenStreamForReadAsync())
+                        {
+                            string filename = mediaFile.Name;
+                            string hash = FileHandler.GetFileHashAsString(stream);
+                            int duplicate = await MediaItemDBHandler.SearchMediaItemWithGivenHash(hash);
+
+                            MediaItem mediaItem = new MediaItem()
+                            {
+                                BackendMediaItemId = 0,
+                                Notes = "",
+                                Position = 0,
+                                Name = filename
+                            };
+
+                            if (duplicate == 0)
+                            {
+                                mediaItemId = await AddMediaItem(mediaFile, hash, filename, mediaItem);
+                                await BindLifethemesToMediaItem(mediaItem, mediaItemId);
+                            }
+                            else
+                            {
+                                mediaItemId = await MediaItemDBHandler.GetID(mediaItem.Name);
+                            }
+
+                            await BindMediaItemAndSession(mediaItemId, session.Id);
+                        }
+                    }
+                }
+
+                sessionViewModel.IsProgressBarVisible = false;
+
+            } catch(Exception exc)
+            {
+                sessionViewModel.IsProgressBarVisible = false;
+
                 throw exc;
             }
         }
@@ -184,8 +335,33 @@ namespace Autorentool_RMT.UWP
                             await UpdateExistingMediaItem(mediaItem, mediaItemId);
                         }
 
-                        int sessionMediaItemsId = await SessionMediaItemsDBHandler.BindSessionMediaItems(mediaItemId, session.Id);
+                        await BindMediaItemAndSession(mediaItemId, session.Id);
                     }
+                }
+
+            } catch(Exception exc)
+            {
+                throw exc;
+            }
+        }
+        #endregion
+
+        #region BindMediaItemAndSession
+        /// <summary>
+        /// Binds MediaItem and Session by given ID's if there isn't already a binding for those ID's.
+        /// </summary>
+        /// <param name="mediaItemId"></param>
+        /// <param name="sessionId"></param>
+        /// <returns></returns>
+        private async Task BindMediaItemAndSession(int mediaItemId, int sessionId)
+        {
+            try
+            {
+                int sessionMediaItemsId = await SessionMediaItemsDBHandler.GetID(mediaItemId, sessionId);
+
+                if (sessionMediaItemsId == -1)
+                {
+                    await SessionMediaItemsDBHandler.BindSessionMediaItems(mediaItemId, sessionId);
                 }
 
             } catch(Exception exc)
@@ -292,73 +468,6 @@ namespace Autorentool_RMT.UWP
                         await MediaItemLifethemesDBHandler.BindMediaItemLifetheme(mediaItemId, queriedLifethemeId);
                     }
                 }
-            } catch(Exception exc)
-            {
-                throw exc;
-            }
-        }
-        #endregion
-
-        #region CreateSessionFromSessionJSON
-        /// <summary>
-        /// Loads and deserializes a Session from the .session-JSON.
-        /// Creates a new Session with the given attributes of the deserialized Session or updates an existing Session with these attributes.
-        /// Re-throws an exception if these processes failed.
-        /// </summary>
-        /// <param name="sessionFiles"></param>
-        /// <returns></returns>
-        public async Task<Session> CreateOrUpdateSessionFromSessionJSON(IReadOnlyList<StorageFile> sessionFiles)
-        {
-            try
-            {
-                StorageFile sessionJSONFile = sessionFiles.FirstOrDefault(sessionFile => sessionFile.Name.Equals(".session"));
-
-                if (sessionJSONFile != null)
-                {
-                    Session session = null;
-
-                    string sessionJSONString = await GetJSONStringFromJSONFile(sessionJSONFile);
-
-                    session = JsonConvert.DeserializeObject<Session>(sessionJSONString);
-                    
-                    Session queriedSession = await SessionDBHandler.GetSingleSession(session.Id);
-
-                    if (queriedSession != null && queriedSession.Name.Equals(session.Name))
-                    {
-                        await SessionDBHandler.UpdateSession(session.Id, session.BackendSessionId, session.Name);
-                    }
-                    else
-                    {
-                        session = await AddNewSession(session);
-                    }
-
-                    return session;
-                }
-                else
-                {
-                    throw new Exception();
-                }
-            } catch(Exception exc)
-            {
-                throw exc;
-            }
-        }
-        #endregion
-
-        #region AddNewSession
-        /// <summary>
-        /// Creates and returns a new Session by the parameters of the given Session.
-        /// Throws an exception if an error occurs.
-        /// </summary>
-        /// <param name="session"></param>
-        /// <returns></returns>
-        private async Task<Session> AddNewSession(Session session)
-        {
-            try
-            {
-                int sessionID = await SessionDBHandler.AddSession(session.Name, session.BackendSessionId);
-                return await SessionDBHandler.GetSingleSession(sessionID);
-
             } catch(Exception exc)
             {
                 throw exc;

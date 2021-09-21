@@ -40,7 +40,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
 
         #region GetID
         /// <summary>
-        /// Returns the ID by given parameters or throws an exception if no entry was found.
+        /// Returns the ID by given parameters or returns -1 if no entry was found.
         /// </summary>
         /// <param name="mediaItemId"></param>
         /// <param name="sessionId"></param>
@@ -57,9 +57,9 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
 
                 return queriedSessionMediaItems.Id;
             }
-            catch (Exception exc)
+            catch (Exception)
             {
-                throw exc;
+                return -1;
             }
         }
         #endregion

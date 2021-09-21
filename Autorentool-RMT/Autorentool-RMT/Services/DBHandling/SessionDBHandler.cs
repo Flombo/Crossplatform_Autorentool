@@ -139,7 +139,7 @@ namespace Autorentool_RMT.Services.DBHandling
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
-            return await sQLiteAsyncConnection.Table<Session>().FirstOrDefaultAsync();
+            return await sQLiteAsyncConnection.Table<Session>().FirstOrDefaultAsync(session => session.Id == sessionID);
         }
         #endregion
 
