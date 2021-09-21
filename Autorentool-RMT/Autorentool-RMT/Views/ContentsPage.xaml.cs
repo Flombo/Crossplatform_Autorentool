@@ -4,6 +4,7 @@ using Autorentool_RMT.Views.Popups;
 using System;
 using System.IO;
 using Xamarin.CommunityToolkit.Extensions;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -277,6 +278,33 @@ namespace Autorentool_RMT.Views
             } else
             {
                 selectContentViewModel.RemoveMediaItemFromCheckedMediaItems(mediaItem);
+            }
+        }
+        #endregion
+
+        #region OnHyperlinkTextTapped
+        /// <summary>
+        /// Opens the hyperlink in the default browser, if it isn't empty or the user canceled the process.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void OnHyperlinkTextTapped(object sender, EventArgs e)
+        {
+            string hyperlink = viewModel.GetHyperlink;
+
+            if(hyperlink.Length > 0)
+            {
+                bool shouldOpenURL = await DisplayAlert(
+                    "Web-Browser zum Link-Ziel öffnen?",
+                    "Klicken Sie auf OK, um den Web-Browser zum ausgewählten Link-Ziel zu öffnen, oder brechen Sie den Vorgang ab.",
+                    "Ok",
+                    "Abbrechen"
+                    );
+
+                if (shouldOpenURL)
+                {
+                    await Launcher.OpenAsync(hyperlink);
+                }
             }
         }
         #endregion

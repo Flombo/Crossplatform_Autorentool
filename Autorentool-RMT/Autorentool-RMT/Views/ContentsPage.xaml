@@ -183,6 +183,22 @@
                                VerticalOptions="CenterAndExpand" 
                                HorizontalOptions="CenterAndExpand"/>
                     </ScrollView>
+                    
+                    <ScrollView IsVisible="{Binding IsMediaItemHyperlinkContainerVisible}"
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                Grid.RowSpan="5"
+                                BackgroundColor="White">
+                        <Label Text="{Binding SelectedMediumHyperlinkText}"
+                               FontSize="Small"
+                               VerticalOptions="CenterAndExpand"
+                               HorizontalOptions="CenterAndExpand">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnHyperlinkTextTapped"/>
+                        </Label.GestureRecognizers>
+                        </Label>
+                    </ScrollView>
 
                     <Button Text="🔍" 
                             FontSize="Small" 

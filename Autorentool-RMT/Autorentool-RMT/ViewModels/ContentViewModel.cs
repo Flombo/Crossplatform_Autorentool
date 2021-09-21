@@ -3,8 +3,8 @@ using Autorentool_RMT.Services.DBHandling;
 using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Xamarin.CommunityToolkit.Core;
 using Xamarin.Forms;
 
@@ -48,6 +48,9 @@ namespace Autorentool_RMT.ViewModels
         protected bool isContentPage;
         protected string title;
         protected bool isActivityIndicatorRunning;
+        protected bool isMediaItemHyperlinkContainerVisible;
+        protected string selectedMediumHyperlinkText;
+        protected string hyperlink;
         #endregion
 
         #region Constructor
@@ -85,6 +88,35 @@ namespace Autorentool_RMT.ViewModels
             isAddMediaItemButtonEnabled = false;
             isActivityIndicatorRunning = false;
             currentMediaItemLifethemes = new List<Lifetheme>();
+            hyperlink = "";
+        }
+        #endregion
+
+        #region GetHyperlink
+        public string GetHyperlink => hyperlink;
+        #endregion
+
+        #region SelectedMediumHyperlinkText
+        public string SelectedMediumHyperlinkText
+        {
+            get => selectedMediumHyperlinkText;
+            set
+            {
+                selectedMediumHyperlinkText = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsMediaItemHyperlinkContainerVisible
+        public bool IsMediaItemHyperlinkContainerVisible
+        {
+            get => isMediaItemHyperlinkContainerVisible;
+            set
+            {
+                isMediaItemHyperlinkContainerVisible = value;
+                OnPropertyChanged();
+            }
         }
         #endregion
 
@@ -500,10 +532,54 @@ namespace Autorentool_RMT.ViewModels
             IsMediaItemImageVisible = selectedMediaItem.IsImage;
             IsMediaItemMediaElementVisible = selectedMediaItem.IsAudioOrVideo;
             IsMediaItemTextVisible = selectedMediaItem.IsTxt;
+            IsMediaItemHyperlinkContainerVisible = selectedMediaItem.IsHTML;
             SelectedMediumImageSource = selectedMediaItem.Source;
             SelectedMediumMediaElementSource = selectedMediaItem.IsAudioOrVideo ? MediaSource.FromFile(selectedMediaItem.Path) : null;
             SelectedMediumTextContent = selectedMediaItem.GetTextContent;
+            SelectedMediumHyperlinkText = selectedMediaItem.IsHTML ? GetHyperlinkTextAndSetHyperlink() : "";
             IsFullscreenButtonVisible = selectedMediaItem.IsImage;
+        }
+        #endregion
+
+        #region GetHyperlinkText
+        /// <summary>
+        /// Returns the HyperlinkText depending if the file-contents are of the right format.
+        /// Sets the hyperlink-attribute.
+        /// </summary>
+        /// <returns></returns>
+        private string GetHyperlinkTextAndSetHyperlink()
+        {
+            string hyperlinkText = "";
+
+            using (FileStream fileStream = File.OpenRead(selectedMediaItem.Path))
+            {
+                byte[] bytes = new byte[fileStream.Length];
+                fileStream.Read(bytes, 0, bytes.Length);
+
+                string htmlContent = System.Text.Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+
+                if (htmlContent.StartsWith("<html><body><script type=\"text/javascript\">window.location.href=\""))
+                {
+                    hyperlink = htmlContent.Replace("<html><body><script type=\"text/javascript\">window.location.href=\"", "").Replace("\";</script></body></html>", "");
+
+                    hyperlinkText = "Wenn Sie hier klicken, wird ein Link zu folgender Webseite in Ihrem Web-Browser geöffnet: "
+                        + "\n\n"
+                        + hyperlink
+                        + "\n\nDie RememTec-App läuft im Hintergrund weiter. Sie können jederzeit zurückkehren."
+                        + "\n\nDer Link führt zu einer externen Webseite, auf deren Inhalte wir keinen Einfluss haben. "
+                        + "Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber verantwortlich. "
+                        + "Die verlinkte Seite wurde zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. "
+                        + "Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. "
+                        + "Klicken Sie nur auf den Link, wenn Sie sicher sind, dass er vertrauenswürdig ist.";
+
+                } else
+                {
+                    hyperlink = "";
+                    hyperlinkText = "Diese Datei enthält leider keinen gültigen Link. Sie können diese Datei löschen.";
+                }
+            }
+
+            return hyperlinkText;
         }
         #endregion
 

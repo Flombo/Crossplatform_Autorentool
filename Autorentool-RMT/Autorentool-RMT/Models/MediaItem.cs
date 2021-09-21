@@ -166,6 +166,8 @@ namespace Autorentool_RMT.Models
                         return "FilmIcon.png";
                     case "txt":
                         return "TextIcon.png";
+                    case "html":
+                        return "HyperlinkIcon.png";
                     default:
                         return ThumbnailSource;
                 }

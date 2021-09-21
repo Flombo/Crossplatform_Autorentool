@@ -298,5 +298,8 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\HFU_Logo.png" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\HyperlinkIcon.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>
