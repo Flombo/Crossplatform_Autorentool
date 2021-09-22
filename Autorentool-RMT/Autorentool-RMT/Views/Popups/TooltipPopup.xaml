@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              x:Class="Autorentool_RMT.Views.Popups.TooltipPopup"
-             Size="600, 500"
+             Size="600, 500" 
              IsLightDismissEnabled="True">
 
     <Grid BackgroundColor="White">
@@ -24,27 +24,28 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate>
 
-                    <StackLayout Orientation="Vertical" 
                                  Padding="2">
                         <Label Text="{Binding Title}" 
                                FontSize="Small" 
                                FontAttributes="Bold"
                                HorizontalOptions="CenterAndExpand" 
                                VerticalOptions="CenterAndExpand"/>
-                        <Image Source="{Binding ImageIcon}" 
-                               IsVisible="{Binding HasImageSource}"
+                        <StackLayout Orientation="Vertical">
+                            <Image Source="{Binding ImageIcon}" 
+                                   IsVisible="{Binding HasImageSource}"
                                HeightRequest="120"
                                WidthRequest="120"
                                HorizontalOptions="CenterAndExpand"/>
-                        <Label Text="{Binding Icon}"
-                               IsVisible="{Binding HasIcon}"
-                               FontSize="Small"
+                            <Label Text="{Binding Icon}"
+                                   IsVisible="{Binding HasIcon}"
+                                   FontSize="Small"
                                HorizontalOptions="CenterAndExpand"/>
-                        <Label Text="{Binding Description}"
-                               FontSize="Small"
+                            <Label Text="{Binding Description}"
+                                   FontSize="Small"
                                LineBreakMode="WordWrap"
-                               HorizontalOptions="CenterAndExpand"
-                               VerticalOptions="CenterAndExpand"/>
+                                   HorizontalOptions="CenterAndExpand"
+                                   VerticalOptions="CenterAndExpand"/>
+                        </StackLayout>
                     </StackLayout>
 
                 </DataTemplate>
