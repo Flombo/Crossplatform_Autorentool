@@ -74,7 +74,8 @@
                                     WidthRequest="{OnPlatform UWP=45, Android=35}"
                                     BackgroundColor="Green"
                                     FontSize="Subtitle" 
-                                    FontAttributes="Bold"/>
+                                    FontAttributes="Bold"
+                                    Clicked="OnPickCSVFileButtonClicked"/>
                             <Button Text="{StaticResource ImportIcon}" 
                                     Clicked="OnImportButtonClicked"
                                     HeightRequest="50"

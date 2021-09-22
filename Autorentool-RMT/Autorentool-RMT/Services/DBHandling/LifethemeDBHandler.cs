@@ -14,7 +14,7 @@ namespace Autorentool_RMT.Services.DBHandling
         /// <summary>
         /// Creates and inserts a new Lifetheme to database asynchronously by given parameters.
         /// Returns the Id of the created Lifetheme.
-        /// If there isn't any Id, an exception will be thrown.
+        /// If there isn't any Id, -1 will be returned.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>

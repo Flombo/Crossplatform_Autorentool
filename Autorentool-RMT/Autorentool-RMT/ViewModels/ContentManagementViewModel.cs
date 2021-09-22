@@ -564,16 +564,37 @@ namespace Autorentool_RMT.ViewModels
             {
                 try
                 {
-                    foreach (Lifetheme selectedLifetheme in selectedLifethemes)
-                    {
-                        await MediaItemLifethemesDBHandler.BindMediaItemLifetheme(selectedMediaItem.Id, selectedLifetheme.Id);
-                    }
+                    await BindMultipleLifethemesToOneMediaItem(selectedMediaItem.Id, selectedLifethemes);
 
                     CurrentMediaItemLifethemes = await MediaItemLifethemesDBHandler.GetLifethemesOfMediaItem(selectedMediaItem.Id);
                 } catch(Exception exc)
                 {
                     throw exc;
                 }
+            }
+        }
+        #endregion
+
+        #region BindMultipleLifethemesToOneMediaItem
+        /// <summary>
+        /// Binds each of the given Lifethemes to the given MediaItem-ID.
+        /// Throws an exception if an error occurs during this process.
+        /// </summary>
+        /// <param name="mediaItemId"></param>
+        /// <param name="lifethemes"></param>
+        /// <returns></returns>
+        private async Task BindMultipleLifethemesToOneMediaItem(int mediaItemId, List<Lifetheme> lifethemes)
+        {
+            try
+            {
+                foreach (Lifetheme lifetheme in lifethemes)
+                {
+                    await MediaItemLifethemesDBHandler.BindMediaItemLifetheme(mediaItemId, lifetheme.Id);
+                }
+
+            } catch(Exception exc)
+            {
+                throw exc;
             }
         }
         #endregion
@@ -631,6 +652,184 @@ namespace Autorentool_RMT.ViewModels
         }
         #endregion
 
+        #region ShowCSVPicker
+        /// <summary>
+        /// Shows csv file picker.
+        /// The picked csv-files must be of the format (Dateiname, Beschreibung, Quelle, Tags).
+        /// If there are MediaItems with a Name-attribute that matches the Dateiname-cell,
+        /// it's Notes-attribute and Lifethemes will be updated with the file-contents.
+        /// Throws an exception if the process fails.
+        /// </summary>
+        public async void ShowCSVPicker()
+        {
 
+            try
+            {
+                FilePickerFileType filePickerFileType = new FilePickerFileType(
+                    new Dictionary<DevicePlatform, IEnumerable<string>> {
+                        { DevicePlatform.iOS, new [] { "commaSeparatedText"} },
+                        { DevicePlatform.Android, new [] { "text/csv" } },
+                        { DevicePlatform.UWP, new []{ "*.csv"} }
+                    });
+
+                PickOptions pickOptions = new PickOptions
+                {
+                    PickerTitle = "Wählen Sie eine CSV-Datei aus",
+                    FileTypes = filePickerFileType,
+                };
+
+                FileResult pickedFile = await FilePicker.PickAsync(pickOptions);
+
+                if (pickedFile != null)
+                {
+                    DisableDeleteButtonsAndShowProgressIndicators();
+
+                    await LoadCSVMediaItemMetaDataList(pickedFile);
+
+                    MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
+                    
+                    ResetDeleteButtonsAndProgressIndicators();
+                    SelectedMediaItem = null;
+                }
+
+            }
+            catch (Exception exc)
+            {
+
+                MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
+                ResetDeleteButtonsAndProgressIndicators();
+                SelectedMediaItem = null;
+
+                throw exc;
+            }
+        }
+        #endregion
+
+        #region LoadCSVMediaItemMetaDataList
+        /// <summary>
+        /// Loads CSVMediaItemMetaData-list from given fileResult.
+        /// Throws an exception if an error happened.
+        /// </summary>
+        /// <param name="fileResult"></param>
+        /// <returns></returns>
+        private async Task LoadCSVMediaItemMetaDataList(FileResult fileResult)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+
+            try {
+                
+                using (Stream stream = await fileResult.OpenReadAsync())
+                {
+                    byte[] bytes = new byte[stream.Length];
+                    stream.Read(bytes, 0, bytes.Length);
+
+                    string csvAsString = System.Text.Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+
+                    if (csvAsString.Length == 0)
+                    {
+                        return;
+                    }
+
+                    csvAsString = csvAsString.Trim();
+                    string[] csvRows = csvAsString.Split('\n');
+
+                    float maxProgress = csvRows.Length;
+                    float currentProgress = 0;
+                    Progress = currentProgress;
+                    stopwatch.Start();
+
+                    for(int i = 2; i < csvRows.Length; i++)
+                    {
+                        currentProgress++;
+                        SetProgressElements(currentProgress, maxProgress, stopwatch);
+
+                        CSVMediaItemMetaData csvMediaItemMetaData = await BuildCSVMediaItemMetaDataFromCSVRow(csvRows[i]);
+
+                        MediaItem foundMediaItem = MediaItems.FirstOrDefault(mediaItem => mediaItem.Name == csvMediaItemMetaData.FileName);
+
+                        if (foundMediaItem != null)
+                        {
+                            await MediaItemDBHandler.UpdateNotes(foundMediaItem.Id, csvMediaItemMetaData.Notes);
+                            await BindMultipleLifethemesToOneMediaItem(foundMediaItem.Id, csvMediaItemMetaData.Lifethemes);
+                        }
+                    }
+
+                    stopwatch.Stop();
+
+                }
+            } catch(Exception exc)
+            {
+                stopwatch.Stop();
+                throw exc;
+            }
+        }
+        #endregion
+
+        #region BuildCSVMediaItemMetaDataFromCSVRow
+        /// <summary>
+        /// Builds CSVMediaItemMetaData-object by given csv-row.
+        /// </summary>
+        /// <param name="row"></param>
+        /// <returns></returns>
+        private async Task<CSVMediaItemMetaData> BuildCSVMediaItemMetaDataFromCSVRow(string row)
+        {
+            //row contains: Dateiname, Beschreibung, Quelle, Tags (Tags are seperated by comma)
+            string[] rowSplit = row.Split(',');
+            CSVMediaItemMetaData csvMediaItemMetaData = new CSVMediaItemMetaData();
+
+            for (int i = 0; i < rowSplit.Length; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        csvMediaItemMetaData.FileName = rowSplit[i];
+                        break;
+                    case 1:
+                        csvMediaItemMetaData.Notes = rowSplit[i];
+                        break;
+                    case 3:
+                        csvMediaItemMetaData.Lifethemes = await BuildLifethemesFromCSVCell(rowSplit[i]);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return csvMediaItemMetaData;
+        }
+        #endregion
+
+        #region BuildLifethemesFromCSVCell
+        /// <summary>
+        /// Returns the comma seperated lifethemes of the given csv-row.
+        /// Splits row by comma and creates or loads lifethemes.
+        /// </summary>
+        /// <param name="row"></param>
+        /// <returns></returns>
+        private async Task<List<Lifetheme>> BuildLifethemesFromCSVCell(string row)
+        {
+            List<Lifetheme> lifethemes = new List<Lifetheme>();
+
+            if (row.Length > 0)
+            {
+                string[] lifethemeNames = row.Split(';');
+
+                foreach (string lifethemeName in lifethemeNames)
+                {
+                    int lifethemeId = await LifethemeDBHandler.GetLifethemeIDByName(lifethemeName);
+
+                    if (lifethemeId == -1)
+                    {
+                        lifethemeId = await LifethemeDBHandler.AddLifetheme(lifethemeName);
+                    }
+
+                    Lifetheme lifetheme = await LifethemeDBHandler.GetSingleLifetheme(lifethemeId);
+
+                    lifethemes.Add(lifetheme);
+                }
+            }
+
+            return lifethemes;
+        }
+        #endregion
     }
 }

@@ -258,6 +258,22 @@ namespace Autorentool_RMT.Views
         }
         #endregion
 
+        #region OnPickCSVFileButtonClicked
+        private async void OnPickCSVFileButtonClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                
+                ContentManagementViewModel contentManagementViewModel = viewModel as ContentManagementViewModel;
+                contentManagementViewModel.ShowCSVPicker();
+            
+            } catch(Exception)
+            {
+                await DisplayAlert("Fehler beim Laden der CSV-Datei", "Beim Laden der CSV-Datei kam es zu einem Fehler", "Schließen");
+            }
+        }
+        #endregion
+
         #region OnMediaItemCheckboxChanged
         /// <summary>
         /// Adds or removes a mediaItem from the CheckedMediaItems-list if the checkbox is checked or unchecked.
