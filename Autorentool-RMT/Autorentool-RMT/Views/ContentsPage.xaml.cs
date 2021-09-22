@@ -2,7 +2,7 @@
 using Autorentool_RMT.ViewModels;
 using Autorentool_RMT.Views.Popups;
 using System;
-using System.IO;
+using System.Collections.Generic;
 using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -11,11 +11,12 @@ using Xamarin.Forms.Xaml;
 namespace Autorentool_RMT.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ContentsPage : ContentPage
+    public partial class ContentsPage : ContentPage, ITooltipProvider
     {
 
         private ContentViewModel viewModel;
         private Session selectedSession;
+        private List<Tooltip> tooltips;
 
         #region Empty Constructor
         /// <summary>
@@ -56,6 +57,8 @@ namespace Autorentool_RMT.Views
         {
             try
             {
+                GenerateTooltips();
+
                 if (selectedSession == null)
                 {
                     await viewModel.OnLoadAllMediaItems();
@@ -64,6 +67,7 @@ namespace Autorentool_RMT.Views
                     SelectContentViewModel selectContentViewModel = viewModel as SelectContentViewModel;
                     selectContentViewModel.OnFilter();
                 }
+
             }
             catch (Exception)
             {
@@ -322,6 +326,82 @@ namespace Autorentool_RMT.Views
                     await Launcher.OpenAsync(hyperlink);
                 }
             }
+        }
+        #endregion
+
+        #region DisplayTooltip
+        /// <summary>
+        /// Displays the previous generated Tooltips in the TooltipPopup.
+        /// </summary>
+        public void DisplayTooltip()
+        {
+            Navigation.ShowPopup(new TooltipPopup(tooltips));
+        }
+        #endregion
+
+        #region GenerateTooltips
+        /// <summary>
+        /// Generates tooltips and adds them to the Tooltip-list.
+        /// </summary>
+        public void GenerateTooltips()
+        {
+            ResourceDictionary resourceDictionary = Application.Current.Resources;
+
+            Tooltip searchMediaItemTooltip = new Tooltip()
+            {
+                Title = "Inhalte suchen",
+                Description = "In diesem Suchfeld können Sie alle der App hinzugefügten multimedialen Inhalte durchsuchen. "
+                              + "Mit den Auswahlboxen rechts daneben können Sie auf Wunsch bei der Suche einen Filter setzen.",
+                Icon = resourceDictionary["FullScreenIcon"].ToString()
+            };
+
+            Tooltip deleteAllMediaItemTooltip = new Tooltip()
+            {
+                Title = "Alle multimediale Inhalte löschen",
+                Description = "Durch diesen Button können Sie alle der App hinzugefügten multimediale Inhalte löschen," 
+                              + " sofern Sie über das entsprechende Passwort verfügen.",
+                Icon = resourceDictionary["DeleteIcon"].ToString()
+            };
+
+            Tooltip pickCSVFileTooltip = new Tooltip()
+            {
+                Title = "Lebensthemen und Metainformationen über CSV-Datei hinzufügen",
+                Description = "Durch diesen Button können Sie Lebensthemen und Metainformation den Medienbausteinen hinzufügen," 
+                              +" wenn deren Dateinamen in der CSV-Datei vorhanden sind."
+                              + "Hierzu können Sie diese Datei von Ihrem Computer auswählen und der App hinzufügen.",
+                Icon = resourceDictionary["ExportIcon"].ToString()
+            };
+
+            Tooltip addMediaItemsTooltip = new Tooltip()
+            {
+                Title = "Multimediale Inhalte hinzufügen",
+                Description = "Durch diesen Button können Sie multimediale Inhalte von Ihrem Computer auswählen und der App hinzufügen.",
+                Icon = resourceDictionary["ImportIcon"].ToString()
+            };
+
+            Tooltip pullMediaItemsFromBackendTooltip = new Tooltip()
+            {
+                Title = "Multimediale Inhalte aus dem Online-Content-Pool hinzufügen",
+                Description = "Durch diesen Button können Sie multimediale Inhalte aus unserem Online-Content-Pool hinzufügen.",
+                Icon = resourceDictionary["ImportFromBackendIcon"].ToString()
+            };
+
+            Tooltip assignLifethemesTooltip = new Tooltip()
+            {
+                Title = "Lebensthemen zuweisen",
+                Description = "Durch diesen Button können Sie den Inhalten neue oder bestehende Lebensthemen zuweisen.",
+                Icon = resourceDictionary["EditIcon"].ToString()
+            };
+
+            tooltips = new List<Tooltip>()
+            {
+                searchMediaItemTooltip,
+                deleteAllMediaItemTooltip,
+                pickCSVFileTooltip,
+                addMediaItemsTooltip,
+                pullMediaItemsFromBackendTooltip,
+                assignLifethemesTooltip
+            };
         }
         #endregion
 

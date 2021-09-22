@@ -1,11 +1,6 @@
 ﻿using System;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
-using System.IO;
-using Autorentool_RMT.Models;
-using Autorentool_RMT.Views;
 using Autorentool_RMT.ViewModels;
-using System.Collections.ObjectModel;
 
 namespace Autorentool_RMT
 {
@@ -37,7 +32,7 @@ namespace Autorentool_RMT
 
             MainPage = new NavigationPage(new MainPage());
 
-            this.BindingContext = new AppViewModel();
+            BindingContext = new AppViewModel();
         }
 
         protected override void OnStart()
@@ -100,12 +95,24 @@ namespace Autorentool_RMT
         //    Console.WriteLine(((NavigationPage)Application.Current.MainPage).CurrentPage.Navigation.NavigationStack);
         //}
 
-        void NavbarButton_Clicked(System.Object sender, System.EventArgs e)
+        void NavbarButton_Clicked(object sender, EventArgs e)
         {
             //Console.WriteLine(((NavigationPage)Application.Current.MainPage).Navigation.NavigationStack.Count);
 
             int currentPage = ((NavigationPage)Application.Current.MainPage).Navigation.NavigationStack.Count - 1;
             Console.WriteLine(((NavigationPage)Application.Current.MainPage).Navigation.NavigationStack[currentPage].Title);
+        }
+
+        private void OnTooltipButtonClicked(object sender, EventArgs e)
+        {
+            int currentPageIndex = Current.MainPage.Navigation.NavigationStack.Count - 1;
+
+            Page currentPage = Current.MainPage.Navigation.NavigationStack[currentPageIndex];
+            
+            if(currentPage is ITooltipProvider iTooltipProvider)
+            {
+                iTooltipProvider.DisplayTooltip();
+            }
         }
     }
 }

@@ -104,7 +104,7 @@
                                 <!--<Button Text=" ? " BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" />
                                 <Button Text=" MISC " BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" />
                                 <Button Text=" X " BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" />-->
-                                <Button Text=" ℹ BEDIENUNGSINFOS " BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" />
+                                <Button Text=" ℹ BEDIENUNGSINFOS " Clicked="OnTooltipButtonClicked"  BackgroundColor="#1d4064" TextColor="White" BorderRadius="0" BorderWidth="2" BorderColor="White" />
 
                             </StackLayout>
 
@@ -131,6 +131,7 @@
             <x:String x:Key="ExportIcon">↧</x:String>
             <x:String x:Key="ImportFromBackendIcon">☁️</x:String>
             <x:String x:Key="CompletedText">&#10003; Fertig</x:String>
+            <x:String x:Key="FullScreenIcon">🔍</x:String>
 
         </ResourceDictionary>
 

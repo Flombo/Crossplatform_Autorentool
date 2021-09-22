@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="Autorentool_RMT.Views.Popups.TooltipPopup"
+             Size="600, 500"
+             IsLightDismissEnabled="True">
+
+    <Grid BackgroundColor="White">
+        <Label Text="Tooltip" 
+               HorizontalOptions="CenterAndExpand"
+               VerticalOptions="CenterAndExpand"
+               FontSize="Medium" 
+               Grid.Row="0"
+               Grid.Column="0"
+               Grid.ColumnSpan="2"/>
+        <CollectionView ItemsSource="{Binding Tooltips}" 
+                            ItemsLayout="VerticalGrid, 1" 
+                            Grid.ColumnSpan="2"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Grid.RowSpan="3"
+                            VerticalOptions="FillAndExpand">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+
+                    <StackLayout Orientation="Vertical" 
+                                 Padding="2">
+                        <Label Text="{Binding Title}" 
+                               FontSize="Small" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="CenterAndExpand" 
+                               VerticalOptions="CenterAndExpand"/>
+                        <Image Source="{Binding ImageIcon}" 
+                               IsVisible="{Binding HasImageSource}"
+                               HeightRequest="120"
+                               WidthRequest="120"
+                               HorizontalOptions="CenterAndExpand"/>
+                        <Label Text="{Binding Icon}"
+                               IsVisible="{Binding HasIcon}"
+                               FontSize="Small"
+                               HorizontalOptions="CenterAndExpand"/>
+                        <Label Text="{Binding Description}"
+                               FontSize="Small"
+                               LineBreakMode="WordWrap"
+                               HorizontalOptions="CenterAndExpand"
+                               VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        
+        <Button Text="Schließen" 
+                BackgroundColor="#0091EA" 
+                Clicked="OnCloseButtonClicked"
+                TextColor="White" 
+                Grid.Row="4" 
+                Grid.Column="1"/>
+    </Grid>
+
+</xct:Popup>

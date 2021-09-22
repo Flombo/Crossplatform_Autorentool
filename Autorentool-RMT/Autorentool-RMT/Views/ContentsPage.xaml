@@ -201,7 +201,7 @@
                         </Label>
                     </ScrollView>
 
-                    <Button Text="🔍" 
+                    <Button Text="{StaticResource FullScreenIcon}" 
                             FontSize="Small" 
                             Grid.Row="5"
                             BackgroundColor="Black"

@@ -10,12 +10,13 @@ using Xamarin.Forms.Xaml;
 namespace Autorentool_RMT.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class CreateOrEditResidentPage : ContentPage
+    public partial class CreateOrEditResidentPage : ContentPage, ITooltipProvider
     {
 
         private CreateOrEditResidentViewModel createOrEditResidentViewModel;
         private Resident selectedResident;
         private Session selectedSession;
+        private List<Tooltip> tooltips;
 
         #region Constructor for creating a resident
         public CreateOrEditResidentPage()
@@ -48,6 +49,8 @@ namespace Autorentool_RMT.Views
         protected override void OnAppearing()
         {
             base.OnAppearing();
+
+            GenerateTooltips();
 
             if (selectedResident != null)
             {
@@ -247,6 +250,129 @@ namespace Autorentool_RMT.Views
                     "Schließen"
                     );
             }
+        }
+        #endregion
+
+        #region DisplayTooltip
+        /// <summary>
+        /// Displays TooltipPopup with the previous generated Tooltips.
+        /// </summary>
+        public void DisplayTooltip()
+        {
+            Navigation.ShowPopup(new TooltipPopup(tooltips));
+        }
+        #endregion
+
+        #region GenerateTooltips
+        /// <summary>
+        /// Generates the Lifethemes-, Session- and ProfilePicTooltips and adds them to the Tooltip-list.
+        /// </summary>
+        public void GenerateTooltips()
+        {
+            ResourceDictionary resourceDictionary = Application.Current.Resources;
+            tooltips = new List<Tooltip>();
+
+            tooltips.AddRange(GenerateLifethemesTooltip(resourceDictionary));
+            tooltips.AddRange(GenerateSessionTooltips(resourceDictionary));
+            tooltips.AddRange(GenerateProfilePicTooltips(resourceDictionary));
+        }
+        #endregion
+
+        #region GenerateLifethemesTooltips
+        /// <summary>
+        /// Generates and returns the LifethemesTooltips for deleting, creating and assigning Lifethemes to the resident.
+        /// </summary>
+        /// <param name="resourceDictionary"></param>
+        /// <returns></returns>
+        private List<Tooltip> GenerateLifethemesTooltip(ResourceDictionary resourceDictionary)
+        {
+            Tooltip deleteLifethemesTooltip = new Tooltip()
+            {
+                Title = "Lebensthema löschen",
+                Description = "Durch diesen Button können Sie ausgewählte Lebensthemen des Bewohners/ der Bewohnerin löschen.",
+                Icon = resourceDictionary["DeleteIcon"].ToString(),
+            };
+
+            Tooltip openLifethemesPopupTooltip = new Tooltip()
+            {
+                Title = "Lebensthemen zuweisen",
+                Description = "Durch diesen Button können Sie Lebensthemen erstellen und diese dem Bewohner/ der Bewohnerin zuweisen.",
+                Icon = resourceDictionary["EditIcon"].ToString(),
+            };
+
+            return new List<Tooltip>()
+            {
+                deleteLifethemesTooltip,
+                openLifethemesPopupTooltip
+            };
+        }
+        #endregion
+
+        #region GenerateSessionTooltips
+        /// <summary>
+        /// Generates and returns the SessionTooltips for starting, deleting and editing a session.
+        /// </summary>
+        /// <param name="resourceDictionary"></param>
+        /// <returns></returns>
+        private List<Tooltip> GenerateSessionTooltips(ResourceDictionary resourceDictionary)
+        {
+            Tooltip startSessionTooltip = new Tooltip()
+            {
+                Title = "Sitzungen abspielen",
+                Description = "Durch diesen Button können Sie die mit dem Bewohner/ der Bewohnerin verknüpften Sitzungen abspielen.",
+                Icon = resourceDictionary["PlayIcon"].ToString(),
+            };
+
+            Tooltip deleteSessionTooltip = new Tooltip()
+            {
+                Title = "Sitzungen löschen",
+                Description = "Durch diesen Button können Sie die dem Bewohner/ der Bewohnerin zugeordneten Sitzungen löschen.",
+                Icon = resourceDictionary["DeleteIcon"].ToString(),
+            };
+
+            Tooltip editSessionTooltip = new Tooltip()
+            {
+                Title = "Sitzungen bearbeiten",
+                Description = "Durch diesen Button können Sie die Sitzungen des Bewohners/ der Bewohnerin bearbeiten.",
+                Icon = resourceDictionary["EditIcon"].ToString(),
+            };
+
+            return new List<Tooltip>()
+            {
+                startSessionTooltip,
+                deleteSessionTooltip,
+                editSessionTooltip
+            };
+        }
+        #endregion
+
+        #region GenerateProfilePicTooltips
+        /// <summary>
+        /// Generates and returns the ProfilePicTooltips for adding a profile pic and resetting it.
+        /// </summary>
+        /// <param name="resourceDictionary"></param>
+        /// <returns></returns>
+        private List<Tooltip> GenerateProfilePicTooltips(ResourceDictionary resourceDictionary)
+        {
+            Tooltip residentProfilePicTooltip = new Tooltip()
+            {
+                Title = "Profilbild erstellen",
+                Description = "Durch diesen Button können Sie ein Profilbild für den Bewohner/ die Bewohnerin von ihrem Gerät auswählen oder es ändern.",
+                Icon = resourceDictionary["EditIcon"].ToString(),
+            };
+
+            Tooltip resetProfilePicTooltip = new Tooltip()
+            {
+                Title = "Profilbild zurücksetzen",
+                Description = "Durch diesen Button können Sie ein Profilbild für den Bewohner/ die Bewohnerin zurücksetzen",
+                Icon = resourceDictionary["DeleteIcon"].ToString()
+            };
+
+            return new List<Tooltip>()
+            {
+                residentProfilePicTooltip,
+                resetProfilePicTooltip
+            };
         }
         #endregion
 
