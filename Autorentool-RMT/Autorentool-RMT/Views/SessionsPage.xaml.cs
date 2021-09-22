@@ -4,6 +4,7 @@ using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
 using Autorentool_RMT.ViewModels;
 using Autorentool_RMT.Views.Popups;
 using System;
+using System.Collections.Generic;
 using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -11,11 +12,12 @@ using Xamarin.Forms.Xaml;
 namespace Autorentool_RMT.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class SessionsPage : ContentPage
+    public partial class SessionsPage : ContentPage, ITooltipProvider
     {
 
         private SessionViewModel sessionViewModel;
         private Session selectedSession;
+        private List<Tooltip> tooltips;
 
         public SessionsPage()
         {
@@ -28,6 +30,7 @@ namespace Autorentool_RMT.Views
         #region OnAppearing
         protected override async void OnAppearing()
         {
+            GenerateTooltips();
             await sessionViewModel.OnLoadAllSessions();
         }
         #endregion
@@ -258,6 +261,88 @@ namespace Autorentool_RMT.Views
                     "Schließen"
                     );
             }
+        }
+        #endregion
+
+        #region DisplayTooltip
+        /// <summary>
+        /// Displays TooltipPopup with the generated Tooltips.
+        /// </summary>
+        public void DisplayTooltip()
+        {
+            Navigation.ShowPopup(new TooltipPopup(tooltips));
+        }
+        #endregion
+
+        #region GenerateTooltips
+        /// <summary>
+        /// Generates the Tooltips for importing, exporting, creating, deleting, starting and editing sessions as well as a Tooltip for the CollectionView and adds them to the Tooltips-list
+        /// </summary>
+        public void GenerateTooltips()
+        {
+            ResourceDictionary resourceDictionary = Application.Current.Resources;
+
+            Tooltip importSessionTooltip = new Tooltip()
+            {
+                Title = "Sitzungen importieren",
+                Description = "Durch diesen Button können Sie bereits exportierte Sitzungen aus einem Ordner importieren.",
+                Icon = resourceDictionary["ImportIcon"].ToString()
+            };
+
+            Tooltip exportSessionTooltip = new Tooltip()
+            {
+                Title = "Sitzungen exportieren",
+                Description = "Durch diesen Button können Sie die Sitzungen in einer Datei auf Ihrem Computer oder an einen externen Speicherort (z.B. USB-Stick) exportieren.",
+                Icon = resourceDictionary["ExportIcon"].ToString()
+            };
+
+            Tooltip sessionListTooltip = new Tooltip()
+            {
+                Title = "Liste der Sitzungen",
+                Description = "In dieser Liste sehen Sie alle bisher erstellten oder importierten Sitzungen. "
+                              +"Um neue Inhaltsbausteine in die Sitzung hinzuzufügen oder zu löschen," 
+                              +" wählen Sie eine Sitzung aus und klicken auf den Button SITZUNG BEARBEITEN.",
+                Icon = ""
+            };
+
+            Tooltip editSessionTooltip = new Tooltip()
+            {
+                Title = "Sitzung bearbeiten",
+                Description = "Durch diesen Button können Sie die ausgewählte Sitzung bearbeiten und die Reihenfolge der Inhalte verändern.",
+                Icon = resourceDictionary["EditIcon"].ToString()
+            };
+
+            Tooltip startSessionTooltip = new Tooltip()
+            {
+                Title = "Sitzungen abspielen",
+                Description = "Durch diesen Button können Sie die ausgewählte Sitzung abpielen (und am Ende bewerten, falls Sie die Sitzung einem Bewohner zuordnen).",
+                Icon = resourceDictionary["PlayIcon"].ToString()
+            };
+
+            Tooltip deleteSessionTooltip = new Tooltip()
+            {
+                Title = "Sitzung löschen",
+                Description = "Durch diesen Button können Sie die ausgewählte Sitzung löschen.",
+                Icon = resourceDictionary["DeleteIcon"].ToString()
+            };
+
+            Tooltip addSessionTooltip = new Tooltip()
+            {
+                Title = "Sitzung hinzufügen",
+                Description = "Durch diesen Button können Sie eine Sitzung hinzufügen.",
+                Icon = resourceDictionary["AddIcon"].ToString()
+            };
+
+            tooltips = new List<Tooltip>()
+            {
+                importSessionTooltip,
+                exportSessionTooltip,
+                sessionListTooltip,
+                editSessionTooltip,
+                startSessionTooltip,
+                deleteSessionTooltip, 
+                addSessionTooltip
+            };
         }
         #endregion
 

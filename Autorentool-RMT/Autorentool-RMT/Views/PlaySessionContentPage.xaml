@@ -72,16 +72,17 @@
                 Grid.Column="0" 
                 Grid.Row="10" 
                 Grid.ColumnSpan="1" >
-                <Button Text="&#63;" 
+                <Button Text="{StaticResource TooltipIcon}" 
                         FontAttributes="Bold" 
                         FontSize="Subtitle" 
                         BackgroundColor="LightGray" 
                         HorizontalOptions="StartAndExpand"
+                        Clicked="OnTooltipButtonClicked"
                         HeightRequest="50"
                         WidthRequest="50"/>
                 <StackLayout Orientation="Horizontal" 
                              IsVisible="{Binding IsNotesPanelVisible}">
-                    <Button Text="ℹ️"
+                    <Button Text="{StaticResource InfoIcon}"
                             FontSize="Subtitle"
                             Clicked="OnNotesButtonClicked" 
                             BackgroundColor="LightGray"
@@ -96,20 +97,20 @@
                         <Label Text="{Binding SelectedMediaItemNotes}"/>
                     </StackLayout>
                 </StackLayout>
-                <Button Text="&#9198;"
+                <Button Text="{StaticResource PreviousElementIcon}"
                         IsVisible="{Binding IsPreviousItemButtonVisible}"
                         FontAttributes="Bold" 
                         FontSize="Subtitle"
                         Command="{Binding PreviousItemButtonClicked}"
                         BackgroundColor="LightGray" 
                         HorizontalOptions="StartAndExpand"/>
-                <Button Text="&#10060;" 
+                <Button Text="{StaticResource CloseIcon}" 
                         FontAttributes="Bold" 
                         FontSize="Subtitle"
                         Clicked="OnCloseSessionClicked"
                         BackgroundColor="LightGray" 
                         HorizontalOptions="StartAndExpand"/>
-                <Button Text="&#9197;" 
+                <Button Text="{StaticResource NextElementIcon}" 
                         FontAttributes="Bold" 
                         FontSize="Subtitle" 
                         IsVisible="{Binding IsNextItemButtonVisible}"

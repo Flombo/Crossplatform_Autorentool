@@ -269,7 +269,7 @@
 
                                 <StackLayout Orientation="Horizontal" Spacing="0">
                                     <Label 
-                                        Text="🔗" 
+                                        Text="{StaticResource TagIcon}" 
                                         FontAttributes="Bold"
                                         VerticalOptions="CenterAndExpand"
                                         FontSize="Subtitle"/>

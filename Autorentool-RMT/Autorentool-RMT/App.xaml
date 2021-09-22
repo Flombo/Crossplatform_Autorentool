@@ -132,6 +132,13 @@
             <x:String x:Key="ImportFromBackendIcon">☁️</x:String>
             <x:String x:Key="CompletedText">&#10003; Fertig</x:String>
             <x:String x:Key="FullScreenIcon">🔍</x:String>
+            <x:String x:Key="AddIcon">&#43;</x:String>
+            <x:String x:Key="CloseIcon">&#10060;</x:String>
+            <x:String x:Key="NextElementIcon">&#9197;</x:String>
+            <x:String x:Key="PreviousElementIcon">&#9198;</x:String>
+            <x:String x:Key="InfoIcon">ℹ️</x:String>
+            <x:String x:Key="TooltipIcon">&#63;</x:String>
+            <x:String x:Key="TagIcon">🔗</x:String>
 
         </ResourceDictionary>
 
