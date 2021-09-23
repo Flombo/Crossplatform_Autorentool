@@ -2,7 +2,6 @@
 using SQLite;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Autorentool_RMT.Services.DBHandling

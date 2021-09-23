@@ -88,6 +88,66 @@ namespace Autorentool_RMT.Services.DBHandling
         }
         #endregion
 
+        #region UpdateHashAndPathFields
+        /// <summary>
+        /// Sets the fields hash, path and thumbnail_path where the id equals the given id.
+        /// Is used while pulling MediaItems from backend and a new file was created for an existing MediaItem.
+        /// </summary>
+        /// <param name="mediaItemId"></param>
+        /// <param name="hash"></param>
+        /// <param name="path"></param>
+        /// <param name="thumbnailPath"></param>
+        /// <returns></returns>
+        public static async Task UpdateHashAndPathFields(int mediaItemId, string hash, string path, string thumbnailPath, string notes)
+        {
+            SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
+
+            await sQLiteAsyncConnection.ExecuteAsync("UPDATE Mediaitems SET hash = ?, path = ?, thumbnail_path = ?, notes = ? WHERE id == ?", hash, path, thumbnailPath, notes, mediaItemId);
+        }
+        #endregion
+
+        #region UpdateMediaItem
+        /// <summary>
+        /// Updates the fields name, backendMediaItemId and notes of a MediaItem by the given parameters
+        /// </summary>
+        /// <param name="mediaItem"></param>
+        /// <returns></returns>
+        public static async Task UpdateMediaItem(
+            int id,
+            string name,
+            int backendMediaItemId,
+            string notes
+            )
+        {
+            try
+            {
+                SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
+
+                await sQLiteAsyncConnection.ExecuteAsync("UPDATE Mediaitems SET notes = ?, name = ?, backend_media_item_id = ? WHERE id == ?", notes, name, backendMediaItemId, id);
+
+            }
+            catch (Exception exc)
+            {
+                throw exc;
+            }
+        }
+        #endregion
+
+        #region GetMediaItemByBackendMediaItemId
+        /// <summary>
+        /// Returns a MediaItem if it's BackendMediaItemId equals the given parameter.
+        /// Else null will be returned.
+        /// </summary>
+        /// <param name="backendMediaItemId"></param>
+        /// <returns></returns>
+        public static async Task<MediaItem> GetMediaItemByBackendMediaItemId(int backendMediaItemId)
+        {
+            SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
+
+            return await sQLiteAsyncConnection.Table<MediaItem>().Where(mediaItem => mediaItem.BackendMediaItemId == backendMediaItemId).FirstOrDefaultAsync();
+        }
+        #endregion
+
         #region GetID
         /// <summary>
         /// Returns the ID of a MediaItem by the given name.

@@ -29,7 +29,7 @@ namespace Autorentool_RMT.Models
         public string Notes { get; set; }
         [Ignore]
         public List<Lifetheme> Lifethemes { get; set; }
-        [Ignore]
+        [Column("backend_media_item_id"), NotNull]
         public int BackendMediaItemId { get; set; }
         public int Position { get; set; }
         [Ignore]
@@ -49,18 +49,33 @@ namespace Autorentool_RMT.Models
         /// <param name="id"></param>
         /// <param name="name"></param>
         /// <param name="filetype"></param>
+        /// <param name="hash"></param>
         /// <param name="path"></param>
+        /// <param name="thumbnailPath"></param>
         /// <param name="notes"></param>
         /// <param name="backendMediaItemId"></param>
-        public MediaItem(int id, string name, string filetype, string hash, string path, string notes, int backendMediaItemId)
+        /// <param name="position"></param>
+        public MediaItem(
+            int id,
+            string name,
+            string filetype,
+            string hash,
+            string path,
+            string thumbnailPath,
+            string notes,
+            int backendMediaItemId,
+            int position
+            )
         {
             Id = id;
             Name = name;
             FileType = filetype;
             Path = path;
+            ThumbnailPath = thumbnailPath;
             Notes = notes;
             Hash = hash;
             BackendMediaItemId = backendMediaItemId;
+            Position = position;
         }
         #endregion
 

@@ -99,6 +99,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UWPDirectoryPicker.cs" />
+    <Compile Include="UWPSerialNumberRetriever.cs" />
     <Compile Include="UWPSessionExporter.cs" />
     <Compile Include="UWPSessionImporter.cs" />
   </ItemGroup>

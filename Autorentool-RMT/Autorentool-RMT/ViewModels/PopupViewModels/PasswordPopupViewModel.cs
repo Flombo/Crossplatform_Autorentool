@@ -6,13 +6,27 @@
         private bool isAcceptButtonEnabled;
         private string password;
         private string acceptButtonBackgroundColour;
+        private string title;
 
-        public PasswordPopupViewModel()
+        public PasswordPopupViewModel(string title)
         {
             isAcceptButtonEnabled = false;
             password = "";
             AcceptButtonBackgroundColour = "LightGray";
+            this.title = title;
         }
+
+        #region Title
+        public string Title
+        {
+            get => title;
+            set
+            {
+                title = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
 
         #region SetAcceptButtonBackgroundColour
         private void SetAcceptButtonBackgroundColour()

@@ -60,12 +60,13 @@
                         
                         <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand">
                             <Button Text="{StaticResource ImportFromBackendIcon}" 
-                                    IsEnabled="False" 
+                                    IsEnabled="{Binding IsImportFromBackendButtonVisible}" 
                                     Padding="5" 
                                     HeightRequest="50"
                                     WidthRequest="{OnPlatform UWP=45, Android=35}"
-                                    BackgroundColor="Green"
+                                    BackgroundColor="{Binding ImportFromBackendButtonBackgroundColour}"
                                     FontSize="Subtitle"
+                                    Clicked="OnImportMediaItemsFromBackendButtonClicked"
                                     FontAttributes="Bold"/>
                             <Button Text="{StaticResource ExportIcon}"
                                     HeightRequest="50"

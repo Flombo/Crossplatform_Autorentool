@@ -10,10 +10,10 @@ namespace Autorentool_RMT.Views.Popups
         
         private PasswordPopupViewModel passwordPopupViewModel;
 
-        public PasswordPopup()
+        public PasswordPopup(string title)
         {
             InitializeComponent();
-            passwordPopupViewModel = new PasswordPopupViewModel();
+            passwordPopupViewModel = new PasswordPopupViewModel(title);
             BindingContext = passwordPopupViewModel;
         }
 

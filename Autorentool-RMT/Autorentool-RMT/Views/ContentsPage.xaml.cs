@@ -1,8 +1,13 @@
 ﻿using Autorentool_RMT.Models;
+using Autorentool_RMT.Services.BackendCommunication;
+using Autorentool_RMT.Services.DBHandling;
+using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
 using Autorentool_RMT.ViewModels;
 using Autorentool_RMT.Views.Popups;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -14,9 +19,12 @@ namespace Autorentool_RMT.Views
     public partial class ContentsPage : ContentPage, ITooltipProvider
     {
 
+        #region Attributes
         private ContentViewModel viewModel;
         private Session selectedSession;
         private List<Tooltip> tooltips;
+        private BackendPullMediaItems backendPullMediaItems;
+        #endregion
 
         #region Empty Constructor
         /// <summary>
@@ -29,6 +37,7 @@ namespace Autorentool_RMT.Views
             NavigationPage.SetHasNavigationBar(this, false);
             viewModel = new ContentManagementViewModel();
             BindingContext = viewModel;
+            InitBackendCommunicationModules();
         }
         #endregion
 
@@ -73,6 +82,46 @@ namespace Autorentool_RMT.Views
             {
                 await DisplayAlert("Fehler beim Laden der Medieninhalte", "Ein Fehler trat auf beim Laden der Medieninhalte", "Schließen");
             }
+        }
+        #endregion
+
+        #region LoadAllMediaItems
+        /// <summary>
+        /// Loads all MediaItems in ContentViewModel.
+        /// Is used by the BackendPullMediaItems-class after pulling or deleting MediaItems and Lifethemes.
+        /// </summary>
+        /// <returns></returns>
+        public async Task LoadAllMediaItems()
+        {
+            await viewModel.OnLoadAllMediaItems();
+        }
+        #endregion
+
+        #region SetProgressElements
+        /// <summary>
+        /// Sets the progressbar progress and the status text.
+        /// Is used by the BackendPullMediaItems-class while deleting and pulling MediaItems and Lifethemes.
+        /// </summary>
+        /// <param name="currentProgress"></param>
+        /// <param name="maxProgress"></param>
+        /// <param name="stopwatch"></param>
+        public void SetProgressElements(int currentProgress, int maxProgress, Stopwatch stopwatch)
+        {
+            ContentManagementViewModel contentManagementViewModel = viewModel as ContentManagementViewModel;
+            contentManagementViewModel.SetProgressElements(currentProgress, maxProgress, stopwatch);
+        }
+        #endregion
+
+        #region SetProgressElementsVisibility
+        /// <summary>
+        /// Sets the visibility of the progressbar and the progressring.
+        /// Is used by the BackendPullMediaItems-class while deleting and pulling MediaItems and Lifethemes.
+        /// </summary>
+        /// <param name="isProgressBarVisible"></param>
+        public void SetProgressElementsVisibility(bool isProgressBarVisible)
+        {
+            viewModel.IsActivityIndicatorRunning = isProgressBarVisible;
+            viewModel.IsProgressBarVisible = isProgressBarVisible;
         }
         #endregion
 
@@ -153,6 +202,14 @@ namespace Autorentool_RMT.Views
         #endregion
 
         #region OnDeleteAllMediaItemsButtonClicked
+        /// <summary>
+        /// Deletes all MediaItems.
+        /// First an dialog will be prompted, where the user can choose if he want to really delete all MediaItems.
+        /// After that he has to enter the right password.
+        /// If an exception happens, an error prompt will be displayed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void OnDeleteAllMediaItemsButtonClicked(object sender, EventArgs e)
         {
             try
@@ -166,7 +223,7 @@ namespace Autorentool_RMT.Views
 
                 while (shouldDeleteAllMediaItems)
                 {
-                    PasswordPopup.Result result = await Navigation.ShowPopupAsync(new PasswordPopup());
+                    PasswordPopup.Result result = await Navigation.ShowPopupAsync(new PasswordPopup("Passwort fürs Löschen aller Inhalte"));
 
                     if(result != null)
                     {
@@ -382,7 +439,8 @@ namespace Autorentool_RMT.Views
             Tooltip pullMediaItemsFromBackendTooltip = new Tooltip()
             {
                 Title = "Multimediale Inhalte aus dem Online-Content-Pool hinzufügen",
-                Description = "Durch diesen Button können Sie multimediale Inhalte aus unserem Online-Content-Pool hinzufügen.",
+                Description = "Durch diesen Button können Sie multimediale Inhalte aus unserem Online-Content-Pool hinzufügen, "
+                              +"sofern Sie über das entsprechende Passwort verfügen.",
                 Icon = resourceDictionary["ImportFromBackendIcon"].ToString()
             };
 
@@ -397,11 +455,237 @@ namespace Autorentool_RMT.Views
             {
                 searchMediaItemTooltip,
                 deleteAllMediaItemTooltip,
+                pullMediaItemsFromBackendTooltip,
                 pickCSVFileTooltip,
                 addMediaItemsTooltip,
-                pullMediaItemsFromBackendTooltip,
                 assignLifethemesTooltip
             };
+        }
+        #endregion
+
+        #region InitBackendCommunicationModules
+        /// <summary>
+        /// Inits the helper-classes of the BackendPullMediaItems-class and it's clientWebSocket.
+        /// After that a request will be sent to the backend, that tells the app, if there are MediaItems for pulling.
+        /// If an exception was thrown, the ImportFromBackendButton will be disabled.
+        /// </summary>
+        private async void InitBackendCommunicationModules()
+        {
+            /*
+            * If previous page was the HomeView, the ContentView should check if new contents are available in online-content-pool.
+            * If this isn't the case, it shouldn't check for new contents, because the previous page was the SessionEditView.
+            * This eliminates waiting time in SessionEditView for checking if there are new contents available in ContentView.
+            */
+            //if (sQLiteController.GetAreBackendModulesEnabledField())
+                //Check if there are new mediaitems in backend to download and enable/disable ImportMediaFromBackendButton depending on result.
+                try
+                {
+                    backendPullMediaItems = new BackendPullMediaItems(this);
+                    await backendPullMediaItems.InitHelper();
+                    await backendPullMediaItems.InitWebSocket();
+                    viewModel.IsImportFromBackendButtonVisible = await backendPullMediaItems.ShouldDownloadMediaItemsFromBackend();
+                }
+                catch (Exception)
+                {
+                    viewModel.IsImportFromBackendButtonVisible = false;
+                }
+            /**}
+            else
+            {
+                ImportMediaFromBackendButton.IsEnabled = false;
+            }**/
+        }
+        #endregion
+
+        #region DisplayImportMediaFromBackendByPushDialog
+        /// <summary>
+        /// Displays an prompt for pulling MediaItems from backend and pulls them if the user accepts it.
+        /// Displays an error message if an error happens.
+        /// </summary>
+        public async void DisplayImportMediaFromBackendByPushDialog()
+        {
+            try
+            {
+                bool shouldDownloadMedia = await DisplayAlert(
+                    "Neue Medieninhalte aus dem Online-Content-Pool verfügbar",
+                    "Möchten Sie neue Medieninhalte aus dem Online-Content-Pool herunterladen?",
+                    "Herunterladen",
+                    "Abbrechen"
+                    );
+
+                if (shouldDownloadMedia)
+                {
+                    viewModel.IsImportFromBackendButtonVisible = await backendPullMediaItems.PullContentsFromBackend();
+                }
+
+            } catch(Exception)
+            {
+                DisplayImportBackendMediaItemsErrorPrompt();
+            }
+        }
+        #endregion
+
+        #region DisplayDeleteMediaViaDeleteCommand
+        /// <summary>
+        /// Displays an prompt for deleting MediaItems and deletes them, when the user accepts this action.
+        /// Displays an error prompt, when an exception occurs.
+        /// </summary>
+        /// <param name="appMediaItemIDs"></param>
+        public async void DisplayDeleteMediaViaDeleteCommand(List<int> appMediaItemIDs)
+        {
+            try
+            {
+                List<MediaItem> mediaItems = new List<MediaItem>();
+                string mediaItemsNames = "";
+
+                foreach (int appMediaItemID in appMediaItemIDs)
+                {
+                    MediaItem mediaItem = await MediaItemDBHandler.GetSingleMediaItem(appMediaItemID);
+
+                    if (mediaItem != null)
+                    {
+                        mediaItemsNames += mediaItem.Name + ", ";
+                        mediaItems.Add(mediaItem);
+                    }
+
+                }
+
+                bool shouldDeleteMediaItems = await DisplayAlert(
+                    "Ein Admin möchte Inhalte von Ihrem Gerät löschen",
+                    "Möchten Sie, dass folgende Inhalte gelöscht werden: '" + mediaItemsNames + "' ?",
+                    "Löschen",
+                    "Abbrechen"
+                    );
+
+                if (shouldDeleteMediaItems)
+                {
+                    await backendPullMediaItems.DeleteMediaItemsRetrievedByWebSocket(mediaItems);
+                }
+
+            } catch (Exception)
+            {
+                await DisplayAlert("Fehler beim Löschen der Inhalte", "Beim Löschen der Inhalte kam es zu einem Fehler", "Schließen");
+            }
+        }
+        #endregion
+
+        #region DisplayDeleteLifethemesViaDeleteCommandDialog
+        /// <summary>
+        /// Displays an prompt for deleting Lifethemes and deletes them, when the user confirms the action.
+        /// If an error occurs an error dialog will be prompted.
+        /// </summary>
+        /// <param name="lifethemeNames"></param>
+        public async void DisplayDeleteLifethemesViaDeleteCommandDialog(List<string> lifethemeNames)
+        {
+            try
+            {
+                string lifethemeNamesString = "";
+
+                foreach (string lifethemeName in lifethemeNames)
+                {
+                    lifethemeNamesString += lifethemeName + ", ";
+                }
+
+                bool shouldDeleteLifethemes = await DisplayAlert(
+                    "Ein Admin möchte Lebensthemen von Ihrem Gerät löschen",
+                    "Möchten Sie, dass folgende Lebensthemen gelöscht werden: '" + lifethemeNamesString + "' ?",
+                    "Löschen",
+                    "Abbrechen"
+                    );
+
+                if (shouldDeleteLifethemes)
+                {
+                    foreach (string lifethemeName in lifethemeNames)
+                    {
+                        int lifethemeId = await LifethemeDBHandler.GetLifethemeIDByName(lifethemeName);
+
+                        if (lifethemeId != -1)
+                        {
+                            await MediaItemLifethemesDBHandler.UnbindMediaItemLifethemesByLifethemeId(lifethemeId);
+                            await LifethemeDBHandler.DeleteLifetheme(lifethemeId);
+                        }
+                    }
+                }
+            } catch (Exception)
+            {
+                await DisplayAlert("Fehler beim Löschen der Lebensthemen", "Es trat ein Fehler auf beim Löschen der Lebensthemen", "Schließen");
+            }
+        }
+        #endregion
+
+        #region DisplayImportMediaFromBackendConnectionErrorDialog
+        /// <summary>
+        /// Displays an error prompt when the backend isn't reachable.
+        /// </summary>
+        public async void DisplayImportMediaFromBackendConnectionErrorDialog()
+        {
+            await DisplayAlert(
+                "Fehler beim Verbindungsaufbau zum Online-Content-Pool", 
+                "Es konnte keine Verbindung zum Online-Content-Pool hergestellt werden.", 
+                "Schließen"
+                );
+        }
+        #endregion
+
+        #region OnImportMediaItemsFromBackendButtonClicked
+        /// <summary>
+        /// Imports MediaItems from backend.
+        /// The user has to confirm the pulling process twice, by clicking on accept and by entering the password.
+        /// If an error happens, an error prompt will be displayed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void OnImportMediaItemsFromBackendButtonClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                bool shouldImportMediaItems = await DisplayAlert(
+                    "Medieninhalte durch Online-Content-Pool aktualisieren?",
+                    "Möchten Sie die aktuellen Inhalte aus unserem Content-Pool herunterladen?",
+                    "Alles klar!",
+                    "Abbrechen"
+                    );
+
+                while (shouldImportMediaItems)
+                {
+                    PasswordPopup.Result result = await Navigation.ShowPopupAsync(new PasswordPopup("Passwort zum Importieren von Medien aus unserem Online-Content-Pool"));
+
+                    if (result != null)
+                    {
+                        if (result.IsPasswordValid)
+                        {
+                            viewModel.IsImportFromBackendButtonVisible = await backendPullMediaItems.PullContentsFromBackend();
+                            
+                            shouldImportMediaItems = false;
+                        }
+                        else
+                        {
+                            shouldImportMediaItems = await DisplayAlert("Falsches Passwort!", "Das eingegebenen Passwort " + result.InsertedPassword + " ist leider falsch.", "Alles klar!", "Abbrechen");
+                        }
+                    }
+                    else
+                    {
+                        shouldImportMediaItems = false;
+                    }
+                }
+            } catch (Exception)
+            {
+                DisplayImportBackendMediaItemsErrorPrompt();
+            }
+        }
+        #endregion
+
+        #region DisplayImportBackendMediaItemsErrorPrompt
+        /// <summary>
+        /// Displays an error prompt, when the pulling of MediaItems from backend fails.
+        /// </summary>
+        private async void DisplayImportBackendMediaItemsErrorPrompt()
+        {
+            await DisplayAlert(
+                "Fehler beim Herunterladen von Medien aus dem Online-Content-Pool", 
+                "Ein Fehler trat auf beim Herunterladen der Medien aus dem Online-Content-Pool", 
+                "Schließen"
+                );
         }
         #endregion
 
