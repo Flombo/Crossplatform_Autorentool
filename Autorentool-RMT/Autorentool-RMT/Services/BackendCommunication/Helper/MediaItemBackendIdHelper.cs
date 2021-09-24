@@ -13,7 +13,7 @@ namespace Autorentool_RMT.Services.BackendCommunication.Helper
         }
 
         /// <summary>
-        /// sets appMediaItemID parameter in backend.
+        /// Sets appMediaItemID parameter in backend.
         /// Throws an exception if an error occurs.
         /// </summary>
         /// <param name="createdMediaItemId"></param>
@@ -23,11 +23,12 @@ namespace Autorentool_RMT.Services.BackendCommunication.Helper
             try
             {
                 string mediaItemIdJSON = JsonConvert.SerializeObject(
-                    (
-                        AppMediaItemID: createdMediaItemId,
-                        BackendMediaItemID: backendMediaItemId
-                    )
-                );
+                    new
+                    {
+                        AppMediaItemID = createdMediaItemId,
+                        BackendMediaItemID = backendMediaItemId
+                    }
+                    );
 
                 HttpResponseMessage response = await httpRequestHelper.SendRequestToBackend(mediaItemIdJSON, "http://127.0.0.1:8000/setappmediaitemid");
             }

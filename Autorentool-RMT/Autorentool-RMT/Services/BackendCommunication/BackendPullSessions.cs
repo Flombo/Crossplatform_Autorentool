@@ -1,78 +1,48 @@
-﻿using Newtonsoft.Json;
+﻿using Autorentool_RMT.Models;
+using Autorentool_RMT.Services.BackendCommunication.Helper;
+using Autorentool_RMT.Services.DBHandling;
+using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
+using Autorentool_RMT.Views;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
 using System.Net.Http;
+using System.Net.WebSockets;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Autorentool_RMT.Services.BackendCommunication
 {
-    class BackendPullSessions
+    public class BackendPullSessions
     {
-        /**
-        private HttpRequestHelper _httpRequestHelper;
-        private MessageWebSocket _webSocket;
-        private SQLiteController _sQLiteController;
-        private string _deviceIdentifier;
-        private MediaItemBackendIdHelper _mediaItemBackendIdHelper;
-        private SessionBackendIdHelper _sessionBackendIdHelper;
-        private ResidentBackendIdHelper _residentBackendIdHelper;
-        private SessionsView _sessionsView;
-        private BackendContentHelper _backendContentHelper;
 
+        #region Attributes
+        private HttpRequestHelper httpRequestHelper;
+        private ClientWebSocket clientWebSocket;
+        private string deviceIdentifier;
+        private MediaItemBackendIdHelper mediaItemBackendIdHelper;
+        private SessionBackendIdHelper sessionBackendIdHelper;
+        private SessionsPage sessionsPage;
+        private BackendContentHelper backendContentHelper;
+        #endregion
+
+        #region Constructor
         /// <summary>
         /// constructor of BackendPullSessions-Class
         /// </summary>
-        /// <param name="sessionsView">Class needs SessionsView instance for updating the UI with pulled sessions</param>
-        public BackendPullSessions(SessionsView sessionsView)
+        /// <param name="sessionsPage">Class needs SessionsView instance for updating the UI with pulled sessions</param>
+        public BackendPullSessions(SessionsPage sessionsPage)
         {
-            _sessionsView = sessionsView;
-            _sQLiteController = SQLiteController.GetInstance();
-            _deviceIdentifier = GetDeviceIdentifier();
-            _mediaItemBackendIdHelper = new MediaItemBackendIdHelper();
-            _sessionBackendIdHelper = new SessionBackendIdHelper();
-            _residentBackendIdHelper = new ResidentBackendIdHelper();
-            _httpRequestHelper = new HttpRequestHelper();
+            this.sessionsPage = sessionsPage;
+            deviceIdentifier = DeviceSerialNumberHelper.GetDeviceSerialNumber();
+            mediaItemBackendIdHelper = new MediaItemBackendIdHelper();
+            sessionBackendIdHelper = new SessionBackendIdHelper();
+            httpRequestHelper = new HttpRequestHelper();
         }
+        #endregion
 
-        ///<summary>
-        ///gets unique applicationID
-        ///</summary>
-        private Guid GetApplicationId()
-        {
-            EasClientDeviceInformation deviceInformation = new EasClientDeviceInformation();
-            Guid appId = deviceInformation.Id;
-
-            return appId;
-        }
-
-        ///<summary>
-        ///gets unique deviceID, if the device is able to generate the deviceID.
-        ///</summary>
-        private Guid GetDeviceId()
-        {
-            Guid deviceId = new Guid();
-            SystemIdentificationInfo systemId = SystemIdentification.GetSystemIdForPublisher();
-
-            if (systemId.Source != SystemIdentificationSource.None)
-            {
-                DataReader dataReader = DataReader.FromBuffer(systemId.Id);
-                deviceId = dataReader.ReadGuid();
-            }
-            return deviceId;
-        }
-
-        ///<summary>
-        ///builds deviceIdentifier => "serial number"
-        ///</summary>
-        private string GetDeviceIdentifier()
-        {
-            Guid appId = GetApplicationId();
-            Guid deviceId = GetDeviceId();
-            return Math.Abs(appId.GetHashCode() + deviceId.GetHashCode()).ToString(new CultureInfo("de-DE"));
-        }
-
+        #region InitHelper
         /// <summary>
         /// Inits helper classes HTTPRequestHelper, MediaItemBackendHelper, SessionBackendIdHelper and ResidentBackendIdHelper.
         /// If the process fails, the ImportSessionsFromBackendButton will be disabled
@@ -82,157 +52,201 @@ namespace Autorentool_RMT.Services.BackendCommunication
         {
             try
             {
-                await _httpRequestHelper.GetCSRFToken(_deviceIdentifier).ConfigureAwait(true);
-                await _mediaItemBackendIdHelper.Init(_deviceIdentifier).ConfigureAwait(true);
-                await _sessionBackendIdHelper.Init(_deviceIdentifier).ConfigureAwait(true);
-                await _residentBackendIdHelper.Init(_deviceIdentifier).ConfigureAwait(true);
-                _backendContentHelper = new BackendContentHelper(_mediaItemBackendIdHelper, _deviceIdentifier);
+                await httpRequestHelper.GetCSRFToken(deviceIdentifier).ConfigureAwait(true);
+                await mediaItemBackendIdHelper.Init(deviceIdentifier).ConfigureAwait(true);
+                await sessionBackendIdHelper.Init(deviceIdentifier).ConfigureAwait(true);
+                backendContentHelper = new BackendContentHelper(mediaItemBackendIdHelper, deviceIdentifier);
             }
             catch (Exception exc)
             {
-                _sessionsView.EnableOrDisableImportSessionsFromBackendButton(false);
+                throw exc;
             }
         }
+        #endregion
 
-        ///<summary>
-        ///Creates a websocket connection to backend websocketserver.
-        ///if connection is set, the websocket send first message with serialnumber and pulls new sessions
-        ///</summary>
+        #region InitWebSocket
+        /// <summary>
+        /// Creates a websocket connection to the backend websocketserver.
+        /// If the connection is set, the websocket sends a first message with the  serialnumber and pulls new contents
+        /// </summary>
+        /// <returns></returns>
         public async Task InitWebSocket()
         {
-            _webSocket = new MessageWebSocket();
-            _webSocket.Control.MessageType = SocketMessageType.Utf8;
+            clientWebSocket = new ClientWebSocket();
 
             try
             {
-                //Before a connection to the backend websocket-server can be established,
-                //the eventhandlers for message-recieving and websocket-closing must be set.
-                _webSocket.MessageReceived += RecieveMessage;
-                _webSocket.Closed += WebSocket_Closed;
-                Task connectTask = _webSocket.ConnectAsync(new Uri("ws://141.28.44.195:8080")).AsTask();
-                TaskScheduler taskScheduler = TaskScheduler.Default;
+                await clientWebSocket.ConnectAsync(new Uri("ws://127.0.0.1:8080"), CancellationToken.None);
+                await SendFirstMessage();
 
-                String serialNumber = JsonConvert.SerializeObject(
-                    new
+                await Task.Factory.StartNew(async () =>
+                {
+                    while (!clientWebSocket.State.Equals(WebSocketState.Closed))
                     {
-                        command = "",
-                        serialNumber = _deviceIdentifier
+                        await RecieveMessage();
                     }
+                },
+                CancellationToken.None,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default
                 );
+            }
+            catch (Exception)
+            {
+                CloseWebSocket(WebSocketCloseStatus.InternalServerError);
+            }
+        }
+        #endregion
 
-                Task task = await connectTask.ContinueWith(_ => SendMessageUsingMessageWebSocket(serialNumber), taskScheduler).ConfigureAwait(false);
+        #region RecieveMessage
+        /// <summary>
+        /// Will be called, when a message was recieved by the clientWebSocket.
+        /// If the message equals own serial number and shouldPullSessions is true, the device needs to pull sessions from backend.
+        /// </summary>
+        /// <returns></returns>
+        private async Task RecieveMessage()
+        {
+            try
+            {
+
+                ArraySegment<byte> message = new ArraySegment<byte>(new byte[4096]);
+
+                await clientWebSocket.ReceiveAsync(message, CancellationToken.None);
+                string recievedMessage = Encoding.UTF8.GetString(message.Array);
+
+                if (recievedMessage.Length > 0)
+                {
+                    WebSocketMessage webSocketMessage = JsonConvert.DeserializeObject<WebSocketMessage>(recievedMessage);
+
+                    //check if this device should pull contents from backend 
+                    if (webSocketMessage.SerialNumber == deviceIdentifier && webSocketMessage.ShouldPullSessions)
+                    {
+                        sessionsPage.DisplayImportSessionsFromBackendByPushDialog();
+                    }
+
+                    //check if this device should delete mediaItems
+                    else if (webSocketMessage.AppSessionIDs.Count > 0)
+                    {
+                        sessionsPage.DisplayDeleteSessionsViaDeleteCommand(webSocketMessage.AppSessionIDs);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //if an exception was thrown, the websocket will be closed.
+                CloseWebSocket(WebSocketCloseStatus.InternalServerError);
+            }
+        }
+        #endregion
+
+        #region CloseWebSocket
+        /// <summary>
+        /// Closes the clientWebSocket.
+        /// </summary>
+        /// <param name="reason">reasons for closing the websocket</param>
+        public async void CloseWebSocket(WebSocketCloseStatus reason)
+        {
+            try
+            {
+                if (clientWebSocket != null && clientWebSocket.State != WebSocketState.Aborted)
+                {
+                    await clientWebSocket.CloseAsync(reason, null, CancellationToken.None);
+                    clientWebSocket.Dispose();
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }
+            catch (Exception)
+            {
+                clientWebSocket.Dispose();
+                clientWebSocket = null;
+            }
+        }
+        #endregion
+
+        #region SendFirstMessage
+        /// <summary>
+        /// Sends the first message to the WebSocket-server if the connection is open.
+        /// The first message must contain the serialNumber for further recognition of this device in the backend.
+        /// Throws an exception when an error happens.
+        /// </summary>
+        /// <returns></returns>
+        private async Task SendFirstMessage()
+        {
+            try
+            {
+                if (clientWebSocket.State.Equals(WebSocketState.Open))
+                {
+
+                    string serialNumber = JsonConvert.SerializeObject(
+                        new
+                        {
+                            command = "",
+                            serialNumber = deviceIdentifier
+                        }
+                        );
+
+                    await SendMessageUsingMessageWebSocket(serialNumber);
+                }
             }
             catch (Exception exc)
             {
-                Windows.Web.WebErrorStatus webErrorStatus = WebSocketError.GetStatus(exc.GetBaseException().HResult);
+                throw exc;
             }
         }
+        #endregion
 
-        ///<summary>
-        ///sends message over websocket.
-        ///Therefore a new Datawriter must be created to write to outputstream
-        ///</summary>
-        ///<param string="message">Message that contains an empty command and the device serial-number</param>
+        #region SendMessageUsingMessageWebSocket
+        /// <summary>
+        /// Sends message over websocket.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         private async Task SendMessageUsingMessageWebSocket(string message)
         {
-            using (var dataWriter = new DataWriter(_webSocket.OutputStream))
-            {
-                dataWriter.WriteString(message);
-                await dataWriter.StoreAsync();
-                dataWriter.DetachStream();
-            }
+            byte[] byteMessage = Encoding.UTF8.GetBytes(message);
+            ArraySegment<byte> messageAsArraySegment = new ArraySegment<byte>(byteMessage);
+
+            await clientWebSocket.SendAsync(messageAsArraySegment, WebSocketMessageType.Text, true, CancellationToken.None);
         }
+        #endregion
 
+        #region DeleteSessionsRetrievedByWebSocket
         /// <summary>
-        /// Will be called, when MessageReceived event of websocket is triggered.
-        /// Uses Datareader to read message string from MessageWebSocketMessageRecievedEventArgs
-        /// If the message equals own serial number and shouldPullSessions is true, the device needs to pull sessions from backend.
-        /// <summary>
-        /// <param name="sender">Instance of the MessageWebSocket Class</param>
-        /// <param name="args">Holder of the recieved message</param>
-        private void RecieveMessage(MessageWebSocket sender, MessageWebSocketMessageReceivedEventArgs args)
-            {
-                try
-                {
-                    using (DataReader dataReader = args.GetDataReader())
-                    {
-                        dataReader.UnicodeEncoding = UnicodeEncoding.Utf8;
-                        string message = dataReader.ReadString(dataReader.UnconsumedBufferLength);
-                        if (message.Length > 0)
-                        {
-                            WebSocketMessage webSocketMessage = JsonConvert.DeserializeObject<WebSocketMessage>(message);
-
-                            //check if this device should pull contents from backend 
-                            if (webSocketMessage.SerialNumber == _deviceIdentifier && webSocketMessage.ShouldPullSessions)
-                            {
-                                _sessionsView.DisplayImportSessionsFromBackendByPushDialog();
-                            }
-
-                            //check if this device should delete mediaItems
-                            else if (webSocketMessage.AppSessionIDs.Count > 0)
-                            {
-                                _sessionsView.DisplayDeleteSessionsViaDeleteCommand(webSocketMessage.AppSessionIDs);
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    //if an exception was thrown, the websockt will be closed.
-                    Windows.Web.WebErrorStatus webErrorStatus = WebSocketError.GetStatus(ex.GetBaseException().HResult);
-                    CloseWebsocket(1000, "normal closure");
-                }
-            }
-
-
-        /// <summary>
-        /// closes websocket.
-        /// </summary>
-        /// <param name="code">Status code for websocket closing</param>
-        /// <param name="reason">reasons for closing the websocket</param>
-        public void CloseWebsocket(ushort code, string reason)
-        {
-            if (_webSocket != null)
-            {
-                _webSocket.Close(code, reason);
-            }
-        }
-
-        /// <summary>
-        /// if dispose method of websocket is called, the websocket Closed-Event will be triggered.
-        /// this method acts as Handler and writes the reason for closing into Debug log.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        private void WebSocket_Closed(IWebSocket sender, WebSocketClosedEventArgs args)
-        {
-            Debug.WriteLine("WebSocket_Closed; Code: " + args.Code + ", Reason: \"" + args.Reason + "\"");
-        }
-
-        /// <summary>
-        /// deletes requested sessions from WebSocket
+        /// Deletes requested sessions from WebSocket
         /// </summary>
         /// <param name="mediaItems"></param>
         /// <returns></returns>
         public async Task DeleteSessionsRetrievedByWebSocket(List<Session> sessions)
         {
-            int sessionsDeleted = 0;
-            await _sessionsView.SetVisibiltyOfProgressBarAndRing(true).ConfigureAwait(true);
-            
-            foreach (Session session in sessions)
+            try
             {
-                await DeleteSession(session).ConfigureAwait(true);
-                sessionsDeleted++;
-                await _sessionsView.SetProgressBarStatusTxt(sessions.Count, sessionsDeleted).ConfigureAwait(true);
+                int sessionsDeleted = 0;
+                sessionsPage.SetVisibilityOfProgressBarAndRing(true);
+
+                foreach (Session session in sessions)
+                {
+                    await DeleteSession(session);
+                    sessionsDeleted++;
+                    sessionsPage.SetProgressBarStatusTxt(sessions.Count, sessionsDeleted);
+                }
+
+                await sessionsPage.LoadAllSessions();
+                sessionsPage.SetVisibilityOfProgressBarAndRing(false);
+
+            } catch(Exception exc)
+            {
+                throw exc;
             }
-
-            await _sessionsView.ResetSessionsAndReloadSessions().ConfigureAwait(true);
-            await _sessionsView.SetVisibiltyOfProgressBarAndRing(false).ConfigureAwait(true);
         }
+        #endregion
 
+        #region DeleteSession
         /// <summary>
-        /// deletes mediaItem by id.
-        /// deletes relationship between lifetheme and mediaItem, if there is one.
+        /// Deletes Session by given Session.
+        /// Deletes relationship between Lifethemes and MediaItems, if there is one.
         /// </summary>
         /// <param name="mediaItem"></param>
         /// <returns></returns>
@@ -243,335 +257,261 @@ namespace Autorentool_RMT.Services.BackendCommunication
                 if (session != null)
                 {
                     int sessionId = session.Id;
-                    _sQLiteController.DeleteOldSessionItems(sessionId);
 
-                    int residentId = _sQLiteController.GetResidentIdBySessionId(sessionId);
+                    await SessionMediaItemsDBHandler.UnbindSessionMediaItemsBySessionId(sessionId);
+                    await ResidentSessionsDBHandler.UnbindAllResidentSessionsBySessionId(sessionId);
+                    await SessionDBHandler.DeleteSession(sessionId);
 
-                    if (residentId != -1)
-                    {
-                        _sQLiteController.UnbindResidentSession(sessionId, residentId);
-                    }
-
-                    _sQLiteController.DeleteSession(sessionId);
-
-                    await _sessionsView.ResetSessionsAndReloadSessions().ConfigureAwait(true);
+                    await sessionsPage.LoadAllSessions();
                 }
             }
             catch (Exception exc)
             {
-                throw;
+                throw exc;
             }
         }
+        #endregion
 
+        #region PullSessionsFromBackend
         /// <summary>
         /// Pulls sessions, connected MediaItems and connected residents from Backend via HttpClient.
-        /// The serial number is required and sent as JSON
+        /// The serial number is required and sent as JSON.
+        /// If an exception was thrown, the progress elements will be closed, an error message will be displayed and the ImportSessionsFromBackendButton will be disabled.
         /// </summary>
         /// <returns>boolean that is used in the SessionView to decide whether the ImportMediaFromBackendButton should be diabled/enabled</returns>
         public async Task<bool> PullSessionsFromBackend()
         {
             try
             {
-                String serialNumber = JsonConvert.SerializeObject(
+                string serialNumber = JsonConvert.SerializeObject(
                 new
                 {
-                    serial_number = _deviceIdentifier
+                    serial_number = deviceIdentifier
                 }
                 );
 
-                HttpResponseMessage response = await _httpRequestHelper.SendRequestToBackend(serialNumber, "http://141.28.44.195/pullsessions").ConfigureAwait(true);
-                var body = await response.Content.ReadAsStringAsync().ConfigureAwait(true);
+                HttpResponseMessage response = await httpRequestHelper.SendRequestToBackend(serialNumber, "http://127.0.0.1:8000/pullsessions");
+                string body = await response.Content.ReadAsStringAsync();
+
                 List<Session> backendSessions = JsonConvert.DeserializeObject<List<Session>>(body);
-                return await SavePulledSessionsFromBackend(backendSessions).ConfigureAwait(true);
+
+                return await SavePulledSessionsFromBackend(backendSessions);
 
             }
-            catch (Exception exc)
+            catch (Exception)
             {
-                //if request or SavePulledSessionsFromBackend method fails an error dialog will be displayed and the ImportSessionsFromBackendButton will be disabled.
-                await _sessionsView.SetVisibiltyOfProgressBarAndRing(false).ConfigureAwait(true);
-                _sessionsView.DisplayImportSessionsFromBackendConnectionErrorDialog();
+                sessionsPage.SetVisibilityOfProgressBarAndRing(false);
+                sessionsPage.DisplayImportSessionsFromBackendConnectionErrorDialog();
                 return false;
             }
         }
+        #endregion
 
+        #region ShouldDownloadSessionsFromBackend
         /// <summary>
         /// Checks if there are contents that can be pulled into app.
         /// The serial number is required and sent as JSON.
         /// The response is sent in JSON format and must be read as String.
-        /// If the request fails, false will be returned.
+        /// If the request fails, an exception will be thrown.
         /// </summary>
-        /// <returns>boolean that is used in the ContentView to decide whether the ImportMediaFromBackendButton should be diabled/enabled</returns>
+        /// <returns>boolean that is used in the SessionsPage to decide whether the ImportSessionsFromBackendButton should be diabled/enabled</returns>
         public async Task<bool> ShouldDownloadSessionsFromBackend()
         {
             try
             {
-                return await _backendContentHelper.ShouldDownloadPropertiesFromBackend(
-                    _deviceIdentifier,
-                    "http://141.28.44.195/getnewersessionsofbackend",
-                    _httpRequestHelper
-                ).ConfigureAwait(true);
+                return await backendContentHelper.ShouldDownloadPropertiesFromBackend(
+                    deviceIdentifier,
+                    "http://127.0.0.1:8000/getnewersessionsofbackend",
+                    httpRequestHelper
+                );
             }
             catch (Exception exc)
             {
-                throw;
+                throw exc;
             }
         }
+        #endregion
 
+        #region SavePulledSessionsFromBackend
         /// <summary>
         /// Saves pulled sessions.
-        /// foreach deserialized session a new session will be created or an existing session will be updated.
+        /// Foreach deserialized session a new session will be created or an existing session will be updated.
+        /// Throws an exception if an error occurs.
         /// </summary>
         /// <param name="backendSessions"></param>
         /// <returns></returns>
         private async Task<bool> SavePulledSessionsFromBackend(List<Session> backendSessions)
         {
-            try 
+            try
             {
-                await _sessionsView.SetVisibiltyOfProgressBarAndRing(true).ConfigureAwait(true);
+                sessionsPage.SetVisibilityOfProgressBarAndRing(true);
                 int sessionAmount = backendSessions.Count;
                 int sessionsCreated = 0;
 
                 foreach (Session backendSession in backendSessions)
                 {
-                    Session existingSession = _sQLiteController.GetSessionByBackendSessionId(backendSession.Id);
+                    sessionsPage.SetProgressBarStatusTxt(sessionsCreated, sessionAmount);
+                    sessionsCreated++;
 
-                    if(existingSession == null)
+                    Session existingSession = await SessionDBHandler.GetSessionByBackendSessionId(backendSession.Id);
+
+                    if (existingSession == null)
                     {
-                        await CreatePulledSessionFromBackend(backendSession).ConfigureAwait(true);
+                        await CreatePulledSessionFromBackend(backendSession);
                     }
                     else
                     {
-                        await UpdateExistingSession(existingSession, backendSession).ConfigureAwait(true);
+                        await UpdateExistingSession(existingSession, backendSession);
                     }
-                    await _sessionsView.SetProgressBarStatusTxt(sessionsCreated, sessionAmount).ConfigureAwait(true);
-                    sessionsCreated++;
                 }
 
-                await _sessionsView.SetVisibiltyOfProgressBarAndRing(false).ConfigureAwait(true);
+                sessionsPage.SetVisibilityOfProgressBarAndRing(false);
 
-                await _sessionsView.ResetSessionsAndReloadSessions().ConfigureAwait(true);
+                await sessionsPage.LoadAllSessions();
 
                 //sets latest date of app database in backend
-                bool latestDeviceSessionUpdateIsSet = await SetLatestDeviceSessionUpdate().ConfigureAwait(true);
+                await SetLatestDeviceSessionUpdate();
 
-                int setLastestDeviceVContentUpdateCounter = 0;
-                //while setting is faulty it will be retried at max 3 times.
-                while (!latestDeviceSessionUpdateIsSet && setLastestDeviceVContentUpdateCounter < 3)
-                {
-                    latestDeviceSessionUpdateIsSet = await SetLatestDeviceSessionUpdate().ConfigureAwait(true);
-                    setLastestDeviceVContentUpdateCounter++;
-                }
-
-                return await ShouldDownloadSessionsFromBackend().ConfigureAwait(true);
-            } 
+                return await ShouldDownloadSessionsFromBackend();
+            }
             catch (Exception exc)
             {
-                throw;
+                throw exc;
             }
         }
+        #endregion
 
+        #region CreatePulledSessionFromBackend
         /// <summary>
-        /// creates pulled session from backend.
-        /// also creates or updates connected resident and mediaItems
+        /// Creates pulled session from backend.
+        /// Also creates or updates connected resident and mediaItems
         /// </summary>
         /// <param name="backendSession"></param>
         /// <returns></returns>
-        private async Task CreatePulledSessionFromBackend(Session backendSession) 
+        private async Task CreatePulledSessionFromBackend(Session backendSession)
         {
             try
             {
-                _sQLiteController.CreateSession(backendSession);
-                int createdSessionId = _sQLiteController.GetSessionIdByName(backendSession.Name);
-                _sQLiteController.UpdateSession(createdSessionId, backendSession.Name, backendSession.Id);
-                await _sessionBackendIdHelper.SetAppSessionID(createdSessionId, backendSession.Id).ConfigureAwait(true);
-                await SavePulledMediaItemsFromBackend(backendSession.MediaList, createdSessionId).ConfigureAwait(true);
-                await SavePulledResidentFromBackend(backendSession.Resident, createdSessionId, backendSession).ConfigureAwait(true);
-            }
-            catch (Exception exc)
+                string sessionName = await GetUniqueSessionName(backendSession.Name);
+                int sessionId = await SessionDBHandler.AddSession(sessionName, backendSession.Id);
+                await sessionBackendIdHelper.SetAppSessionID(sessionId, backendSession.Id);
+                await SavePulledMediaItemsFromBackend(backendSession.MediaList, sessionId);
+
+            } catch (Exception exc)
             {
-                throw;
+                throw exc;
             }
         }
+        #endregion
 
+        #region UpdateExistingSession
         /// <summary>
-        /// updates existing session with properties from backendSession
+        /// Updates existing session with properties from Backend-Session.
+        /// Throws an exception if the update fails.
         /// </summary>
         /// <param name="existingSession"></param>
         /// <param name="backendSession"></param>
         /// <returns></returns>
         private async Task UpdateExistingSession(Session existingSession, Session backendSession)
         {
-            try 
-            {
-                _sQLiteController.UpdateSession(existingSession.Id, backendSession.Name, backendSession.Id);
-                await SavePulledMediaItemsFromBackend(backendSession.MediaList, existingSession.Id).ConfigureAwait(true);
-                await SavePulledResidentFromBackend(backendSession.Resident, existingSession.Id, backendSession).ConfigureAwait(true);
-            }
-            catch (Exception exc)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// saves pulled residents from backend.
-        /// if a resident already exists, the resident will be updated.
-        /// else a new resident will be created.
-        /// in both cases the appResidentId will be set in backend and the resident will be bind to given session.
-        /// </summary>
-        /// <param name="backendResident"></param>
-        /// <param name="createdSessionId"></param>
-        /// <returns></returns>
-        private async Task SavePulledResidentFromBackend(Resident backendResident, int createdSessionId, Session backendSession)
-        {
             try
             {
-                Resident existingResident = _sQLiteController.GetResident(backendResident.Id);
+                string sessionName = await GetUniqueSessionName(backendSession.Name);
+                await SessionDBHandler.UpdateSession(existingSession.Id, backendSession.Id, sessionName);
+                await SavePulledMediaItemsFromBackend(backendSession.MediaList, existingSession.Id);
 
-                if (backendResident.Id != 0)
-                {
-                    if (existingResident != null)
-                    {
-                        _sQLiteController.UpdateResident(backendResident);
-                        await _residentBackendIdHelper.SetAppResidentID(existingResident.Id, backendResident.Id).ConfigureAwait(true);
-                        _sQLiteController.BindResidentSession(createdSessionId, existingResident.Id);
-                        _sQLiteController.CreateRating(existingResident.Id, createdSessionId, backendSession.Rating, backendSession.DurationInSeconds);
-                        await SavePulledResidentLifethemesFromBackend(backendResident.Lifethemes, existingResident.Id).ConfigureAwait(true);
-                    }
-                    else
-                    {
-                        int createndResidentId = _sQLiteController.CreateResident(backendResident);
-                        await _residentBackendIdHelper.SetAppResidentID(createndResidentId, backendResident.Id).ConfigureAwait(true);
-                        _sQLiteController.CreateRating(createndResidentId, createdSessionId, backendSession.Rating, backendSession.DurationInSeconds);
-                        _sQLiteController.BindResidentSession(createdSessionId, createndResidentId);
-                        await SavePulledResidentLifethemesFromBackend(backendResident.Lifethemes, createndResidentId).ConfigureAwait(true);
-                    }
-                }
-            }
-            catch (Exception exc)
+            } catch (Exception exc)
             {
-                throw;
+                throw exc;
             }
         }
+        #endregion
 
-        /// <summary>
-        /// creates pulled resident lifethemes from backend and binds them with given resident by id.
-        /// </summary>
-        /// <param name="lifethemes"></param>
-        /// <param name="residentId"></param>
-        /// <returns></returns>
-        private async Task SavePulledResidentLifethemesFromBackend(List<Lifetheme> lifethemes, int residentId) 
-        {
-            try 
-            {
-                foreach(Lifetheme lifetheme in lifethemes) 
-                {
-                    _sQLiteController.CreateLifetheme(lifetheme.Name);
-                    _sQLiteController.BindResidentLifetheme(residentId, lifetheme.Name);
-                }
-            }
-            catch (Exception exc)
-            {
-                throw;
-            }
-        }
-
+        #region SavePulledMediaItemsFromBackend
         /// <summary>
         /// Saves pulled MediaItems from session.
-        /// foreach MediaItem a new MediaItem will be created.
-        /// if MediaItem has Notes, the freshly created MediaItems needs to be updated.
+        /// Throws an error if an exception occurs.
         /// </summary>
         /// <param name="backendMediaItems"></param>
-        /// <param name="createdSessionId"></param>
+        /// <param name="sessionId"></param>
         /// <returns></returns>
-        private async Task SavePulledMediaItemsFromBackend(List<MediaItem> backendMediaItems, int createdSessionId)
+        private async Task SavePulledMediaItemsFromBackend(List<MediaItem> backendMediaItems, int sessionId)
         {
             try
             {
-                foreach (var backendMediaItem in backendMediaItems)
+
+                await SessionMediaItemsDBHandler.UnbindSessionMediaItemsBySessionId(sessionId);
+
+                foreach (MediaItem backendMediaItem in backendMediaItems)
                 {
-                    MediaItem existingMediaItem = _sQLiteController.GetMediaItemByBackendMediaItemId(backendMediaItem.Id);
+                    MediaItem existingMediaItem = await MediaItemDBHandler.GetMediaItemByBackendMediaItemId(backendMediaItem.Id);
+
+                    int mediaItemId = 0;
+                    
                     if (existingMediaItem == null)
                     {
-                        StorageFile file = await _backendContentHelper.GetFileFromBackend(backendMediaItem.Path, backendMediaItem.Name).ConfigureAwait(true);
+                        await backendContentHelper.DownloadFileFromBackend(null, backendMediaItem);
+                        MediaItem foundMediaItem = await MediaItemDBHandler.GetMediaItemByBackendMediaItemId(backendMediaItem.Id);
+                        mediaItemId = foundMediaItem.Id;
 
-                        await CreatePulledMediaItemFromBackend(file, backendMediaItem, createdSessionId).ConfigureAwait(true);
-                    }
-                    else
+                    } else
                     {
-                        await UpdateExistingMediaItem(existingMediaItem, backendMediaItem, createdSessionId).ConfigureAwait(true);
+                        await backendContentHelper.DownloadFileFromBackend(existingMediaItem, backendMediaItem);
+                        mediaItemId = existingMediaItem.Id;
                     }
+
+                    await SessionMediaItemsDBHandler.BindSessionMediaItems(mediaItemId, sessionId);
                 }
-            }
-            catch (Exception exc)
+            } catch (Exception exc)
             {
-                throw;
+                throw exc;
             }
         }
+        #endregion
 
-        /// <summary>
-        /// Updates Existing MediaItem.
-        /// File will be newly set and saved in LocalStorage.
-        /// </summary>
-        /// <param name="existingMediaItem">Instance of existing MediaItem of app</param>
-        /// <param name="backendMediaItem">Instance of new backend MediaItem</param>
-        private async Task UpdateExistingMediaItem(MediaItem existingMediaItem, MediaItem backendMediaItem, int createdSessionId)
-        {
-            try
-            {
-                StorageFile newFile = await _backendContentHelper.GetFileFromBackend(backendMediaItem.Path, backendMediaItem.Name).ConfigureAwait(true);
-
-                if (newFile != null)
-                {
-                    await _backendContentHelper.UpdateExistingMediaItem(existingMediaItem, backendMediaItem).ConfigureAwait(true);
-                    _sQLiteController.AppendSessionItem(existingMediaItem.Id, createdSessionId);
-                }
-            }
-            catch (Exception exc)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Creates single MediaItem from Backend
-        /// </summary>
-        /// <param name="mediaItemStorageFile">newly created StorageFile of backend MediaItem</param>
-        /// <param name="backendMediaItem">newly created backend MediaItem</param>
-        /// <returns></returns>
-        private async Task CreatePulledMediaItemFromBackend(StorageFile mediaItemStorageFile, MediaItem backendMediaItem, int createdSessionId)
-            {
-                try
-                {
-                    await _backendContentHelper.CreatePulledMediaItemFromBackend(mediaItemStorageFile, backendMediaItem).ConfigureAwait(true);
-                    MediaItem createdMediaItem = _sQLiteController.GetMediaItemByBackendMediaItemId(backendMediaItem.Id);
-                    _sQLiteController.AppendSessionItem(createdMediaItem.Id, createdSessionId);
-            }
-                catch (Exception exc)
-                {
-                    throw;
-                }
-            }
-
+        #region SetLatestDeviceSessionUpdate
         /// <summary>
         /// Sets latest device session update date in backend.
+        /// If the request fails, then an exception will be thrown.
         /// </summary>
         /// <returns>returns boolean that is set by whether the request was successfull or not</returns>
         private async Task<bool> SetLatestDeviceSessionUpdate()
         {
             try
             {
-                return await _backendContentHelper.SetLatestDevicePropertyUpdate(
-                    _deviceIdentifier,
-                    "http://141.28.44.195/setlatestdevicesessionupdate",
-                    _httpRequestHelper
-                ).ConfigureAwait(true);
+                return await backendContentHelper.SetLatestDevicePropertyUpdate(
+                    deviceIdentifier,
+                    "http://127.0.0.1:8000/setlatestdevicesessionupdate",
+                    httpRequestHelper
+                );
             }
             catch (Exception exc)
             {
-                throw;
+                throw exc;
             }
         }
-        **/
+        #endregion
+
+        #region GetUniqueSessionName
+        /// <summary>
+        /// Returns an unique session name.
+        /// </summary>
+        /// <param name="whishedSessionName"></param>
+        /// <returns></returns>
+        private async Task<string> GetUniqueSessionName(string whishedSessionName)
+        {
+            int increment = 1;
+            string uniqueSessionName = whishedSessionName;
+
+            while(await SessionDBHandler.GetSessionByName(uniqueSessionName) != null)
+            {
+                uniqueSessionName = whishedSessionName;
+                uniqueSessionName += increment;
+                increment++;
+            }
+
+            return uniqueSessionName;
+        }
+        #endregion
     }
 }

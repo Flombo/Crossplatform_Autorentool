@@ -38,6 +38,21 @@ namespace Autorentool_RMT.Services.DBHandling
         }
         #endregion
 
+        #region GetSessionByBackendSessionId
+        /// <summary>
+        /// Returns the first Session with a BackendSessionId, that is equal to the given id.
+        /// Else null will be returned.
+        /// </summary>
+        /// <param name="backendSessionId"></param>
+        /// <returns></returns>
+        public static async Task<Session> GetSessionByBackendSessionId(int backendSessionId)
+        {
+            SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
+
+            return await sQLiteAsyncConnection.Table<Session>().FirstOrDefaultAsync(session => session.BackendSessionId == backendSessionId);
+        }
+        #endregion
+
         #region GetID
         /// <summary>
         /// Returns the ID of a Session by given parameters or throws an exception if no Session was found.

@@ -43,10 +43,12 @@
                                  Orientation="Horizontal">
                         
                         <Button Text="{StaticResource ImportFromBackendIcon}" 
-                                TextColor="White" 
+                                TextColor="White"
+                                IsEnabled="{Binding IsImportFromBackendButtonEnabled}"
                                 HeightRequest="50" 
                                 WidthRequest="45" 
-                                BackgroundColor="LightGray" 
+                                BackgroundColor="{Binding ImportFromBackendButtonBackgroundColour}"
+                                Clicked="OnImportSessionsFromBackendButtonClicked"
                                 FontSize="Subtitle" 
                                 FontAttributes="Bold"/>
                         

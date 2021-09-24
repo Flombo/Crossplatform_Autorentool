@@ -112,7 +112,7 @@ namespace Autorentool_RMT.ViewModels.PopupViewModels
                 }
                 else
                 {
-                    await RatingDBHandler.UpdateRating(rating.Id, session.Id, resident.Id, session.DurationInSeconds, ratingValue);
+                    await RatingDBHandler.UpdateRating(rating.Id, session.DurationInSeconds, ratingValue);
                 }
 
             } catch(Exception exc)

@@ -151,25 +151,14 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         /// Updates Rating by given ID and parameters.
         /// </summary>
         /// <param name="ratingId"></param>
-        /// <param name="sessionId"></param>
-        /// <param name="residentId"></param>
         /// <param name="durationInSeconds"></param>
         /// <param name="ratingValue"></param>
         /// <returns></returns>
-        public static async Task UpdateRating(int ratingId, int sessionId, int residentId, int durationInSeconds, int ratingValue)
+        public static async Task UpdateRating(int ratingId, int durationInSeconds, int ratingValue)
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
-            Rating rating = new Rating()
-            {
-                Id = ratingId,
-                SessionId = sessionId,
-                ResidentId = residentId,
-                DurationInSeconds = durationInSeconds,
-                RatingValue = ratingValue
-            };
-
-            await sQLiteAsyncConnection.UpdateAsync(rating);
+            await sQLiteAsyncConnection.ExecuteAsync("UPDATE Ratings SET rating_value = ?, duration_in_seconds = ? WHERE id == ?", durationInSeconds, ratingValue, ratingId);
         }
         #endregion
 

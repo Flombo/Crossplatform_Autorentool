@@ -30,6 +30,8 @@ namespace Autorentool_RMT.ViewModels
         private bool isProgressBarVisible;
         private int progress;
         private string statusText;
+        private bool isImportFromBackendButtonEnabled;
+        private string importFromBackendButtonBackgroundColour;
         #endregion
 
         #region Constructor
@@ -53,6 +55,33 @@ namespace Autorentool_RMT.ViewModels
             progress = 0;
             statusText = "";
             isProgressBarVisible = false;
+            isImportFromBackendButtonEnabled = false;
+            importFromBackendButtonBackgroundColour = "LightGray";
+        }
+        #endregion
+
+        #region ImportFromBackendButtonBackgroundColour
+        public string ImportFromBackendButtonBackgroundColour
+        {
+            get => importFromBackendButtonBackgroundColour;
+            set
+            {
+                importFromBackendButtonBackgroundColour = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsImportFromBackendButtonEnabled
+        public bool IsImportFromBackendButtonEnabled
+        {
+            get => isImportFromBackendButtonEnabled;
+            set
+            {
+                isImportFromBackendButtonEnabled = value;
+                ImportFromBackendButtonBackgroundColour = GetBackgroundColour(isImportFromBackendButtonEnabled, "Green");
+                OnPropertyChanged();
+            }
         }
         #endregion
 

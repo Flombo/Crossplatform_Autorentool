@@ -502,26 +502,29 @@ namespace Autorentool_RMT.Views
         /// Displays an prompt for pulling MediaItems from backend and pulls them if the user accepts it.
         /// Displays an error message if an error happens.
         /// </summary>
-        public async void DisplayImportMediaFromBackendByPushDialog()
+        public void DisplayImportMediaFromBackendByPushDialog()
         {
-            try
+            Device.BeginInvokeOnMainThread(async () =>
             {
-                bool shouldDownloadMedia = await DisplayAlert(
-                    "Neue Medieninhalte aus dem Online-Content-Pool verfügbar",
-                    "Möchten Sie neue Medieninhalte aus dem Online-Content-Pool herunterladen?",
-                    "Herunterladen",
-                    "Abbrechen"
-                    );
-
-                if (shouldDownloadMedia)
+                try
                 {
-                    viewModel.IsImportFromBackendButtonVisible = await backendPullMediaItems.PullContentsFromBackend();
-                }
+                    bool shouldDownloadMedia = await DisplayAlert(
+                        "Neue Medieninhalte aus dem Online-Content-Pool verfügbar",
+                        "Möchten Sie neue Medieninhalte aus dem Online-Content-Pool herunterladen?",
+                        "Herunterladen",
+                        "Abbrechen"
+                        );
 
-            } catch(Exception)
-            {
-                DisplayImportBackendMediaItemsErrorPrompt();
-            }
+                    if (shouldDownloadMedia)
+                    {
+                        viewModel.IsImportFromBackendButtonVisible = await backendPullMediaItems.PullContentsFromBackend();
+                    }
+
+                } catch(Exception)
+                {
+                    DisplayImportBackendMediaItemsErrorPrompt();
+                }
+            });
         }
         #endregion
 
@@ -531,41 +534,45 @@ namespace Autorentool_RMT.Views
         /// Displays an error prompt, when an exception occurs.
         /// </summary>
         /// <param name="appMediaItemIDs"></param>
-        public async void DisplayDeleteMediaViaDeleteCommand(List<int> appMediaItemIDs)
+        public void DisplayDeleteMediaViaDeleteCommand(List<int> appMediaItemIDs)
         {
-            try
+            Device.BeginInvokeOnMainThread(async () =>
             {
-                List<MediaItem> mediaItems = new List<MediaItem>();
-                string mediaItemsNames = "";
-
-                foreach (int appMediaItemID in appMediaItemIDs)
+                try
                 {
-                    MediaItem mediaItem = await MediaItemDBHandler.GetSingleMediaItem(appMediaItemID);
 
-                    if (mediaItem != null)
+                    List<MediaItem> mediaItems = new List<MediaItem>();
+                    string mediaItemsNames = "";
+
+                    foreach (int appMediaItemID in appMediaItemIDs)
                     {
-                        mediaItemsNames += mediaItem.Name + ", ";
-                        mediaItems.Add(mediaItem);
+                        MediaItem mediaItem = await MediaItemDBHandler.GetSingleMediaItem(appMediaItemID);
+
+                        if (mediaItem != null)
+                        {
+                            mediaItemsNames += mediaItem.Name + ", ";
+                            mediaItems.Add(mediaItem);
+                        }
+
                     }
 
-                }
+                    bool shouldDeleteMediaItems = await DisplayAlert(
+                        "Ein Admin möchte Inhalte von Ihrem Gerät löschen",
+                        $"Möchten Sie, dass folgende Inhalte gelöscht werden: {mediaItemsNames} ?",
+                        "Löschen",
+                        "Abbrechen"
+                        );
 
-                bool shouldDeleteMediaItems = await DisplayAlert(
-                    "Ein Admin möchte Inhalte von Ihrem Gerät löschen",
-                    "Möchten Sie, dass folgende Inhalte gelöscht werden: '" + mediaItemsNames + "' ?",
-                    "Löschen",
-                    "Abbrechen"
-                    );
+                    if (shouldDeleteMediaItems)
+                    {
+                        await backendPullMediaItems.DeleteMediaItemsRetrievedByWebSocket(mediaItems);
+                    }
 
-                if (shouldDeleteMediaItems)
+                } catch (Exception)
                 {
-                    await backendPullMediaItems.DeleteMediaItemsRetrievedByWebSocket(mediaItems);
+                    await DisplayAlert("Fehler beim Löschen der Inhalte", "Beim Löschen der Inhalte kam es zu einem Fehler", "Schließen");
                 }
-
-            } catch (Exception)
-            {
-                await DisplayAlert("Fehler beim Löschen der Inhalte", "Beim Löschen der Inhalte kam es zu einem Fehler", "Schließen");
-            }
+            });
         }
         #endregion
 
@@ -575,41 +582,44 @@ namespace Autorentool_RMT.Views
         /// If an error occurs an error dialog will be prompted.
         /// </summary>
         /// <param name="lifethemeNames"></param>
-        public async void DisplayDeleteLifethemesViaDeleteCommandDialog(List<string> lifethemeNames)
+        public void DisplayDeleteLifethemesViaDeleteCommandDialog(List<string> lifethemeNames)
         {
-            try
+            Device.BeginInvokeOnMainThread(async () =>
             {
-                string lifethemeNamesString = "";
-
-                foreach (string lifethemeName in lifethemeNames)
+                try
                 {
-                    lifethemeNamesString += lifethemeName + ", ";
-                }
+                    string lifethemeNamesString = "";
 
-                bool shouldDeleteLifethemes = await DisplayAlert(
-                    "Ein Admin möchte Lebensthemen von Ihrem Gerät löschen",
-                    "Möchten Sie, dass folgende Lebensthemen gelöscht werden: '" + lifethemeNamesString + "' ?",
-                    "Löschen",
-                    "Abbrechen"
-                    );
-
-                if (shouldDeleteLifethemes)
-                {
                     foreach (string lifethemeName in lifethemeNames)
                     {
-                        int lifethemeId = await LifethemeDBHandler.GetLifethemeIDByName(lifethemeName);
+                        lifethemeNamesString += lifethemeName + ", ";
+                    }
 
-                        if (lifethemeId != -1)
+                    bool shouldDeleteLifethemes = await DisplayAlert(
+                        "Ein Admin möchte Lebensthemen von Ihrem Gerät löschen",
+                        "Möchten Sie, dass folgende Lebensthemen gelöscht werden: '" + lifethemeNamesString + "' ?",
+                        "Löschen",
+                        "Abbrechen"
+                        );
+
+                    if (shouldDeleteLifethemes)
+                    {
+                        foreach (string lifethemeName in lifethemeNames)
                         {
-                            await MediaItemLifethemesDBHandler.UnbindMediaItemLifethemesByLifethemeId(lifethemeId);
-                            await LifethemeDBHandler.DeleteLifetheme(lifethemeId);
+                            int lifethemeId = await LifethemeDBHandler.GetLifethemeIDByName(lifethemeName);
+
+                            if (lifethemeId != -1)
+                            {
+                                await MediaItemLifethemesDBHandler.UnbindMediaItemLifethemesByLifethemeId(lifethemeId);
+                                await LifethemeDBHandler.DeleteLifetheme(lifethemeId);
+                            }
                         }
                     }
+                } catch (Exception)
+                {
+                    await DisplayAlert("Fehler beim Löschen der Lebensthemen", "Es trat ein Fehler auf beim Löschen der Lebensthemen", "Schließen");
                 }
-            } catch (Exception)
-            {
-                await DisplayAlert("Fehler beim Löschen der Lebensthemen", "Es trat ein Fehler auf beim Löschen der Lebensthemen", "Schließen");
-            }
+            });
         }
         #endregion
 
@@ -617,13 +627,15 @@ namespace Autorentool_RMT.Views
         /// <summary>
         /// Displays an error prompt when the backend isn't reachable.
         /// </summary>
-        public async void DisplayImportMediaFromBackendConnectionErrorDialog()
+        public void DisplayImportMediaFromBackendConnectionErrorDialog()
         {
-            await DisplayAlert(
-                "Fehler beim Verbindungsaufbau zum Online-Content-Pool", 
-                "Es konnte keine Verbindung zum Online-Content-Pool hergestellt werden.", 
-                "Schließen"
-                );
+            Device.BeginInvokeOnMainThread(async () =>
+                await DisplayAlert(
+                    "Fehler beim Verbindungsaufbau zum Online-Content-Pool", 
+                    "Es konnte keine Verbindung zum Online-Content-Pool hergestellt werden.", 
+                    "Schließen"
+                    )
+            );
         }
         #endregion
 
@@ -679,12 +691,14 @@ namespace Autorentool_RMT.Views
         /// <summary>
         /// Displays an error prompt, when the pulling of MediaItems from backend fails.
         /// </summary>
-        private async void DisplayImportBackendMediaItemsErrorPrompt()
+        private void DisplayImportBackendMediaItemsErrorPrompt()
         {
-            await DisplayAlert(
-                "Fehler beim Herunterladen von Medien aus dem Online-Content-Pool", 
-                "Ein Fehler trat auf beim Herunterladen der Medien aus dem Online-Content-Pool", 
-                "Schließen"
+            Device.BeginInvokeOnMainThread(async () =>
+                await DisplayAlert(
+                    "Fehler beim Herunterladen von Medien aus dem Online-Content-Pool",
+                    "Ein Fehler trat auf beim Herunterladen der Medien aus dem Online-Content-Pool",
+                    "Schließen"
+                    )
                 );
         }
         #endregion

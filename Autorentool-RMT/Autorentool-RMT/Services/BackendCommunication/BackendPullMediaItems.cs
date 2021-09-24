@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
 using System.Text;
 using System.Threading;
-using Xamarin.Forms;
 using Autorentool_RMT.Views;
 
 namespace Autorentool_RMT.Services.BackendCommunication
@@ -29,43 +28,22 @@ namespace Autorentool_RMT.Services.BackendCommunication
 
         #region Constructor
         /// <summary>
-        /// constructor of BackendPullMediaItems-Class
+        /// Constructor of BackendPullMediaItems-Class
         /// </summary>
         /// <param name="contentManagementViewModel"></param>
         public BackendPullMediaItems(ContentsPage contentsPage)
         {
             this.contentsPage = contentsPage;
-            deviceIdentifier = GetDeviceSerialNumber();
+            deviceIdentifier = DeviceSerialNumberHelper.GetDeviceSerialNumber();
             mediaItemBackendIdHelper = new MediaItemBackendIdHelper();
             httpRequestHelper = new HttpRequestHelper();
-        }
-        #endregion
-
-        #region GetDeviceSerialNumber
-        /// <summary>
-        /// Retrieves the platformspecific device serial-number.
-        /// Returns an empty string if an error occurs.
-        /// </summary>
-        /// <returns></returns>
-        private string GetDeviceSerialNumber()
-        {
-            try
-            {
-
-                ISerialNumberRetriever serialNumberRetriever = DependencyService.Get<ISerialNumberRetriever>();
-                return serialNumberRetriever.GetDeviceSerialNumber();
-
-            } catch(Exception)
-            {
-                return "";
-            }
         }
         #endregion
 
         #region InitHelper
         /// <summary>
         /// Inits helper classes HTTPRequestHelper and MediaItemBackendHelper.
-        /// If the process fails, the ImportMediaFromBackendButton will be disabled
+        /// If the process fails, an exception will be thrown.
         /// </summary>
         /// <returns></returns>
         public async Task InitHelper()
@@ -76,9 +54,9 @@ namespace Autorentool_RMT.Services.BackendCommunication
                 await mediaItemBackendIdHelper.Init(deviceIdentifier);
                 backendContentHelper = new BackendContentHelper(mediaItemBackendIdHelper, deviceIdentifier);
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                contentsPage.SetProgressElementsVisibility(false);
+                throw exc;
             }
         }
         #endregion
@@ -141,13 +119,15 @@ namespace Autorentool_RMT.Services.BackendCommunication
 
                     await SendMessageUsingMessageWebSocket(serialNumber);
                 }
-            } catch(Exception exc)
+            } 
+            catch(Exception exc)
             {
                 throw exc;
             }
         }
         #endregion
 
+        #region SendMessageUsingMessageWebSocket
         /// <summary>
         /// Sends message over websocket.
         /// </summary>
@@ -155,16 +135,16 @@ namespace Autorentool_RMT.Services.BackendCommunication
         /// <returns></returns>
         private async Task SendMessageUsingMessageWebSocket(string message)
         {
-            var byteMessage = Encoding.UTF8.GetBytes(message);
-            var segmnet = new ArraySegment<byte>(byteMessage);
+            byte[] byteMessage = Encoding.UTF8.GetBytes(message);
+            ArraySegment<byte> messageAsArraySegment = new ArraySegment<byte>(byteMessage);
 
-            await clientWebSocket.SendAsync(segmnet, WebSocketMessageType.Text, true, CancellationToken.None);
+            await clientWebSocket.SendAsync(messageAsArraySegment, WebSocketMessageType.Text, true, CancellationToken.None);
         }
+        #endregion
 
         #region RecieveMessage
         /// <summary>
         /// Will be called, when a message was recievet by the clientWebSocket.
-        /// Uses Datareader to read message string from MessageWebSocketMessageRecievedEventArgs
         /// If the message equals own serial number and shouldPullContent is true, the device needs to pull contents from backend.
         /// </summary>
         /// <returns></returns>
@@ -266,7 +246,8 @@ namespace Autorentool_RMT.Services.BackendCommunication
 
                 await contentsPage.LoadAllMediaItems();
 
-            } catch (Exception exc)
+            } 
+            catch (Exception exc)
             {
                 contentsPage.SetProgressElementsVisibility(false);
                 throw exc;
@@ -311,15 +292,15 @@ namespace Autorentool_RMT.Services.BackendCommunication
         {
             try
             {
-                String serialNumber = JsonConvert.SerializeObject(
-                new
-                {
-                    serial_number = deviceIdentifier
-                }
-                );
+                string serialNumber = JsonConvert.SerializeObject(
+                    new
+                    {
+                        serial_number = deviceIdentifier
+                    }
+                    );
 
                 HttpResponseMessage response = await httpRequestHelper.SendRequestToBackend(serialNumber, "http://127.0.0.1:8000/pullmediaitemsofbackend");
-                var body = await response.Content.ReadAsStringAsync();
+                string body = await response.Content.ReadAsStringAsync();
                 return await SavePulledMediaItemsFromBackend(body);
 
             }
@@ -337,9 +318,9 @@ namespace Autorentool_RMT.Services.BackendCommunication
         /// Checks if there are contents that can be pulled into app.
         /// The serial number is required and sent as JSON.
         /// The response is sent in JSON format and must be read as String.
-        /// If the request fails, false will be returned.
+        /// If the request fails, an excetpion will be thrown.
         /// </summary>
-        /// <returns>boolean that is used in the ContentView to decide whether the ImportMediaFromBackendButton should be diabled/enabled</returns>
+        /// <returns>boolean that is used in the ContentsPage to decide whether the ImportMediaFromBackendButton should be diabled/enabled</returns>
         public async Task<bool> ShouldDownloadMediaItemsFromBackend()
         {
             try
@@ -360,12 +341,12 @@ namespace Autorentool_RMT.Services.BackendCommunication
         #region SavePulledMediaItemsFromBackend
         /// <summary>
         /// Saves pulled MediaItems.
-        /// JSON response String must be deserialized to MediaItem Model.
-        /// foreach deserialized MediaItem a new MediaItem will be created or updated.
-        /// if MediaItem has Notes, the freshly created MediaItems needs to be updated.
+        /// JSON response string must be deserialized to MediaItem Model.
+        /// Foreach deserialized MediaItem a new MediaItem will be created or updated.
+        /// Throws an exception if these processes failed.
         /// </summary>
         /// <param name="pulledMediaItemJSON">json string with pulled mediaItem data</param>
-        /// <returns>boolean that is used in the ContentView to decide whether the ImportMediaFromBackendButton should be diabled/enabled</returns>
+        /// <returns>boolean that is used in the ContentsPage to decide whether the ImportMediaFromBackendButton should be diabled/enabled</returns>
         private async Task<bool> SavePulledMediaItemsFromBackend(string pulledMediaItemJSON)
         {
             try
@@ -405,13 +386,11 @@ namespace Autorentool_RMT.Services.BackendCommunication
                 //sets latest date of app database in backend
                 bool latestDeviceContentUpdateIsSet = await SetLatestDeviceContentUpdate();
 
-                if (!latestDeviceContentUpdateIsSet)
-                {
-                    throw new Exception("Couldn't set latestDeviceContentUpdate");
-                }
+                return !latestDeviceContentUpdateIsSet
+                    ? throw new Exception()
+                    : await ShouldDownloadMediaItemsFromBackend();
 
-                return await ShouldDownloadMediaItemsFromBackend();
-            }
+            } 
             catch (Exception exc)
             {
                 contentsPage.SetProgressElementsVisibility(false);

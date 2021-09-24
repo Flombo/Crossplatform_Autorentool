@@ -12,7 +12,7 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
         #region BindSessionMediaItems
         /// <summary>
         /// Creates and inserts a new SessionMediaItems-model to database asynchronously by given parameters.
-        /// Returns the ID of the newly created SessionMediaItems-model or throws an exception when no SessionMediaItems entry was found.
+        /// Returns the ID of the newly created SessionMediaItems-model or -1 when no SessionMediaItems entry was found or an exception occurs.
         /// </summary>
         /// <param name="mediaItemId"></param>
         /// <param name="sessionId"></param>
@@ -31,9 +31,10 @@ namespace Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler
             {
                 await sQLiteAsyncConnection.InsertAsync(mediaItemLifethemes);
                 return await GetID(mediaItemId, sessionId);
-            } catch(Exception exc)
+
+            } catch(Exception)
             {
-                throw exc;
+                return -1;
             }
         }
         #endregion
