@@ -183,7 +183,7 @@ namespace Autorentool_RMT.ViewModels
                         {
                             string hash = FileHandler.GetFileHashAsString(stream);
 
-                            int duplicate = await MediaItemDBHandler.SearchMediaItemWithGivenHash(hash);
+                            int duplicate = await MediaItemDBHandler.CountMediaItemDuplicates(hash);
 
                             if (duplicate == 0)
                             {

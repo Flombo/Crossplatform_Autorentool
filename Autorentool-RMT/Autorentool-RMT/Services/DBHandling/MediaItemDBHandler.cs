@@ -333,17 +333,31 @@ namespace Autorentool_RMT.Services.DBHandling
         }
         #endregion
 
-        #region SearchMediaItemWithGivenHash
+        #region CountMediaItemDuplicates
         /// <summary>
         /// Returns the count for mediaitems which are containing the given hash.
         /// </summary>
         /// <param name="hash"></param>
         /// <returns></returns>
-        public static async Task<int> SearchMediaItemWithGivenHash(string hash)
+        public static async Task<int> CountMediaItemDuplicates(string hash)
         {
             SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
 
             return await sQLiteAsyncConnection.Table<MediaItem>().CountAsync(MediaItem => MediaItem.Hash.Equals(hash));
+        }
+        #endregion
+
+        #region SearchMediaItemWithGivenHash
+        /// <summary>
+        /// Returns the MediaItem with given hash or null.
+        /// </summary>
+        /// <param name="hash"></param>
+        /// <returns></returns>
+        public static async Task<MediaItem> SearchMediaItemWithGivenHash(string hash)
+        {
+            SQLiteAsyncConnection sQLiteAsyncConnection = await DBHandler.Init();
+
+            return await sQLiteAsyncConnection.Table<MediaItem>().FirstOrDefaultAsync(mediaItem => mediaItem.Hash.Equals(hash));
         }
         #endregion
 

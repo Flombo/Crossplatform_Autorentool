@@ -222,7 +222,7 @@ namespace Autorentool_RMT.UWP
                         {
                             string filename = mediaFile.Name;
                             string hash = FileHandler.GetFileHashAsString(stream);
-                            int duplicate = await MediaItemDBHandler.SearchMediaItemWithGivenHash(hash);
+                            int duplicate = await MediaItemDBHandler.CountMediaItemDuplicates(hash);
 
                             MediaItem mediaItem = new MediaItem()
                             {
@@ -322,7 +322,7 @@ namespace Autorentool_RMT.UWP
                     {
                         string filename = mediaFile.Name;
                         string hash = FileHandler.GetFileHashAsString(stream);
-                        int duplicate = await MediaItemDBHandler.SearchMediaItemWithGivenHash(hash);
+                        int duplicate = await MediaItemDBHandler.CountMediaItemDuplicates(hash);
 
                         if (duplicate == 0)
                         {

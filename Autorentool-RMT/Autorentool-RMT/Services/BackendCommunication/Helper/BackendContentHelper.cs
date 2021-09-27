@@ -52,7 +52,7 @@ namespace Autorentool_RMT.Services.BackendCommunication.Helper
                 byte[] fileData = webClient.DownloadData(backendFileURI);
 
                 string hash = FileHandler.GetFileHashAsString(new MemoryStream(fileData));
-                int duplicate = await MediaItemDBHandler.SearchMediaItemWithGivenHash(hash);
+                int duplicate = await MediaItemDBHandler.CountMediaItemDuplicates(hash);
 
                 if (duplicate == 0)
                 {
@@ -60,6 +60,11 @@ namespace Autorentool_RMT.Services.BackendCommunication.Helper
 
                 } else
                 {
+                    if(existingMediaItem == null)
+                    {
+                        existingMediaItem = await MediaItemDBHandler.SearchMediaItemWithGivenHash(hash);
+                    }
+
                     await MediaItemDBHandler.UpdateMediaItem(existingMediaItem.Id, backendMediaItem.Name, backendMediaItem.Id, backendMediaItem.Notes);
                     await BindLifethemesAndMediaItemAndSetAppMediaItemId(backendMediaItem.Lifethemes, existingMediaItem.Id, backendMediaItem.Id);
 

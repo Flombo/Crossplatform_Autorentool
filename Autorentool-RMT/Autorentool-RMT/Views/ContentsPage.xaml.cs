@@ -615,6 +615,10 @@ namespace Autorentool_RMT.Views
                             }
                         }
                     }
+
+                    await LoadAllMediaItems();
+                    viewModel.LoadLifethemesOfSelectedMediaItem();
+
                 } catch (Exception)
                 {
                     await DisplayAlert("Fehler beim Löschen der Lebensthemen", "Es trat ein Fehler auf beim Löschen der Lebensthemen", "Schließen");
