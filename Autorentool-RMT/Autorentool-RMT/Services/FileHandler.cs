@@ -69,7 +69,6 @@ namespace Autorentool_RMT.Services
             {
 
                 byte[] bArray = new byte[stream.Length];
-                byte[] thumbnailImageBytes = new byte[stream.Length];
 
                 using (FileStream fs = new FileStream(filePath, FileMode.OpenOrCreate))
                 {
