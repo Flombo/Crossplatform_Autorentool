@@ -189,16 +189,6 @@ namespace Autorentool_RMT.ViewModels
                             {
                                 await AddMediaItem(fileResult, hash);
                             }
-                            else
-                            {
-                                stopwatch.Stop();
-
-                                MediaItems = await MediaItemDBHandler.FilterMediaItems(isPhotosFilterChecked, isMusicFilterChecked, isDocumentsFilterChecked, isFilmsFilterChecked, isLinksFilterChecked);
-                                ResetDeleteButtonsAndProgressIndicators();
-                                SelectedMediaItem = null;
-
-                                throw new Exception("Duplicate");
-                            }
                         }
                     }
 

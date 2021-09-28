@@ -281,7 +281,7 @@ namespace Autorentool_RMT.Views
         #region OnImportButtonClicked
         /// <summary>
         /// Shows file picker (if the user selected this option), saves the selected files and displays them.
-        /// Shows the directory picker (if the user selected this option), saves the files in the selected folder and displays them.
+        /// Shows the directory picker (if the user selected this option and the app is executed under UWP), saves the files in the selected folder and displays them.
         /// If an error occured an error prompt will be displayed.
         /// </summary>
         /// <param name="sender"></param>
@@ -292,14 +292,49 @@ namespace Autorentool_RMT.Views
             {
                 ContentManagementViewModel contentManagementViewModel = viewModel as ContentManagementViewModel;
 
+                if (Device.RuntimePlatform.Equals(Device.UWP))
+                {
+                    await ShowUWPPickerOptions(contentManagementViewModel);
+                } else
+                {
+                    await contentManagementViewModel.ShowFilePicker();
+                }
+
+            } catch (Exception exc)
+            {
+                if (exc.Message.Contains("Folder"))
+                {
+                    await DisplayAlert("Fehler beim Hinzufügen der Ordnerinhalte", "Es kam zu einem Fehler beim Hinzufügen der Dateien aus dem ausgewählten Ordner", "Schließen");
+                } else
+                {
+                    await DisplayAlert("Fehler beim Hinzufügen neuer Inhalte", "Ein Fehler trat auf beim Hinzufügen neuer Inhalte", "Schließen");
+                }
+            }
+        }
+        #endregion
+
+        #region ShowUWPPickerOptions
+        /// <summary>
+        /// Shows file picker(if the user selected this option), saves the selected files and displays them.
+        /// Shows the directory picker (if the user selected this option), saves the files in the selected folder and displays them.
+        /// Throws an exception if an error happened.
+        /// </summary>
+        /// <param name="contentManagementViewModel"></param>
+        /// <returns></returns>
+        private async Task ShowUWPPickerOptions(ContentManagementViewModel contentManagementViewModel)
+        {
+            try
+            {
                 string action = await DisplayActionSheet("Import von Medieninhalten: Art des Imports auswählen", "Abbrechen", null, "Ordnerauswahl", "Einzelne Dateien");
+
 
                 if (action.Equals("Einzelne Dateien"))
                 {
                     await contentManagementViewModel.ShowFilePicker();
-                } else
+                }
+                else
                 {
-                    //Get the implementation of the IDirectoryPicker interface by dependency injection depending on the platform (UWP = UWPDirectoryPicker, Android = ToDo, iOS = ToDo)
+                    //Get the implementation of the IDirectoryPicker interface by dependency injection => UWPDirectoryPicker
                     IDirectoryPicker directortyPickerImplementation = DependencyService.Get<IDirectoryPicker>();
 
                     /**Shows the folder-picker and saves the contained files.
@@ -308,19 +343,10 @@ namespace Autorentool_RMT.Views
                     await directortyPickerImplementation.ShowFolderPicker(contentManagementViewModel);
                     await contentManagementViewModel.OnLoadAllMediaItems();
                 }
-
-            } catch (Exception exc)
+            }
+            catch (Exception exc)
             {
-                if (exc.Message.Contains("Duplicate"))
-                {
-                    await DisplayAlert("Fehler beim Hinzufügen neuer Inhalte", "Es dürfen keine bereits existierenden Dateien hinzugefügt werden", "Schließen");
-                } else if (exc.Message.Contains("Folder")) 
-                {
-                    await DisplayAlert("Fehler beim Hinzufügen der Ordnerinhalte", "Es kam zu einem Fehler beim Hinzufügen der Dateien aus dem ausgewählten Ordner", "Schließen");
-                } else
-                {
-                    await DisplayAlert("Fehler beim Hinzufügen neuer Inhalte", "Ein Fehler trat auf beim Hinzufügen neuer Inhalte", "Schließen");
-                }
+                throw exc;
             }
         }
         #endregion
