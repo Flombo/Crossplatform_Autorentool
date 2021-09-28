@@ -51,7 +51,7 @@ namespace Autorentool_RMT.ViewModels
         protected bool isMediaItemHyperlinkContainerVisible;
         protected string selectedMediumHyperlinkText;
         protected string hyperlink;
-        protected bool isImportFromBackendButtonVisible;
+        protected bool isImportFromBackendButtonEnabled;
         protected string importFromBackendButtonBackgroundColour;
         #endregion
 
@@ -91,18 +91,18 @@ namespace Autorentool_RMT.ViewModels
             isActivityIndicatorRunning = false;
             currentMediaItemLifethemes = new List<Lifetheme>();
             hyperlink = "";
-            isImportFromBackendButtonVisible = false;
+            isImportFromBackendButtonEnabled = false;
         }
         #endregion
 
-        #region IsImportFromBackendButtonVisible
-        public bool IsImportFromBackendButtonVisible
+        #region IsImportFromBackendButtonEnabled
+        public bool IsImportFromBackendButtonEnabled
         {
-            get => isImportFromBackendButtonVisible;
+            get => isImportFromBackendButtonEnabled;
             set
             {
-                isImportFromBackendButtonVisible = value;
-                ImportFromBackendButtonBackgroundColour = GetBackgroundColour(isImportFromBackendButtonVisible, "Green");
+                isImportFromBackendButtonEnabled = value;
+                ImportFromBackendButtonBackgroundColour = GetBackgroundColour(isImportFromBackendButtonEnabled, "Green");
                 OnPropertyChanged();
             }
         }

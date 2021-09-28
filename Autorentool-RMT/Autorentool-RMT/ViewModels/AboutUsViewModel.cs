@@ -17,6 +17,9 @@ namespace Autorentool_RMT.ViewModels
         public ICommand ClickedHyperlink { get; }
         private string appVersion;
         private List<MediaMetaData> mediaMetaDataList;
+        private bool isBackendCommunicationSwitchToggled;
+        private bool isAdminsDeletePermissionSwitchToggled;
+        private bool isShowPushDialogSwitchToggled;
         #endregion
 
         public AboutUsViewModel()
@@ -24,6 +27,54 @@ namespace Autorentool_RMT.ViewModels
             ClickedHyperlink = new Command<string>(async (url) => await Launcher.OpenAsync(url));
             SetAppVersion();
         }
+
+        #region IsBackendCommunicationSwitchToggled
+        /// <summary>
+        /// Getter and Setter for the IsBackendCommunicationSwitchToggled-switch .
+        /// </summary>
+        public bool IsBackendCommunicationSwitchToggled
+        {
+            get => isBackendCommunicationSwitchToggled;
+            set
+            {
+                isBackendCommunicationSwitchToggled = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsShowPushDialogSwitchToggled
+        /// <summary>
+        /// Getter and Setter for the ShowPushDialog switch and preference.
+        /// This preference is used, for deciding if the app should display a push-dialog, if a Session or MediaItem was created/edited in the backend.
+        /// If this preference is false, only the ImportFromBackend-button will be enabled in the SessionsPage or ContentsPage (depending which of these pages are the current one).
+        /// </summary>
+        public bool IsShowPushDialogSwitchToggled
+        {
+            get => isShowPushDialogSwitchToggled;
+            set
+            {
+                isShowPushDialogSwitchToggled = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region IsAdminsDeletePermissionSwitchToggled
+        /// <summary>
+        /// Getter and Setter for the IsAdminsDeletePermissionSwitchToggled switch and preference.
+        /// This preference is used, for deciding if admins are allowed to delete Sessions and MediaItems/Tags over the backend.
+        /// </summary>
+        public bool IsAdminsDeletePermissionSwitchToggled
+        {
+            get => isAdminsDeletePermissionSwitchToggled;
+            set
+            {
+                isAdminsDeletePermissionSwitchToggled = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
 
         #region AppVersion
         public string AppVersion
@@ -46,6 +97,18 @@ namespace Autorentool_RMT.ViewModels
                 mediaMetaDataList = value;
                 OnPropertyChanged();
             }
+        }
+        #endregion
+
+        #region SetPreferenceSwitches
+        /// <summary>
+        /// Sets the IsToggled-value of the preference-switches.
+        /// </summary>
+        public void SetPreferenceSwitches()
+        {
+            IsBackendCommunicationSwitchToggled = Preferences.Get("ConnectToBackend", false);
+            IsAdminsDeletePermissionSwitchToggled = Preferences.Get("AllowAdminsDeletion", false);
+            IsShowPushDialogSwitchToggled = Preferences.Get("ShowPushDialog", false);
         }
         #endregion
 

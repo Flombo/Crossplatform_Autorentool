@@ -47,7 +47,7 @@ namespace Autorentool_RMT.Services.BackendCommunication.Helper
         {
             try
             {
-                Uri backendFileURI = new Uri("http://127.0.0.1:8000/getmedium?backendmediaitempath=" + backendMediaItem.Path + "&serialnumber=" + deviceIdentifier);
+                Uri backendFileURI = new Uri("http://141.28.44.195/getmedium?backendmediaitempath=" + backendMediaItem.Path + "&serialnumber=" + deviceIdentifier);
 
                 byte[] fileData = webClient.DownloadData(backendFileURI);
 

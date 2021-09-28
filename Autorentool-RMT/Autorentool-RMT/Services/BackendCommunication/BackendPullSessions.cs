@@ -11,6 +11,7 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 
 namespace Autorentool_RMT.Services.BackendCommunication
 {
@@ -53,8 +54,8 @@ namespace Autorentool_RMT.Services.BackendCommunication
             try
             {
                 await httpRequestHelper.GetCSRFToken(deviceIdentifier).ConfigureAwait(true);
-                await mediaItemBackendIdHelper.Init(deviceIdentifier).ConfigureAwait(true);
-                await sessionBackendIdHelper.Init(deviceIdentifier).ConfigureAwait(true);
+                await mediaItemBackendIdHelper.Init(deviceIdentifier);
+                await sessionBackendIdHelper.Init(deviceIdentifier);
                 backendContentHelper = new BackendContentHelper(mediaItemBackendIdHelper, deviceIdentifier);
             }
             catch (Exception exc)
@@ -76,7 +77,7 @@ namespace Autorentool_RMT.Services.BackendCommunication
 
             try
             {
-                await clientWebSocket.ConnectAsync(new Uri("ws://127.0.0.1:8080"), CancellationToken.None);
+                await clientWebSocket.ConnectAsync(new Uri("ws://141.28.44.195:8080"), CancellationToken.None);
                 await SendFirstMessage();
 
                 await Task.Factory.StartNew(async () =>
@@ -118,16 +119,16 @@ namespace Autorentool_RMT.Services.BackendCommunication
                 {
                     WebSocketMessage webSocketMessage = JsonConvert.DeserializeObject<WebSocketMessage>(recievedMessage);
 
-                    //check if this device should pull contents from backend 
-                    if (webSocketMessage.SerialNumber == deviceIdentifier && webSocketMessage.ShouldPullSessions)
-                    {
-                        sessionsPage.DisplayImportSessionsFromBackendByPushDialog();
-                    }
+                    bool isOwnSerialNumber = webSocketMessage.SerialNumber.Equals(deviceIdentifier);
+                    bool shouldPullSessions = webSocketMessage.ShouldPullSessions;
 
-                    //check if this device should delete mediaItems
-                    else if (webSocketMessage.AppSessionIDs.Count > 0)
+                    //check if this device should pull contents from backend
+                    if (Preferences.Get("ShowPushDialog", false))
                     {
-                        sessionsPage.DisplayDeleteSessionsViaDeleteCommand(webSocketMessage.AppSessionIDs);
+                        ProcessWebSocketMessage(webSocketMessage, isOwnSerialNumber, shouldPullSessions);
+                    } else
+                    {
+                        DisplayDeletePromptOrSetImportFromBackendButton(webSocketMessage, isOwnSerialNumber, shouldPullSessions);
                     }
                 }
             }
@@ -135,6 +136,75 @@ namespace Autorentool_RMT.Services.BackendCommunication
             {
                 //if an exception was thrown, the websocket will be closed.
                 CloseWebSocket(WebSocketCloseStatus.InternalServerError);
+            }
+        }
+        #endregion
+
+        #region DisplayDeletePromptOrSetImportFromBackendButton
+        /// <summary>
+        /// Deletes the requested Session or enables/disables the ImportFromBackend-button.
+        /// </summary>
+        /// <param name="webSocketMessage"></param>
+        /// <param name="isOwnSerialNumber"></param>
+        /// <param name="shouldPullSessions"></param>
+        private void DisplayDeletePromptOrSetImportFromBackendButton(WebSocketMessage webSocketMessage, bool isOwnSerialNumber, bool shouldPullSessions)
+        {
+            try
+            {
+                if (!CheckIfAppSessionIDsAreGreaterThanZero(webSocketMessage))
+                {
+                    sessionsPage.IsImportFromBackendButtonEnabled(isOwnSerialNumber && shouldPullSessions);
+                }
+            } catch(Exception exc)
+            {
+                throw exc;
+            }
+        }
+        #endregion
+
+        #region ProcessWebSocketMessage
+        /// <summary>
+        /// Decides whether the ImportSessionsFromBackend- or the DeleteSessions-prompt should be displayed.
+        /// Throws an exception if an error occurs.
+        /// </summary>
+        /// <param name="webSocketMessage"></param>
+        /// <param name="isOwnSerialNumber"></param>
+        /// <param name="shouldPullSessions"></param>
+        private void ProcessWebSocketMessage(WebSocketMessage webSocketMessage, bool isOwnSerialNumber, bool shouldPullSessions)
+        {
+            try
+            {
+                if (isOwnSerialNumber && shouldPullSessions)
+                {
+                    sessionsPage.DisplayImportSessionsFromBackendByPushDialog();
+                }
+
+                //check if this device should delete mediaItems
+                CheckIfAppSessionIDsAreGreaterThanZero(webSocketMessage);
+            } catch(Exception exc)
+            {
+                throw exc;
+            }
+        }
+        #endregion
+
+        #region CheckIfAppSessionIDsAreGreaterThanZero
+        private bool CheckIfAppSessionIDsAreGreaterThanZero(WebSocketMessage webSocketMessage)
+        {
+            try
+            {
+                bool isAppSessionIDsGreaterThanZero = Preferences.Get("AllowAdminsDeletion", false) && webSocketMessage.AppSessionIDs.Count > 0;
+
+                if (isAppSessionIDsGreaterThanZero)
+                {
+                    sessionsPage.DisplayDeleteSessionsViaDeleteCommand(webSocketMessage.AppSessionIDs);
+                }
+
+                return isAppSessionIDsGreaterThanZero;
+
+            } catch(Exception exc)
+            {
+                throw exc;
             }
         }
         #endregion
@@ -160,7 +230,6 @@ namespace Autorentool_RMT.Services.BackendCommunication
             }
             catch (Exception)
             {
-                clientWebSocket.Dispose();
                 clientWebSocket = null;
             }
         }
@@ -290,7 +359,7 @@ namespace Autorentool_RMT.Services.BackendCommunication
                 }
                 );
 
-                HttpResponseMessage response = await httpRequestHelper.SendRequestToBackend(serialNumber, "http://127.0.0.1:8000/pullsessions");
+                HttpResponseMessage response = await httpRequestHelper.SendRequestToBackend(serialNumber, "http://141.28.44.195/pullsessions");
                 string body = await response.Content.ReadAsStringAsync();
 
                 List<Session> backendSessions = JsonConvert.DeserializeObject<List<Session>>(body);
@@ -321,7 +390,7 @@ namespace Autorentool_RMT.Services.BackendCommunication
             {
                 return await backendContentHelper.ShouldDownloadPropertiesFromBackend(
                     deviceIdentifier,
-                    "http://127.0.0.1:8000/getnewersessionsofbackend",
+                    "http://141.28.44.195/getnewersessionsofbackend",
                     httpRequestHelper
                 );
             }
@@ -481,7 +550,7 @@ namespace Autorentool_RMT.Services.BackendCommunication
             {
                 return await backendContentHelper.SetLatestDevicePropertyUpdate(
                     deviceIdentifier,
-                    "http://127.0.0.1:8000/setlatestdevicesessionupdate",
+                    "http://141.28.44.195/setlatestdevicesessionupdate",
                     httpRequestHelper
                 );
             }

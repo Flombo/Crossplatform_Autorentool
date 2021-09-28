@@ -10,15 +10,20 @@ namespace Autorentool_RMT.Services.BackendCommunication.Helper
     public class HttpRequestHelper
     {
 
+        #region Attributes
         private string csrfToken;
         private HttpClient httpClient;
+        #endregion
 
+        #region Constructor
         public HttpRequestHelper()
         {
             httpClient = new HttpClient();
             csrfToken = "";
         }
+        #endregion
 
+        #region GetCSRFToken
         /// <summary>
         /// Requests CSRFToken.
         /// Throws an exception if an error occurs.
@@ -35,7 +40,7 @@ namespace Autorentool_RMT.Services.BackendCommunication.Helper
                 );
 
                 StringContent content = new StringContent(serialNumber, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await httpClient.PostAsync(new Uri("http://127.0.0.1:8000/getcsrftoken"), content);
+                HttpResponseMessage response = await httpClient.PostAsync(new Uri("http://141.28.44.195/getcsrftoken"), content);
                 
                 string body = await response.Content.ReadAsStringAsync();
                 HttpMessage httpMessage = JsonConvert.DeserializeObject<HttpMessage>(body);
@@ -47,7 +52,9 @@ namespace Autorentool_RMT.Services.BackendCommunication.Helper
                 throw exc;
             }
         }
+        #endregion
 
+        #region SendRequestToBackend
         /// <summary>
         /// sends request to given uri with given data to backend and returns the body content as string.
         /// Throws an exception if an error happens.
@@ -70,6 +77,7 @@ namespace Autorentool_RMT.Services.BackendCommunication.Helper
                 throw exc;
             }
         }
+        #endregion
 
     }
 }

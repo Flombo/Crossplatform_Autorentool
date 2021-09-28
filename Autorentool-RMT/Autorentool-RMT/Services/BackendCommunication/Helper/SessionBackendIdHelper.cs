@@ -12,6 +12,7 @@ namespace Autorentool_RMT.Services.BackendCommunication.Helper
         {
         }
 
+        #region SetAppSessionID
         /// <summary>
         /// sets appSessionID parameter in backend.
         /// Throws an exception if an error occurs.
@@ -29,12 +30,14 @@ namespace Autorentool_RMT.Services.BackendCommunication.Helper
                         BackendSessionID = backendSessionId
                     }
                 );
-                HttpResponseMessage response = await httpRequestHelper.SendRequestToBackend(mediaItemIdJSON, "http://127.0.0.1:8000/setappsessionid").ConfigureAwait(true);
+                HttpResponseMessage response = await httpRequestHelper.SendRequestToBackend(mediaItemIdJSON, "http://141.28.44.195/setappsessionid").ConfigureAwait(true);
             }
             catch (Exception exc)
             {
                 throw exc;
             }
         }
+        #endregion
+
     }
 }

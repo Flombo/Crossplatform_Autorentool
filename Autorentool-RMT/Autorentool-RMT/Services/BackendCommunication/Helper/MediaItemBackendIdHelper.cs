@@ -12,6 +12,7 @@ namespace Autorentool_RMT.Services.BackendCommunication.Helper
         {
         }
 
+        #region SetAppMediaItemID
         /// <summary>
         /// Sets appMediaItemID parameter in backend.
         /// Throws an exception if an error occurs.
@@ -30,13 +31,14 @@ namespace Autorentool_RMT.Services.BackendCommunication.Helper
                     }
                     );
 
-                HttpResponseMessage response = await httpRequestHelper.SendRequestToBackend(mediaItemIdJSON, "http://127.0.0.1:8000/setappmediaitemid");
+                HttpResponseMessage response = await httpRequestHelper.SendRequestToBackend(mediaItemIdJSON, "http://141.28.44.195/setappmediaitemid");
             }
             catch (Exception exc)
             {
                 throw exc;
             }
         }
+        #endregion
 
     }
 }

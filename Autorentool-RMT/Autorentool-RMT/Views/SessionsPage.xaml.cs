@@ -6,8 +6,10 @@ using Autorentool_RMT.ViewModels;
 using Autorentool_RMT.Views.Popups;
 using System;
 using System.Collections.Generic;
+using System.Net.WebSockets;
 using System.Threading.Tasks;
 using Xamarin.CommunityToolkit.Extensions;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -36,6 +38,21 @@ namespace Autorentool_RMT.Views
             GenerateTooltips();
             await LoadAllSessions();
             InitBackendCommunicationModules();
+        }
+        #endregion
+
+        #region OnDisappearing
+        /// <summary>
+        /// Closes the ClientWebSocket of the BackendPullSessions-class if this page disappears.
+        /// </summary>
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            if (backendPullSessions != null)
+            {
+                backendPullSessions.CloseWebSocket(WebSocketCloseStatus.NormalClosure);
+            }
         }
         #endregion
 
@@ -72,6 +89,17 @@ namespace Autorentool_RMT.Views
         public void SetProgressBarStatusTxt(int currentProgress, int maxProgress)
         {
             sessionViewModel.SetProgressAndStatus(currentProgress, maxProgress);
+        }
+        #endregion
+
+        #region IsImportFromBackendButtonEnabled
+        /// <summary>
+        /// Enables/Disables ImportFromBackend-button.
+        /// </summary>
+        /// <param name="isEnabled"></param>
+        public void IsImportFromBackendButtonEnabled(bool isEnabled)
+        {
+            sessionViewModel.IsImportFromBackendButtonEnabled = isEnabled;
         }
         #endregion
 
@@ -415,14 +443,24 @@ namespace Autorentool_RMT.Views
         /// </summary>
         private async void InitBackendCommunicationModules()
         {
-            try
+            /**
+             * If the user enabled the connection to the backend, the app will ask if there are any Sessions to download.
+             * Else the ImportFromBackend-button will be disabled.
+             */
+            if (Preferences.Get("ConnectToBackend", false))
             {
-                backendPullSessions = new BackendPullSessions(this);
-                await backendPullSessions.InitHelper();
-                await backendPullSessions.InitWebSocket();
-                sessionViewModel.IsImportFromBackendButtonEnabled = await backendPullSessions.ShouldDownloadSessionsFromBackend();
-            }
-            catch (Exception)
+                try
+                {
+                    backendPullSessions = new BackendPullSessions(this);
+                    await backendPullSessions.InitHelper();
+                    await backendPullSessions.InitWebSocket();
+                    sessionViewModel.IsImportFromBackendButtonEnabled = await backendPullSessions.ShouldDownloadSessionsFromBackend();
+                }
+                catch (Exception)
+                {
+                    sessionViewModel.IsImportFromBackendButtonEnabled = false;
+                }
+            } else
             {
                 sessionViewModel.IsImportFromBackendButtonEnabled = false;
             }

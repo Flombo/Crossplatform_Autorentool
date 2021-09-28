@@ -12,6 +12,7 @@ using Autorentool_RMT.Services.DBHandling.ReferenceTablesDBHandler;
 using System.Text;
 using System.Threading;
 using Autorentool_RMT.Views;
+using Xamarin.Essentials;
 
 namespace Autorentool_RMT.Services.BackendCommunication
 {
@@ -73,7 +74,7 @@ namespace Autorentool_RMT.Services.BackendCommunication
 
             try
             {
-                await clientWebSocket.ConnectAsync(new Uri("ws://127.0.0.1:8080"), CancellationToken.None);
+                await clientWebSocket.ConnectAsync(new Uri("ws://141.28.44.195:8080"), CancellationToken.None);
                 await SendFirstMessage();
 
                 await Task.Factory.StartNew(async () =>
@@ -144,8 +145,9 @@ namespace Autorentool_RMT.Services.BackendCommunication
 
         #region RecieveMessage
         /// <summary>
-        /// Will be called, when a message was recievet by the clientWebSocket.
+        /// Will be called, when a message was recieved by the clientWebSocket.
         /// If the message equals own serial number and shouldPullContent is true, the device needs to pull contents from backend.
+        /// If an error occurs, the ClientWebSocket will be closed.
         /// </summary>
         /// <returns></returns>
         private async Task RecieveMessage()
@@ -162,14 +164,89 @@ namespace Autorentool_RMT.Services.BackendCommunication
                 {
                     WebSocketMessage webSocketMessage = JsonConvert.DeserializeObject<WebSocketMessage>(recievedMessage);
 
-                    //check if this device should pull contents from backend 
-                    if (webSocketMessage.SerialNumber == deviceIdentifier && webSocketMessage.ShouldPullContent)
+                    bool isOwnSerialNumber = webSocketMessage.SerialNumber == deviceIdentifier;
+                    bool shouldPullContent = webSocketMessage.ShouldPullContent;
+
+                    if (Preferences.Get("ShowPushDialog", false))
                     {
-                        contentsPage.DisplayImportMediaFromBackendByPushDialog();
+                        ProcessWebSocketMessage(webSocketMessage, isOwnSerialNumber, shouldPullContent);
+                    } else
+                    {
+                        ShowDeletePromptOrSetImportFromBackendButton(webSocketMessage, isOwnSerialNumber, shouldPullContent);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //if an exception was thrown, the websocket will be closed.
+                CloseWebSocket(WebSocketCloseStatus.InternalServerError);
+            }
+        }
+        #endregion
+
+        #region ShowDeletePromptOrSetImportFromBackendButton
+        private void ShowDeletePromptOrSetImportFromBackendButton(WebSocketMessage webSocketMessage, bool isOwnSerialNumber, bool shouldPullContent)
+        {
+            if (!ProcessDeleteCommands(webSocketMessage))
+            {
+                contentsPage.IsImportFromBackendButtonEnabled(isOwnSerialNumber && shouldPullContent);
+            }
+        }
+        #endregion
+
+        #region ProcessWebSocketMessage
+        /// <summary>
+        /// Checks if the WebSocketMessage commands to pull MediaItems or to delete MediaItems or Lifethemes.
+        /// Throws an exception if an error occurs.
+        /// </summary>
+        /// <param name="webSocketMessage"></param>
+        /// <param name="isOwnSerialNumber"></param>
+        /// <param name="shouldPullContent"></param>
+        private void ProcessWebSocketMessage(WebSocketMessage webSocketMessage, bool isOwnSerialNumber, bool shouldPullContent)
+        {
+            try
+            {
+
+                if (isOwnSerialNumber && shouldPullContent)
+                {
+                    contentsPage.DisplayImportMediaFromBackendByPushDialog();
+                } else {
+
+                    //If deleting and showing the push-dailog are disabled, the ImportButton should be enabled.
+                    if (!ProcessDeleteCommands(webSocketMessage))
+                    {
+                        contentsPage.IsImportFromBackendButtonEnabled(isOwnSerialNumber && shouldPullContent);
                     }
 
+                }
+
+            } catch(Exception exc)
+            {
+                throw exc;
+            }
+        }
+        #endregion
+
+        #region ProcessDeleteCommands
+        /// <summary>
+        /// Displays a prompt for the deletion of MediaItems or Lifethemes, 
+        /// depending on the contents of the AppMediaItemIDs- or LifethemeNames-attribute.
+        /// If the user disabled the deletion nothing will happen.
+        /// Throws an exception if an error happened.
+        /// </summary>
+        /// <param name="webSocketMessage"></param>
+        private bool ProcessDeleteCommands(WebSocketMessage webSocketMessage)
+        {
+            try
+            {
+                bool shouldDelete = Preferences.Get("AllowAdminsDeletion", false);
+
+                if (shouldDelete)
+                {
+                    shouldDelete = webSocketMessage.AppMediaItemIDs.Count > 0 || webSocketMessage.LifethemeNames.Count > 0;
+
                     //check if this device should delete mediaItems
-                    else if (webSocketMessage.AppMediaItemIDs.Count > 0)
+                    if (webSocketMessage.AppMediaItemIDs.Count > 0)
                     {
                         contentsPage.DisplayDeleteMediaViaDeleteCommand(webSocketMessage.AppMediaItemIDs);
                     }
@@ -180,11 +257,12 @@ namespace Autorentool_RMT.Services.BackendCommunication
                         contentsPage.DisplayDeleteLifethemesViaDeleteCommandDialog(webSocketMessage.LifethemeNames);
                     }
                 }
-            }
-            catch (Exception)
+
+                return shouldDelete;
+
+            } catch(Exception exc)
             {
-                //if an exception was thrown, the websocket will be closed.
-                CloseWebSocket(WebSocketCloseStatus.InternalServerError);
+                throw exc;
             }
         }
         #endregion
@@ -209,7 +287,6 @@ namespace Autorentool_RMT.Services.BackendCommunication
             }
             catch (Exception)
             {
-                clientWebSocket.Dispose();
                 clientWebSocket = null;
             }
         }
@@ -299,7 +376,7 @@ namespace Autorentool_RMT.Services.BackendCommunication
                     }
                     );
 
-                HttpResponseMessage response = await httpRequestHelper.SendRequestToBackend(serialNumber, "http://127.0.0.1:8000/pullmediaitemsofbackend");
+                HttpResponseMessage response = await httpRequestHelper.SendRequestToBackend(serialNumber, "http://141.28.44.195/pullmediaitemsofbackend");
                 string body = await response.Content.ReadAsStringAsync();
                 return await SavePulledMediaItemsFromBackend(body);
 
@@ -327,7 +404,7 @@ namespace Autorentool_RMT.Services.BackendCommunication
             {
                 return await backendContentHelper.ShouldDownloadPropertiesFromBackend(
                     deviceIdentifier,
-                    "http://127.0.0.1:8000/getnewermediaitemsofbackend",
+                    "http://141.28.44.195/getnewermediaitemsofbackend",
                     httpRequestHelper
                     );
             }
@@ -413,7 +490,7 @@ namespace Autorentool_RMT.Services.BackendCommunication
             {
                 return await backendContentHelper.SetLatestDevicePropertyUpdate(
                     deviceIdentifier,
-                    "http://127.0.0.1:8000/setlatestdevicecontentupdate",
+                    "http://141.28.44.195/setlatestdevicecontentupdate",
                     httpRequestHelper
                 );
             }

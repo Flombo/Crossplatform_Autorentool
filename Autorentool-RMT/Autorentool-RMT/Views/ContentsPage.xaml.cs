@@ -12,6 +12,7 @@ using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using System.Net.WebSockets;
 
 namespace Autorentool_RMT.Views
 {
@@ -85,6 +86,21 @@ namespace Autorentool_RMT.Views
         }
         #endregion
 
+        #region OnDisappearing
+        /// <summary>
+        /// Closes the ClientWebSocket of the BackendPullMediaItems-class if this page disappears.
+        /// </summary>
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            if (backendPullMediaItems != null)
+            {
+                backendPullMediaItems.CloseWebSocket(WebSocketCloseStatus.NormalClosure);
+            }
+        }
+        #endregion
+
         #region LoadAllMediaItems
         /// <summary>
         /// Loads all MediaItems in ContentViewModel.
@@ -93,6 +109,7 @@ namespace Autorentool_RMT.Views
         /// <returns></returns>
         public async Task LoadAllMediaItems()
         {
+            viewModel.SelectedMediaItem = null;
             await viewModel.OnLoadAllMediaItems();
         }
         #endregion
@@ -122,6 +139,17 @@ namespace Autorentool_RMT.Views
         {
             viewModel.IsActivityIndicatorRunning = isProgressBarVisible;
             viewModel.IsProgressBarVisible = isProgressBarVisible;
+        }
+        #endregion
+
+        #region IsImportFromBackendButtonEnabled
+        /// <summary>
+        /// Enables/Disables ImportFromBackendButton
+        /// </summary>
+        /// <param name="isEnabled"></param>
+        public void IsImportFromBackendButtonEnabled(bool isEnabled)
+        {
+            viewModel.IsImportFromBackendButtonEnabled = isEnabled;
         }
         #endregion
 
@@ -472,28 +500,28 @@ namespace Autorentool_RMT.Views
         private async void InitBackendCommunicationModules()
         {
             /*
-            * If previous page was the HomeView, the ContentView should check if new contents are available in online-content-pool.
-            * If this isn't the case, it shouldn't check for new contents, because the previous page was the SessionEditView.
-            * This eliminates waiting time in SessionEditView for checking if there are new contents available in ContentView.
+            * If the user enabled the connection to the backend, the app will ask if there are any MediaItems to download.
+            * Else the ImportFromBackend-button will be disabled.
             */
-            //if (sQLiteController.GetAreBackendModulesEnabledField())
+            if (Preferences.Get("ConnectToBackend", false)) 
+            {
                 //Check if there are new mediaitems in backend to download and enable/disable ImportMediaFromBackendButton depending on result.
                 try
                 {
                     backendPullMediaItems = new BackendPullMediaItems(this);
                     await backendPullMediaItems.InitHelper();
                     await backendPullMediaItems.InitWebSocket();
-                    viewModel.IsImportFromBackendButtonVisible = await backendPullMediaItems.ShouldDownloadMediaItemsFromBackend();
+                    viewModel.IsImportFromBackendButtonEnabled = await backendPullMediaItems.ShouldDownloadMediaItemsFromBackend();
                 }
                 catch (Exception)
                 {
-                    viewModel.IsImportFromBackendButtonVisible = false;
+                    viewModel.IsImportFromBackendButtonEnabled = false;
                 }
-            /**}
+            }
             else
             {
-                ImportMediaFromBackendButton.IsEnabled = false;
-            }**/
+                viewModel.IsImportFromBackendButtonEnabled = false;
+            }
         }
         #endregion
 
@@ -517,7 +545,7 @@ namespace Autorentool_RMT.Views
 
                     if (shouldDownloadMedia)
                     {
-                        viewModel.IsImportFromBackendButtonVisible = await backendPullMediaItems.PullContentsFromBackend();
+                        viewModel.IsImportFromBackendButtonEnabled = await backendPullMediaItems.PullContentsFromBackend();
                     }
 
                 } catch(Exception)
@@ -670,7 +698,7 @@ namespace Autorentool_RMT.Views
                     {
                         if (result.IsPasswordValid)
                         {
-                            viewModel.IsImportFromBackendButtonVisible = await backendPullMediaItems.PullContentsFromBackend();
+                            viewModel.IsImportFromBackendButtonEnabled = await backendPullMediaItems.PullContentsFromBackend();
                             
                             shouldImportMediaItems = false;
                         }

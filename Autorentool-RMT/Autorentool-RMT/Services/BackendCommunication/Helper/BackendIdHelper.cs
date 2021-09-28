@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 
 namespace Autorentool_RMT.Services.BackendCommunication.Helper
 {
+    /// <summary>
+    /// Class is parent of MediaItemBackendIdHelper and SessionBackendIdHelper, because both classes need different CSRF-tokens and a HttpRequestHelper.
+    /// </summary>
     public class BackendIdHelper
     {
 
@@ -13,8 +16,9 @@ namespace Autorentool_RMT.Services.BackendCommunication.Helper
             httpRequestHelper = new HttpRequestHelper();
         }
 
+        #region Init
         /// <summary>
-        /// inits HttpRequestHelper.
+        /// Inits HttpRequestHelper.
         /// HttpRequestHelper needs to retrieve a CSRF-Token from backend, for further requests.
         /// Throws an exception if an error occurs.
         /// </summary>
@@ -31,6 +35,7 @@ namespace Autorentool_RMT.Services.BackendCommunication.Helper
                 throw exc;
             }
         }
+        #endregion
 
     }
 }

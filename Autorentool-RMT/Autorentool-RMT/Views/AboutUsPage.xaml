@@ -7,7 +7,7 @@
     <ContentPage.Content>
         <ScrollView>
             <Grid>
-                
+
                 <!--ImageButton-section start-->
                 <Grid Grid.Row="0"
                       Grid.Column="0"
@@ -54,8 +54,50 @@
                 </Grid>
                 <!--ImageButton-section end-->
 
+                <!--User preferences switches start-->
+                <Grid Grid.Row="2"
+                      Grid.Column="0"
+                      Grid.ColumnSpan="3"
+                      HorizontalOptions="CenterAndExpand">
+                    <Label Text="Kommunikation mit dem Online-Content-Pool erlauben"
+                           FontAttributes="Bold"
+                           Grid.Row="0" 
+                           Grid.Column="0"
+                           HorizontalOptions="CenterAndExpand"/>
+                    <Switch Toggled="OnBackendCommunicationSwitchToggled"
+                            IsToggled="{Binding IsBackendCommunicationSwitchToggled}"
+                            Grid.Row="1" 
+                            Grid.Column="0"
+                            HorizontalOptions="CenterAndExpand"/>
+
+                    <Label Text="Dialog anzeigen, wenn neue Inhalte oder Sitzungen im Online-Content-Pool vorhanden sind" 
+                           FontAttributes="Bold"
+                           Grid.Row="0"
+                           Grid.Column="1"
+                           HorizontalOptions="CenterAndExpand"/>
+                    <Switch IsEnabled="{Binding IsBackendCommunicationSwitchToggled}"
+                            IsToggled="{Binding IsShowPushDialogSwitchToggled}"
+                            Toggled="OnShowPushDialogSwitchToggled"
+                            Grid.Row="1" 
+                            Grid.Column="1"
+                            HorizontalOptions="CenterAndExpand"/>
+
+                    <Label Text="Admins erlauben Inhalte und Sitzungen zu entfernen"
+                           FontAttributes="Bold"
+                           Grid.Row="0"
+                           Grid.Column="2"
+                           HorizontalOptions="CenterAndExpand"/>
+                    <Switch IsEnabled="{Binding IsBackendCommunicationSwitchToggled}"
+                            IsToggled="{Binding IsAdminsDeletePermissionSwitchToggled}"
+                            Toggled="OnAdminsDeletePermissionSwitchToggled"
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            HorizontalOptions="CenterAndExpand"/>
+                </Grid>
+                <!--User preferences switches end-->
+
                 <!--Contact-section start-->
-                <StackLayout Grid.Row="1"
+                <StackLayout Grid.Row="3"
                              Grid.Column="0"
                              HorizontalOptions="CenterAndExpand">
                     <Label Text="(C) Forschungsgruppe RemeMTI / RememTec"/>
@@ -114,11 +156,10 @@
                 <!--Contact-section end-->
 
                 <!--Used-libraries-section start-->
-                <StackLayout Grid.Row="1" Grid.Column="1" Grid.RowSpan="4">
+                <StackLayout Grid.Row="3" Grid.Column="1" Grid.RowSpan="4">
                     <Label Text="Verwendete Bibliotheken"
                         FontSize="Small"
-                        HorizontalTextAlignment="Center"
-                        Grid.Row="4" Grid.Column="1"/>
+                        HorizontalTextAlignment="Center"/>
 
                     <StackLayout>
                         <Label Text="MailKit"
@@ -160,7 +201,7 @@
                 <!--Used-libraries-section end-->
 
                 <!--Used-pictures-section start-->
-                <StackLayout Grid.Row="1"
+                <StackLayout Grid.Row="3"
                              Grid.Column="2">
                     <Label FontSize="Subtitle"
                        Text="Verwendetes Bildmaterial: "/>
@@ -210,7 +251,7 @@
                 <!--Used-pictures-section end-->
 
                 <!--MediaMetaDataList-begin-->
-                <CollectionView Grid.Row="4"
+                <CollectionView Grid.Row="6"
                                 Grid.Column="0"
                                 Grid.ColumnSpan="3"
                                 Grid.RowSpan="5"
