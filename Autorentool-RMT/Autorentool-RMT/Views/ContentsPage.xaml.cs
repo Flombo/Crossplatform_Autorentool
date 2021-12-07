@@ -364,6 +364,7 @@ namespace Autorentool_RMT.Views
 
             try
             {
+                selectContentViewModel.IsAddMediaItemButtonEnabled = false;
                 await selectContentViewModel.BindCheckedMediaItemsToSession();
                 await Navigation.PopAsync();
             } catch(Exception)

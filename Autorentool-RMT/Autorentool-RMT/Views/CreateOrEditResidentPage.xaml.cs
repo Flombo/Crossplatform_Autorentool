@@ -74,6 +74,7 @@ namespace Autorentool_RMT.Views
 
                 try
                 {
+                    createOrEditResidentViewModel.IsCompleteButtonEnabled = false;
                     await createOrEditResidentViewModel.OnAddResident();
                     await Navigation.PopAsync();
 
@@ -93,6 +94,7 @@ namespace Autorentool_RMT.Views
 
                 try
                 {
+                    createOrEditResidentViewModel.IsCompleteButtonEnabled = false;
                     await createOrEditResidentViewModel.OnEditResident();
                     await Navigation.PopAsync();
 

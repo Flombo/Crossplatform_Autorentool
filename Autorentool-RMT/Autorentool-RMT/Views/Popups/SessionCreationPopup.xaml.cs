@@ -32,6 +32,7 @@ namespace Autorentool_RMT.Views.Popups
 
             try
             {
+                sessionCreationViewModel.IsCreateButtonEnabled = false;
                 await sessionCreationViewModel.OnAddSession();
 
                 result.SessionName = sessionCreationViewModel.SessionName;

@@ -57,7 +57,7 @@
                    HeightRequest="50"
                    IsSpellCheckEnabled="True"
                    IsTextPredictionEnabled="True"/>
-            <Button BackgroundColor="LightGray" Text="&#43; NEU ERSTELLEN" Clicked="OnCreateLifethemeButtonClicked"/>
+            <Button BackgroundColor="LightGray" Text="&#43; NEU ERSTELLEN" Clicked="OnCreateLifethemeButtonClicked" IsEnabled="{Binding IsCreateLifethemesButtonEnabled}"/>
         </StackLayout>
         <Button Text="Auswahl übernehmen und Fenster schließen" 
                 BackgroundColor="#0091EA" 

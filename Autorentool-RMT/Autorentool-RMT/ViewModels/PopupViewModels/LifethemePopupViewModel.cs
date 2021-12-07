@@ -13,6 +13,7 @@ namespace Autorentool_RMT.ViewModels
         private List<Lifetheme> allExistingLifethemes;
         private string lifethemeEntryText;
         private string searchText;
+        private bool isCreateLifethemeButtonEnabled;
         private List<Lifetheme> selectedLifethemes;
 
         #region Constructor
@@ -23,6 +24,19 @@ namespace Autorentool_RMT.ViewModels
         {
             this.selectedLifethemes = selectedLifethemes;
             allExistingLifethemes = new List<Lifetheme>();
+            IsCreateLifethemesButtonEnabled = true;
+        }
+        #endregion
+
+        #region IsCreateLifethemesButtonEnabled
+        public bool IsCreateLifethemesButtonEnabled
+        {
+            get => isCreateLifethemeButtonEnabled;
+            set
+            {
+                isCreateLifethemeButtonEnabled = value;
+                OnPropertyChanged();
+            }
         }
         #endregion
 

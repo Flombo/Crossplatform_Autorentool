@@ -53,6 +53,7 @@ namespace Autorentool_RMT.Views.Popups
 
             try
             {
+                lifethemePopupViewModel.IsCreateLifethemesButtonEnabled = false;
                 await lifethemePopupViewModel.OnAddLifetheme();
             } catch(Exception)
             {
